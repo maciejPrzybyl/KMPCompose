@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kmpcompose.composeapp.generated.resources.Res
 import kmpcompose.composeapp.generated.resources.compose_multiplatform
+import kotlinx.datetime.Clock
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -37,6 +38,7 @@ fun App() {
         ) {
             val greeting = remember { Greeting().greet() }
             Text("Compose: $greeting")
+            Text("${Clock.System.now()}")
             var inputText by remember { mutableStateOf("") }
             TextField(
                 inputText,
