@@ -23,7 +23,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kmpcompose.composeapp.generated.resources.Res
 import kmpcompose.composeapp.generated.resources.compose_multiplatform
-import me.tatarka.inject.annotations.Inject
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -41,7 +40,6 @@ fun App() {
     }
 }
 
-@Inject
 @Composable
 fun MainScreen(appViewModel: AppViewModel = viewModel { AppViewModel() }) {
     val state by appViewModel.currentTime.collectAsStateWithLifecycle()
