@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -40,6 +41,10 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             // put your Multiplatform dependencies here
+            implementation(libs.kotlinInject.runtime)
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.androidx.lifecycle.viewmodel)
         }
     }
 }
@@ -54,4 +59,19 @@ android {
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
+}
+
+/*ksp {
+    arg("me.tatarka.inject.generateCompanionExtensions", "true")
+}*/
+
+dependencies {
+    // KSP will eventually have better multiplatform support and we'll be able to simply have
+    // `ksp libs.kotlinInject.compiler` in the dependencies block of each source set
+    // https://github.com/google/ksp/pull/1021
+    add("kspAndroid", libs.kotlinInject.compiler)
+    add("kspIosX64", libs.kotlinInject.compiler)
+    add("kspIosArm64", libs.kotlinInject.compiler)
+    add("kspIosSimulatorArm64", libs.kotlinInject.compiler)
+    add("kspJvm", libs.kotlinInject.compiler)
 }

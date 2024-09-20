@@ -66,8 +66,9 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
-            implementation(projects.shared)
+            implementation(libs.kotlinInject.runtime)
             implementation(libs.kotlinx.datetime)
+            implementation(projects.shared)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

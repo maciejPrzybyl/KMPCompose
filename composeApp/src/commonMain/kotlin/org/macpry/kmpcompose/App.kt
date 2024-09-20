@@ -1,6 +1,5 @@
 package org.macpry.kmpcompose
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,13 +19,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kmpcompose.composeapp.generated.resources.Res
 import kmpcompose.composeapp.generated.resources.compose_multiplatform
-import kotlinx.datetime.Clock
+import me.tatarka.inject.annotations.Inject
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 @Preview
 fun App() {
@@ -36,28 +36,36 @@ fun App() {
             Arrangement.SpaceEvenly,
             Alignment.CenterHorizontally
         ) {
-            val greeting = remember { Greeting().greet() }
-            Text("Compose: $greeting")
-            Text("${Clock.System.now()}")
-            var inputText by remember { mutableStateOf("") }
-            TextField(
-                inputText,
-                { inputText = it }
+            MainScreen()
+        }
+    }
+}
+
+@Inject
+@Composable
+fun MainScreen(appViewModel: AppViewModel = viewModel { AppViewModel() }) {
+    val state by appViewModel.currentTime.collectAsStateWithLifecycle()
+    val greeting = remember { Greeting().greet() }
+    Text("Compose: $greeting")
+    Text(state.toString().orEmpty())
+
+    var inputText by remember { mutableStateOf("") }
+    TextField(
+        inputText,
+        { inputText = it }
+    )
+    val pagerState = rememberPagerState(pageCount = { 11 })
+    HorizontalPager(pagerState) { page ->
+        Column(
+            Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painterResource(Res.drawable.compose_multiplatform),
+                null,
+                Modifier.width(200.dp)
             )
-            val pagerState = rememberPagerState(pageCount = { 11 })
-            HorizontalPager(pagerState) { page ->
-                Column(
-                    Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        painterResource(Res.drawable.compose_multiplatform),
-                        null,
-                        Modifier.width(200.dp)
-                    )
-                    Text("Page: $page")
-                }
-            }
+            Text("Page: $page")
         }
     }
 }
