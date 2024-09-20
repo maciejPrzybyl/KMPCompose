@@ -20,28 +20,32 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kmpcompose.composeapp.generated.resources.Res
 import kmpcompose.composeapp.generated.resources.compose_multiplatform
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.KoinApplication
+import org.koin.compose.viewmodel.koinViewModel
+import org.macpry.kmpcompose.di.koinConfiguration
 
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
-        Column(
-            Modifier.fillMaxSize(),
-            Arrangement.SpaceEvenly,
-            Alignment.CenterHorizontally
-        ) {
-            MainScreen()
+    KoinApplication(::koinConfiguration) {
+        MaterialTheme {
+            Column(
+                Modifier.fillMaxSize(),
+                Arrangement.SpaceEvenly,
+                Alignment.CenterHorizontally
+            ) {
+                MainScreen()
+            }
         }
     }
 }
 
 @Composable
-fun MainScreen(appViewModel: AppViewModel = viewModel { AppViewModel() }) {
+fun MainScreen(appViewModel: AppViewModel = koinViewModel()) {
     val state by appViewModel.currentTime.collectAsStateWithLifecycle()
     val greeting = remember { Greeting().greet() }
     Text("Compose: $greeting")

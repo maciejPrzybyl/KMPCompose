@@ -3,11 +3,10 @@ package org.macpry.kmpcompose
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 
 class AppViewModel (
-    //private val timeManager: TimeManager
+    private val timeManager: TimeManager
 ) : ViewModel() {
 
     init {
@@ -19,8 +18,7 @@ class AppViewModel (
         super.onCleared()
     }
 
-    val currentTime = //timeManager.timeFlow()
-        flowOf(1)
+    val currentTime = timeManager.timeFlow()
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
