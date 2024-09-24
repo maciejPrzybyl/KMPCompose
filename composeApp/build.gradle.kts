@@ -69,7 +69,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.kotlinx.datetime)
-            implementation(libs.koin.compose.viewodel.navigation)
+            implementation(libs.koin.compose.viewmodel)
             api(libs.koin.annotations)
 
             implementation(projects.shared)

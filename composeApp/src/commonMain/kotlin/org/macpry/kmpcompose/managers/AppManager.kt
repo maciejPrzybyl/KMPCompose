@@ -1,7 +1,6 @@
-package org.macpry.kmpcompose.manager
+package org.macpry.kmpcompose.managers
 
 import org.koin.core.annotation.Single
-import org.macpry.kmpcompose.TimeProvider
 
 @Single
 class AppManager(

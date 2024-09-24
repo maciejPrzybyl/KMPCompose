@@ -9,14 +9,13 @@ fun koinConfiguration() = koinApplication {
     modules(AppModule().module)
 }
 
-@Module//(includes = [ManagerModule::class, ViewModelsModule::class])
-@ComponentScan
+@Module(includes = [ManagersModule::class, ViewModelsModule::class])
 class AppModule
 
-/*@Module
-@ComponentScan("org.macpry.kmpcompose.manager")
-class ManagerModule
+@Module
+@ComponentScan("org.macpry.kmpcompose.managers")
+class ManagersModule
 
 @Module
-@ComponentScan("org.macpry.kmpcompose.appviewmodel")
-class ViewModelsModule*/
+@ComponentScan("org.macpry.kmpcompose.screens")
+class ViewModelsModule

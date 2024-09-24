@@ -1,4 +1,4 @@
-package org.macpry.kmpcompose
+package org.macpry.kmpcompose.managers
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
