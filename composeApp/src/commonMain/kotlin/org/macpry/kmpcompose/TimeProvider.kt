@@ -5,8 +5,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.koin.core.annotation.Single
 import kotlin.time.Duration.Companion.seconds
 
+@Single
 class TimeProvider {
 
     fun currentDateTime() = flow {

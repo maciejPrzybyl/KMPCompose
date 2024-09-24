@@ -1,22 +1,22 @@
 package org.macpry.kmpcompose.di
 
-import org.koin.core.module.dsl.singleOf
-import org.koin.core.module.dsl.viewModelOf
+import org.koin.core.annotation.ComponentScan
+import org.koin.core.annotation.Module
 import org.koin.dsl.koinApplication
-import org.koin.dsl.module
-import org.macpry.kmpcompose.AppViewModel
-import org.macpry.kmpcompose.AppManager
-import org.macpry.kmpcompose.TimeProvider
+import org.koin.ksp.generated.module
 
 fun koinConfiguration() = koinApplication {
-    modules(appModule, viewModelsModule)
+    modules(AppModule().module)
 }
 
-val appModule = module {
-    singleOf(::AppManager)
-    singleOf(::TimeProvider)
-}
+@Module//(includes = [ManagerModule::class, ViewModelsModule::class])
+@ComponentScan
+class AppModule
 
-val viewModelsModule = module {
-    viewModelOf(::AppViewModel)
-}
+/*@Module
+@ComponentScan("org.macpry.kmpcompose.manager")
+class ManagerModule
+
+@Module
+@ComponentScan("org.macpry.kmpcompose.appviewmodel")
+class ViewModelsModule*/

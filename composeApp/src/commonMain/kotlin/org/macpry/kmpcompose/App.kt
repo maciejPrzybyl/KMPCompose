@@ -26,6 +26,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
 import org.koin.compose.viewmodel.koinViewModel
+import org.macpry.kmpcompose.appviewmodel.AppViewModel
 import org.macpry.kmpcompose.di.koinConfiguration
 
 @Composable

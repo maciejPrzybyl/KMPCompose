@@ -3,12 +3,14 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -68,6 +70,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.kotlinx.datetime)
             implementation(libs.koin.compose.viewodel.navigation)
+            api(libs.koin.annotations)
 
             implementation(projects.shared)
         }
@@ -79,6 +82,12 @@ kotlin {
             implementation(npm("@js-joda/timezone", "2.3.0"))
         }
     }
+
+    // KSP Common sourceSet
+    sourceSets.named("commonMain").configure {
+        kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
+    }
+
 }
 
 android {
@@ -128,4 +137,25 @@ compose.desktop {
             packageVersion = "1.0.0"
         }
     }
+}
+
+// KSP Tasks
+dependencies {
+    add("kspCommonMainMetadata", libs.koin.compiler)
+    add("kspAndroid", libs.koin.compiler)
+    add("kspIosX64", libs.koin.compiler)
+    add("kspIosArm64", libs.koin.compiler)
+    add("kspIosSimulatorArm64", libs.koin.compiler)
+}
+
+// Trigger Common Metadata Generation from Native tasks
+project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
+    if(name != "kspCommonMainKotlinMetadata") {
+        dependsOn("kspCommonMainKotlinMetadata")
+    }
+}
+
+ksp {
+    arg("KOIN_USE_COMPOSE_VIEWMODEL","true")
+    arg("KOIN_CONFIG_CHECK","true")
 }
