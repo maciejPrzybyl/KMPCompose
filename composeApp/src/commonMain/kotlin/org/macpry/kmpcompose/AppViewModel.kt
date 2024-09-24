@@ -6,19 +6,10 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 
 class AppViewModel (
-    private val timeManager: TimeManager
+    appManager: AppManager
 ) : ViewModel() {
 
-    init {
-        println("AppViewModel init")
-    }
-
-    override fun onCleared() {
-        println("AppViewModel onCleared")
-        super.onCleared()
-    }
-
-    val currentTime = timeManager.timeFlow()
+    val currentTime = appManager.timeFlow()
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
