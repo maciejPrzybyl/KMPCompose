@@ -25,8 +25,6 @@ fun App() {
             val navController = rememberNavController()
             val mainViewModel: MainViewModel = koinViewModel()
             val mainState by mainViewModel.state.collectAsStateWithLifecycle()
-            val detailsViewModel: DetailsViewModel = koinViewModel()
-            val detailsState by detailsViewModel.state.collectAsStateWithLifecycle()
             NavHost(
                 navController = navController,
                 startDestination = Screen.Main.route
@@ -35,13 +33,19 @@ fun App() {
                     MainScreen(
                         state = mainState,
                         onOpenDetails = {
+                            navController.currentBackStackEntry?.savedStateHandle?.set("ARG_KEY", it)
                             navController.navigate(Screen.Details.route)
                         }
                     )
                 }
                 composable(Screen.Details.route) {
+                    val detailsViewModel: DetailsViewModel = koinViewModel()
+                    val detailsState by detailsViewModel.state.collectAsStateWithLifecycle()
+                    navController.previousBackStackEntry?.savedStateHandle?.get<String>("ARG_KEY").let {
+                        detailsViewModel.setArg(it)
+                    }
                     DetailsScreen(
-                        detailsState,
+                        state = detailsState,
                         onBack = { navController.popBackStack() }
                     )
                 }
