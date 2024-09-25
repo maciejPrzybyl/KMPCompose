@@ -2,10 +2,10 @@ package org.macpry.kmpcompose.di
 
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Module
-import org.koin.dsl.koinApplication
+import org.koin.dsl.KoinAppDeclaration
 import org.koin.ksp.generated.module
 
-fun koinConfiguration() = koinApplication {
+fun koinConfiguration(): KoinAppDeclaration = {
     modules(AppModule().module)
 }
 
