@@ -1,15 +1,16 @@
 package org.macpry.kmpcompose
 
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,11 +28,11 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
 import org.koin.compose.viewmodel.koinViewModel
 import org.macpry.kmpcompose.di.koinConfiguration
-import org.macpry.kmpcompose.screens.MainState
 import org.macpry.kmpcompose.screens.MainViewModel
 import org.macpry.kmpcompose.screens.Route
 import org.macpry.kmpcompose.screens.Screen
-import org.macpry.kmpcompose.screens.details.DetailsScreen
+import org.macpry.kmpcompose.screens.details.DetailsCommonViewModelScreen
+import org.macpry.kmpcompose.screens.details.DetailsNavArgsScreen
 import org.macpry.kmpcompose.screens.details.DetailsViewModel
 import org.macpry.kmpcompose.screens.main.MainScreen
 import org.macpry.kmpcompose.utils.composableWithLabel
@@ -43,13 +44,11 @@ fun App() {
         MaterialTheme {
             val navController = rememberNavController()
 
-            val mainViewModel: MainViewModel = koinViewModel()
-            val mainState by mainViewModel.state.collectAsStateWithLifecycle()
-
             val backStackEntry by navController.currentBackStackEntryAsState()
-            var inputText by remember { mutableStateOf("") }
-            val onTextChanged: (String) -> Unit = { inputText = it }
-            val onOpenDetails: () -> Unit = { navController.navigate(Route.Details(inputText)) }
+            var navArgsInputText by remember { mutableStateOf("") }
+            val navArgsOnTextChanged: (String) -> Unit = { navArgsInputText = it }
+            val navArgsOnOpenDetails: () -> Unit =
+                { navController.navigate(Route.DetailsNavArgs(navArgsInputText)) }
             Scaffold(
                 topBar = {
                     TopBar(
@@ -61,22 +60,22 @@ fun App() {
                 bottomBar = {
                     BottomBar(
                         navController,
-                        onOpenDetails
+                        navArgsOnOpenDetails
                     )
                 }
             ) {
                 Navigation(
                     navController = navController,
-                    mainState = mainState,
-                    inputText = inputText,
-                    onTextChanged = onTextChanged,
-                    onOpenDetails = onOpenDetails
+                    navArgsInputText = navArgsInputText,
+                    navArgsOnTextChanged = navArgsOnTextChanged,
+                    navArgsOnOpenDetails = navArgsOnOpenDetails
                 )
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
     //TODO Use resource
@@ -101,16 +100,22 @@ fun TopBar(
 @Composable
 private fun BottomBar(
     navController: NavHostController,
-    onOpenDetails: () -> Unit
+    navArgsOnOpenDetails: () -> Unit
 ) {
     // TODO No reflection available (so far) for below:
     // val routes = Screen::class.sealedSubclasses.forEach {}
-    BottomNavigation {
+    NavigationBar {
         val backStackEntry by navController.currentBackStackEntryAsState()
-        listOf(Screen.Main, Screen.Details).forEach { screen ->
-            BottomNavigationItem(
+        listOf(Screen.Main, Screen.DetailsNavArgs, Screen.DetailsCommonState).forEach { screen ->
+            NavigationBarItem(
                 selected = backStackEntry?.destination?.hierarchy?.any { it.hasRoute(screen.route) } == true,
-                onClick = onOpenDetails,
+                onClick = {
+                    if (screen.route == Screen.DetailsNavArgs.route) {
+                        navArgsOnOpenDetails()
+                    } else {
+                        navController.navigate(screen.route)
+                    }
+                },
                 icon = { Icon(screen.icon, screen.label) },
                 label = { Text(screen.label) }
             )
@@ -121,11 +126,12 @@ private fun BottomBar(
 @Composable
 private fun Navigation(
     navController: NavHostController,
-    mainState: MainState,
-    inputText: String,
-    onTextChanged: (String) -> Unit,
-    onOpenDetails: () -> Unit
+    navArgsInputText: String,
+    navArgsOnTextChanged: (String) -> Unit,
+    navArgsOnOpenDetails: () -> Unit
 ) {
+    val mainViewModel: MainViewModel = koinViewModel()
+    val mainState by mainViewModel.state.collectAsStateWithLifecycle()
     NavHost(
         navController = navController,
         startDestination = Screen.Main.route
@@ -136,20 +142,22 @@ private fun Navigation(
         composableWithLabel<Route.Main>(Screen.Main.label) {
             MainScreen(
                 state = mainState,
-                inputText = inputText,
-                onTextChanged = onTextChanged,
-                onOpenDetails = onOpenDetails
+                navArgsInputText = navArgsInputText,
+                navArgsOnTextChanged = navArgsOnTextChanged,
+                navArgsOnOpenDetails = navArgsOnOpenDetails,
+                commonOnTextChanged = { mainViewModel.updateInput(it) },
+                commonOnOpenDetails = { navController.navigate(Screen.DetailsCommonState.route) }
             )
         }
-        composableWithLabel<Route.Details>(Screen.Details.label) {
+        composableWithLabel<Route.DetailsNavArgs>(Screen.DetailsNavArgs.label) {
+            it.toRoute<Route.DetailsNavArgs>().arg.let {
+                DetailsNavArgsScreen(it)
+            }
+        }
+        composableWithLabel<Route.DetailsCommonState>(Screen.DetailsCommonState.label) {
             val detailsViewModel: DetailsViewModel = koinViewModel()
             val detailsState by detailsViewModel.state.collectAsStateWithLifecycle()
-            it.toRoute<Route.Details>().arg.let {
-                detailsViewModel.setArg(it)
-            }
-            DetailsScreen(
-                state = detailsState
-            )
+            DetailsCommonViewModelScreen(mainState.inputText)
         }
     }
 }
