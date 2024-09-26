@@ -30,7 +30,9 @@ import org.macpry.kmpcompose.screens.MainState
 @Composable
 fun MainScreen(
     state: MainState,
-    onOpenDetails: (arg: String) -> Unit
+    inputText: String,
+    onTextChanged: (String) -> Unit,
+    onOpenDetails: () -> Unit
 ) {
     val greeting = remember { Greeting().greet() }
     Column(
@@ -41,13 +43,12 @@ fun MainScreen(
         Text("Compose: $greeting")
         Text(state.currentTime.toString())
 
-        var inputText by remember { mutableStateOf("") }
         TextField(
             inputText,
-            { inputText = it }
+            { onTextChanged(it) }
         )
         TextButton({
-            onOpenDetails(inputText)
+            onOpenDetails()
         }) {
             Text(stringResource(Res.string.title_details))
         }
