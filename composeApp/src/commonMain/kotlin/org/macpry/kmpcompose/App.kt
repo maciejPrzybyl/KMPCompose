@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
@@ -32,9 +33,9 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
 import org.koin.compose.viewmodel.koinViewModel
 import org.macpry.kmpcompose.di.koinConfiguration
+import org.macpry.kmpcompose.screens.BottomNavigation
 import org.macpry.kmpcompose.screens.MainViewModel
 import org.macpry.kmpcompose.screens.Route
-import org.macpry.kmpcompose.screens.BottomNavigation
 import org.macpry.kmpcompose.screens.details.DetailsCommonViewModelScreen
 import org.macpry.kmpcompose.screens.details.DetailsNavArgsScreen
 import org.macpry.kmpcompose.screens.details.DetailsViewModel
@@ -52,8 +53,9 @@ fun App() {
             val backStackEntry by navController.currentBackStackEntryAsState()
             var navArgsInputText by remember { mutableStateOf("") }
             val navArgsOnTextChanged: (String) -> Unit = { navArgsInputText = it }
-            val navArgsOnOpenDetails: () -> Unit =
-                { navController.navigate(Route.DetailsNavArgs(navArgsInputText)) }
+            val navArgsOnOpenDetails: () -> Unit = {
+                navController.navigateTo(Route.DetailsNavArgs(navArgsInputText))
+            }
             Scaffold(
                 topBar = {
                     TopBar(
@@ -111,14 +113,18 @@ private fun BottomBar(
     // val routes = Screen::class.sealedSubclasses.forEach {}
     NavigationBar {
         val backStackEntry by navController.currentBackStackEntryAsState()
-        listOf(BottomNavigation.Main, BottomNavigation.DetailsNavArgs, BottomNavigation.DetailsCommonState).forEach { screen ->
+        listOf(
+            BottomNavigation.Main,
+            BottomNavigation.DetailsNavArgs,
+            BottomNavigation.DetailsCommonState
+        ).forEach { screen ->
             NavigationBarItem(
                 selected = backStackEntry?.destination?.hierarchy?.any { it.hasRoute(screen.findRoute()) } == true,
                 onClick = {
                     when (screen) {
-                        BottomNavigation.Main -> navController.navigate(Route.Main)
+                        BottomNavigation.Main -> navController.navigateTo(Route.Main)
                         BottomNavigation.DetailsNavArgs -> navArgsOnOpenDetails()
-                        BottomNavigation.DetailsCommonState -> navController.navigate(Route.DetailsCommonState)
+                        BottomNavigation.DetailsCommonState -> navController.navigateTo(Route.DetailsCommonState)
                     }
                 },
                 icon = { Icon(screen.icon, screen.label) },
@@ -154,7 +160,7 @@ private fun Navigation(
                 navArgsOnTextChanged = navArgsOnTextChanged,
                 navArgsOnOpenDetails = navArgsOnOpenDetails,
                 commonOnTextChanged = { mainViewModel.updateInput(it) },
-                commonOnOpenDetails = { navController.navigate(Route.DetailsCommonState) }
+                commonOnOpenDetails = { navController.navigateTo(Route.DetailsCommonState) }
             )
         }
         composableWithLabel<Route.DetailsNavArgs>(BottomNavigation.DetailsNavArgs.label) {
@@ -168,4 +174,8 @@ private fun Navigation(
             DetailsCommonViewModelScreen(mainState.inputText)
         }
     }
+}
+
+private fun NavController.navigateTo(route: Route) = navigate(route) {
+    launchSingleTop = true
 }
