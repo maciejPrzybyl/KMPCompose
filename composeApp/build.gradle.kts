@@ -14,6 +14,12 @@ plugins {
     alias(libs.plugins.serialization)
 }
 
+repositories {
+    maven("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
+    mavenCentral()
+    google()
+}
+
 kotlin {
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
@@ -59,6 +65,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -74,15 +81,21 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.koin.compose.viewmodel)
             api(libs.koin.annotations)
+            implementation(libs.ktor.client.core)
 
             implementation(projects.shared)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
+            implementation(libs.ktor.client.okhttp)
         }
         wasmJsMain.dependencies {
             implementation(npm("@js-joda/timezone", "2.3.0"))
+            implementation(libs.ktor.client.js)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
     }
 
