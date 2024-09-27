@@ -177,5 +177,11 @@ private fun Navigation(
 }
 
 private fun NavController.navigateTo(route: Route) = navigate(route) {
+    graph.startDestinationRoute?.let {
+        popUpTo<Route.Main> {
+            saveState = true
+        }
+    }
     launchSingleTop = true
+    restoreState = true
 }
