@@ -9,13 +9,19 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 import org.macpry.kmpcompose.managers.AppManager
+import org.macpry.kmpcompose.managers.network.Networking
 
 @KoinViewModel
 class MainViewModel(
     private val appManager: AppManager
 ) : ViewModel() {
+
+    init {
+        fetchImages()
+    }
 
     private var inputText by mutableStateOf("")
 
@@ -32,6 +38,18 @@ class MainViewModel(
         SharingStarted.WhileSubscribed(5000),
         MainState(null, null)
     )
+
+    var images by mutableStateOf(emptyList<Networking.ImageResponse>())
+        private set
+
+    private fun fetchImages() = viewModelScope.launch {
+        appManager.fetchImages()
+            .onSuccess {
+                images = it.images
+            }.onFailure {
+                println(it)
+            }
+    }
 
 }
 

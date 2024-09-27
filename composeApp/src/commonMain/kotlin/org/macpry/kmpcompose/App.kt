@@ -161,6 +161,7 @@ private fun Navigation(
         composableWithLabel<Route.Main>(BottomNavigation.Main.label) {
             MainScreen(
                 state = mainState,
+                mainViewModel.images,
                 navArgsInputText = navArgsInputText,
                 navArgsOnTextChanged = navArgsOnTextChanged,
                 navArgsOnOpenDetails = navArgsOnOpenDetails,
