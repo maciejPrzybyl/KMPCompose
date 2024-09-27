@@ -30,10 +30,11 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.macpry.kmpcompose.di.koinConfiguration
 import org.macpry.kmpcompose.screens.MainViewModel
 import org.macpry.kmpcompose.screens.Route
-import org.macpry.kmpcompose.screens.Screen
+import org.macpry.kmpcompose.screens.BottomNavigation
 import org.macpry.kmpcompose.screens.details.DetailsCommonViewModelScreen
 import org.macpry.kmpcompose.screens.details.DetailsNavArgsScreen
 import org.macpry.kmpcompose.screens.details.DetailsViewModel
+import org.macpry.kmpcompose.screens.findRoute
 import org.macpry.kmpcompose.screens.main.MainScreen
 import org.macpry.kmpcompose.utils.composableWithLabel
 
@@ -106,14 +107,14 @@ private fun BottomBar(
     // val routes = Screen::class.sealedSubclasses.forEach {}
     NavigationBar {
         val backStackEntry by navController.currentBackStackEntryAsState()
-        listOf(Screen.Main, Screen.DetailsNavArgs, Screen.DetailsCommonState).forEach { screen ->
+        listOf(BottomNavigation.Main, BottomNavigation.DetailsNavArgs, BottomNavigation.DetailsCommonState).forEach { screen ->
             NavigationBarItem(
-                selected = backStackEntry?.destination?.hierarchy?.any { it.hasRoute(screen.route) } == true,
+                selected = backStackEntry?.destination?.hierarchy?.any { it.hasRoute(screen.findRoute()) } == true,
                 onClick = {
-                    if (screen.route == Screen.DetailsNavArgs.route) {
-                        navArgsOnOpenDetails()
-                    } else {
-                        navController.navigate(screen.route)
+                    when (screen) {
+                        BottomNavigation.Main -> navController.navigate(Route.Main)
+                        BottomNavigation.DetailsNavArgs -> navArgsOnOpenDetails()
+                        BottomNavigation.DetailsCommonState -> navController.navigate(Route.DetailsCommonState)
                     }
                 },
                 icon = { Icon(screen.icon, screen.label) },
@@ -134,27 +135,27 @@ private fun Navigation(
     val mainState by mainViewModel.state.collectAsStateWithLifecycle()
     NavHost(
         navController = navController,
-        startDestination = Screen.Main.route
+        startDestination = Route.Main
     ) {
         //TODO Get context and set label from resources
         // TODO No reflection available, so far for below:
         // val routes = Screen::class.sealedSubclasses.forEach {}
-        composableWithLabel<Route.Main>(Screen.Main.label) {
+        composableWithLabel<Route.Main>(BottomNavigation.Main.label) {
             MainScreen(
                 state = mainState,
                 navArgsInputText = navArgsInputText,
                 navArgsOnTextChanged = navArgsOnTextChanged,
                 navArgsOnOpenDetails = navArgsOnOpenDetails,
                 commonOnTextChanged = { mainViewModel.updateInput(it) },
-                commonOnOpenDetails = { navController.navigate(Screen.DetailsCommonState.route) }
+                commonOnOpenDetails = { navController.navigate(Route.DetailsCommonState) }
             )
         }
-        composableWithLabel<Route.DetailsNavArgs>(Screen.DetailsNavArgs.label) {
+        composableWithLabel<Route.DetailsNavArgs>(BottomNavigation.DetailsNavArgs.label) {
             it.toRoute<Route.DetailsNavArgs>().arg.let {
                 DetailsNavArgsScreen(it)
             }
         }
-        composableWithLabel<Route.DetailsCommonState>(Screen.DetailsCommonState.label) {
+        composableWithLabel<Route.DetailsCommonState>(BottomNavigation.DetailsCommonState.label) {
             val detailsViewModel: DetailsViewModel = koinViewModel()
             val detailsState by detailsViewModel.state.collectAsStateWithLifecycle()
             DetailsCommonViewModelScreen(mainState.inputText)

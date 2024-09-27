@@ -6,13 +6,21 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.ui.graphics.vector.ImageVector
 import kotlinx.serialization.Serializable
-import kotlin.reflect.KClass
 
-//TODO Find better way of coupling screen with route
-sealed class Screen(val route: KClass<out Route>, val icon: ImageVector, val label: String) {
-    data object Main : Screen(Route.Main::class, Icons.Default.AccountBox, "Main")
-    data object DetailsNavArgs : Screen(Route.DetailsNavArgs::class, Icons.Default.Create, "Details With Nav Args")
-    data object DetailsCommonState : Screen(Route.DetailsCommonState::class, Icons.Default.Add, "Details Common State")
+//TODO Find way of coupling screen with route
+sealed class BottomNavigation(/*val route: KClass<out Route>,*/ val icon: ImageVector, val label: String) {
+    data object Main : BottomNavigation(/*Route.Main::class,*/ Icons.Default.AccountBox, "Main")
+    data object DetailsNavArgs :
+        BottomNavigation(/*Route.DetailsNavArgs::class,*/ Icons.Default.Create, "Details With Nav Args")
+
+    data object DetailsCommonState :
+        BottomNavigation(/*Route.DetailsCommonState::class,*/ Icons.Default.Add, "Details Common State")
+}
+
+fun BottomNavigation.findRoute() = when (this) {
+    BottomNavigation.Main -> Route.Main::class
+    BottomNavigation.DetailsNavArgs -> Route.DetailsNavArgs::class
+    BottomNavigation.DetailsCommonState -> Route.DetailsCommonState::class
 }
 
 @Serializable
