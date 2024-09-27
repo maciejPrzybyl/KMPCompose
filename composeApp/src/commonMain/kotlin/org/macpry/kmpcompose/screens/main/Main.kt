@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,6 +43,7 @@ fun MainScreen(
         Alignment.CenterHorizontally
     ) {
         Text("Compose: $greeting")
+        Spacer(Modifier.height(400.dp))
         Text(state.currentTime.toString())
 
         Row(

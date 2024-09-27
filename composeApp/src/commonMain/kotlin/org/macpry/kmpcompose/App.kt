@@ -1,6 +1,8 @@
 package org.macpry.kmpcompose
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -70,8 +72,9 @@ fun App() {
                         navArgsOnOpenDetails
                     )
                 }
-            ) {
+            ) { innerPadding ->
                 Navigation(
+                    innerPadding,
                     navController = navController,
                     navArgsInputText = navArgsInputText,
                     navArgsOnTextChanged = navArgsOnTextChanged,
@@ -136,6 +139,7 @@ private fun BottomBar(
 
 @Composable
 private fun Navigation(
+    padding: PaddingValues,
     navController: NavHostController,
     navArgsInputText: String,
     navArgsOnTextChanged: (String) -> Unit,
@@ -149,6 +153,7 @@ private fun Navigation(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
+            .padding(padding)
     ) {
         //TODO Get context and set label from resources
         // TODO No reflection available, so far for below:
