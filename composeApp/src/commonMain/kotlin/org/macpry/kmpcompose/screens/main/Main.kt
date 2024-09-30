@@ -55,7 +55,6 @@ fun MainScreen(
     ) {
         Text("Compose: $greeting")
         //Spacer(Modifier.height(400.dp))
-        //TODO AVOID RECOMPOSITION OF WHOLE SCREEN!!!
         Text(state.currentTime.toString())
 
         Row(
