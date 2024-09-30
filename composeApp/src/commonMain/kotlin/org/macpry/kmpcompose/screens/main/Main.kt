@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,6 +30,9 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
+import kmpcompose.composeapp.generated.resources.Res
+import kmpcompose.composeapp.generated.resources.compose_multiplatform
+import org.jetbrains.compose.resources.painterResource
 import org.macpry.kmpcompose.Greeting
 import org.macpry.kmpcompose.managers.network.Networking
 import org.macpry.kmpcompose.screens.MainState
@@ -89,13 +93,19 @@ fun PagerWithIndicator(images: List<Networking.ImageResponse>) {
     val pagerState = rememberPagerState { images.size }
     HorizontalPager(pagerState) { page ->
         Column(
-            Modifier.fillMaxWidth(),
+            Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val imageData = images[page]
             AsyncImage(
-                ImageRequest.Builder(LocalPlatformContext.current).data(imageData.url).build(),
-                null
+                model = ImageRequest.Builder(LocalPlatformContext.current)
+                    .data(imageData.url)
+                    .build(),
+                contentDescription = null,
+                modifier = Modifier.aspectRatio(ratio = 1.0f),
+                placeholder = painterResource(Res.drawable.compose_multiplatform)
             )
             Text("${imageData.id} ${imageData.author}")
         }
