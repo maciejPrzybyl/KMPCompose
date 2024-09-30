@@ -45,7 +45,7 @@ class MainViewModel(
     private fun fetchImages() = viewModelScope.launch {
         appManager.fetchImages()
             .onSuccess {
-                images = it.images
+                images = it
             }.onFailure {
                 println(it)
             }

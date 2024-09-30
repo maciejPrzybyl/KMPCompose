@@ -1,18 +1,15 @@
 package org.macpry.kmpcompose.screens.main
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -29,9 +26,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import kmpcompose.composeapp.generated.resources.Res
-import kmpcompose.composeapp.generated.resources.compose_multiplatform
-import org.jetbrains.compose.resources.painterResource
+import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
 import org.macpry.kmpcompose.Greeting
 import org.macpry.kmpcompose.managers.network.Networking
 import org.macpry.kmpcompose.screens.MainState
@@ -54,6 +51,7 @@ fun MainScreen(
     ) {
         Text("Compose: $greeting")
         //Spacer(Modifier.height(400.dp))
+        //TODO AVOID RECOMPOSITION OF WHOLE SCREEN!!!
         Text(state.currentTime.toString())
 
         Row(
@@ -94,12 +92,12 @@ fun PagerWithIndicator(images: List<Networking.ImageResponse>) {
             Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painterResource(Res.drawable.compose_multiplatform),
-                null,
-                Modifier.width(200.dp)
+            val imageData = images[page]
+            AsyncImage(
+                ImageRequest.Builder(LocalPlatformContext.current).data(imageData.url).build(),
+                null
             )
-            Text("Page: $page")
+            Text("${imageData.id} ${imageData.author}")
         }
     }
     Row(
