@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 import org.macpry.kmpcompose.managers.AppManager
-import org.macpry.kmpcompose.managers.network.Networking
+import org.macpry.kmpcompose.network.Networking
 
 @KoinViewModel
 class MainViewModel(

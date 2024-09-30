@@ -34,7 +34,7 @@ import kmpcompose.composeapp.generated.resources.Res
 import kmpcompose.composeapp.generated.resources.compose_multiplatform
 import org.jetbrains.compose.resources.painterResource
 import org.macpry.kmpcompose.Greeting
-import org.macpry.kmpcompose.managers.network.Networking
+import org.macpry.kmpcompose.network.Networking
 import org.macpry.kmpcompose.screens.MainState
 
 @Composable
