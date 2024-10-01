@@ -4,20 +4,21 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.utils.io.core.use
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
+import org.macpry.kmpcompose.providers.KMPDispatchers
 
 @Single
 class Networking(
     private val client: HttpClient,
-    //TODO Inject IO dispatcher
-    //private val ioDispatcher: CoroutineDispatcher
+    @Named(KMPDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
 ) {
 
-    suspend fun getImages() = withContext(Dispatchers.Default) {
+    suspend fun getImages() = withContext(ioDispatcher) {
         runCatching {
             client.use {
                 it.get("https://picsum.photos/v2/list").body<List<ImageResponse>>()

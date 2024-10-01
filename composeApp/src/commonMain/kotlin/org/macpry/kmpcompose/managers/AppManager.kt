@@ -2,6 +2,7 @@ package org.macpry.kmpcompose.managers
 
 import org.koin.core.annotation.Single
 import org.macpry.kmpcompose.network.Networking
+import org.macpry.kmpcompose.providers.TimeProvider
 
 @Single
 class AppManager(

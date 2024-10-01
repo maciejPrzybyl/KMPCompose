@@ -74,15 +74,22 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.androidx.navigation.compose)
+
+            implementation(libs.kotlinx.coroutines.core)
+
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
+
             implementation(libs.coil)
             implementation(libs.coil.network.ktor)
+
             implementation(libs.koin.compose.viewmodel)
             api(libs.koin.annotations)
+
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.client.serialization.json)
@@ -170,12 +177,12 @@ dependencies {
 
 // Trigger Common Metadata Generation from Native tasks
 project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
-    if(name != "kspCommonMainKotlinMetadata") {
+    if (name != "kspCommonMainKotlinMetadata") {
         dependsOn("kspCommonMainKotlinMetadata")
     }
 }
 
 ksp {
-    arg("KOIN_USE_COMPOSE_VIEWMODEL","true")
-    arg("KOIN_CONFIG_CHECK","true")
+    arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
+    arg("KOIN_CONFIG_CHECK", "true")
 }
