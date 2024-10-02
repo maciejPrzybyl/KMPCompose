@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.serialization)
+    alias(libs.plugins.room)
 }
 
 repositories {
@@ -108,6 +109,13 @@ kotlin {
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
+        listOf(androidMain, desktopMain, iosMain).forEach {
+            dependencies {
+                implementation(libs.sqlite.bundle)
+                implementation(libs.room.compiler)
+                implementation(libs.room.runtime)
+            }
+        }
     }
 
     // KSP Common sourceSet
@@ -169,10 +177,10 @@ compose.desktop {
 // KSP Tasks
 dependencies {
     add("kspCommonMainMetadata", libs.koin.compiler)
-    add("kspAndroid", libs.koin.compiler)
+    /*add("kspAndroid", libs.koin.compiler)
     add("kspIosX64", libs.koin.compiler)
     add("kspIosArm64", libs.koin.compiler)
-    add("kspIosSimulatorArm64", libs.koin.compiler)
+    add("kspIosSimulatorArm64", libs.koin.compiler)*/
 }
 
 // Trigger Common Metadata Generation from Native tasks
@@ -185,4 +193,15 @@ project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
 ksp {
     arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
     arg("KOIN_CONFIG_CHECK", "true")
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
+configurations {
+    //create("cleanedAnnotations")
+    implementation {
+        exclude(group = "com.intellij", module = "annotations")
+    }
 }
