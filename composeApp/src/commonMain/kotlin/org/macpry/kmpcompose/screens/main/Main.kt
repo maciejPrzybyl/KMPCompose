@@ -35,7 +35,6 @@ import kmpcompose.composeapp.generated.resources.compose_multiplatform
 import org.jetbrains.compose.resources.painterResource
 import org.macpry.kmpcompose.Greeting
 import org.macpry.kmpcompose.network.Networking
-import org.macpry.kmpcompose.screens.MainState
 
 @Composable
 fun MainScreen(
@@ -58,7 +57,7 @@ fun MainScreen(
         Text(state.currentTime.toString())
 
         Row(
-            //horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.height(50.dp).fillMaxWidth(),
         ) {
             TextField(

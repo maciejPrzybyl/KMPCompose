@@ -3,6 +3,7 @@ package org.macpry.kmpcompose.screens
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.ui.graphics.vector.ImageVector
 import kotlinx.serialization.Serializable
@@ -15,12 +16,16 @@ sealed class BottomNavigation(/*val route: KClass<out Route>,*/ val icon: ImageV
 
     data object DetailsCommonState :
         BottomNavigation(/*Route.DetailsCommonState::class,*/ Icons.Default.Add, "Details Common State")
+
+    data object DbList :
+        BottomNavigation(/*Route.DbList::class,*/ Icons.Default.Call, "Db List")
 }
 
 fun BottomNavigation.findRoute() = when (this) {
     BottomNavigation.Main -> Route.Main::class
     BottomNavigation.DetailsNavArgs -> Route.DetailsNavArgs::class
     BottomNavigation.DetailsCommonState -> Route.DetailsCommonState::class
+    BottomNavigation.DbList -> Route.DbList::class
 }
 
 @Serializable
@@ -33,4 +38,7 @@ sealed class Route {
 
     @Serializable
     data object DetailsCommonState : Route()
+
+    @Serializable
+    data object DbList : Route()
 }

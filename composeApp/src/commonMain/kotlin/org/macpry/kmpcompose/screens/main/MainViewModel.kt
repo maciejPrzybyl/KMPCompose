@@ -1,4 +1,4 @@
-package org.macpry.kmpcompose.screens
+package org.macpry.kmpcompose.screens.main
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
