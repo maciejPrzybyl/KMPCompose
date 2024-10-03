@@ -34,12 +34,13 @@ import kmpcompose.composeapp.generated.resources.Res
 import kmpcompose.composeapp.generated.resources.compose_multiplatform
 import org.jetbrains.compose.resources.painterResource
 import org.macpry.kmpcompose.Greeting
-import org.macpry.kmpcompose.network.Networking
+import org.macpry.kmpcompose.data.network.NetworkData
+import org.macpry.kmpcompose.screens.MainState
 
 @Composable
 fun MainScreen(
     state: MainState,
-    images: List<Networking.ImageResponse>,
+    images: List<NetworkData.ImageResponse>,
     navArgsInputText: String,
     navArgsOnTextChanged: (String) -> Unit,
     navArgsOnOpenDetails: () -> Unit,
@@ -87,7 +88,7 @@ fun MainScreen(
 }
 
 @Composable
-fun PagerWithIndicator(images: List<Networking.ImageResponse>) {
+fun PagerWithIndicator(images: List<NetworkData.ImageResponse>) {
     val pagerState = rememberPagerState { images.size }
     HorizontalPager(pagerState) { page ->
         Column(

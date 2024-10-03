@@ -1,4 +1,4 @@
-package org.macpry.kmpcompose.screens.details
+package org.macpry.kmpcompose.screens.args
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 
 @Composable
-fun DetailsNavArgsScreen(
+fun ArgsFromNavigationScreen(
     argValue: String?
 ) {
     Column(

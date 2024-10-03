@@ -17,15 +17,15 @@ sealed class BottomNavigation(/*val route: KClass<out Route>,*/ val icon: ImageV
     data object DetailsCommonState :
         BottomNavigation(/*Route.DetailsCommonState::class,*/ Icons.Default.Add, "Details Common State")
 
-    data object DbList :
-        BottomNavigation(/*Route.DbList::class,*/ Icons.Default.Call, "Db List")
+    data object Notes :
+        BottomNavigation(/*Route.Notes::class,*/ Icons.Default.Call, "Db List")
 }
 
 fun BottomNavigation.findRoute() = when (this) {
     BottomNavigation.Main -> Route.Main::class
     BottomNavigation.DetailsNavArgs -> Route.DetailsNavArgs::class
     BottomNavigation.DetailsCommonState -> Route.DetailsCommonState::class
-    BottomNavigation.DbList -> Route.DbList::class
+    BottomNavigation.Notes -> Route.Notes::class
 }
 
 @Serializable
@@ -40,5 +40,5 @@ sealed class Route {
     data object DetailsCommonState : Route()
 
     @Serializable
-    data object DbList : Route()
+    data object Notes : Route()
 }

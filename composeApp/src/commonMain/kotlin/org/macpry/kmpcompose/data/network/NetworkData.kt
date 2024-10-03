@@ -1,4 +1,4 @@
-package org.macpry.kmpcompose.network
+package org.macpry.kmpcompose.data.network
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -13,16 +13,14 @@ import org.koin.core.annotation.Single
 import org.macpry.kmpcompose.providers.KMPDispatchers
 
 @Single
-class Networking(
+class NetworkData(
     private val client: HttpClient,
     @Named(KMPDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
 ) {
 
-    suspend fun getImages() = withContext(ioDispatcher) {
-        runCatching {
-            client.use {
-                it.get("https://picsum.photos/v2/list").body<List<ImageResponse>>()
-            }
+    internal suspend fun getImages() = withContext(ioDispatcher) {
+        client.use {
+            it.get("https://picsum.photos/v2/list").body<List<ImageResponse>>()
         }
     }
 

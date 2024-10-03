@@ -1,4 +1,4 @@
-package org.macpry.kmpcompose.screens.main
+package org.macpry.kmpcompose.screens
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 import org.macpry.kmpcompose.managers.AppManager
-import org.macpry.kmpcompose.network.Networking
+import org.macpry.kmpcompose.data.network.NetworkData
 
 @KoinViewModel
 class MainViewModel(
@@ -25,11 +25,11 @@ class MainViewModel(
 
     private var inputText by mutableStateOf("")
 
-    fun updateInput(value: String) {
+    internal fun updateInput(value: String) {
         inputText = value
     }
 
-    val state = appManager.timeFlow().combine(
+    internal val state = appManager.timeFlow().combine(
         snapshotFlow { inputText }
     ) { currentTime, inputText ->
         MainState(currentTime.toString(), inputText)
@@ -39,7 +39,7 @@ class MainViewModel(
         MainState(null, null)
     )
 
-    var images by mutableStateOf(emptyList<Networking.ImageResponse>())
+    internal var images by mutableStateOf(emptyList<NetworkData.ImageResponse>())
         private set
 
     private fun fetchImages() = viewModelScope.launch {

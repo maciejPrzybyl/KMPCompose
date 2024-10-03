@@ -1,4 +1,4 @@
-package org.macpry.kmpcompose.network
+package org.macpry.kmpcompose.providers
 
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation

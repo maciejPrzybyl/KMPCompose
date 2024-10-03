@@ -1,4 +1,4 @@
-package org.macpry.kmpcompose.screens.dblist
+package org.macpry.kmpcompose.screens.notes
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,8 +18,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 
 @Composable
-fun DbListScreen(
-    state: DbListState,
+fun NotesScreen(
+    state: NotesState,
     saveText: (String) -> Unit
 ) {
     Column(

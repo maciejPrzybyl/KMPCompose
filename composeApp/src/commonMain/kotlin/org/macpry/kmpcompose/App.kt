@@ -36,13 +36,12 @@ import org.koin.compose.KoinApplication
 import org.koin.compose.viewmodel.koinViewModel
 import org.macpry.kmpcompose.di.koinConfiguration
 import org.macpry.kmpcompose.screens.BottomNavigation
-import org.macpry.kmpcompose.screens.main.MainViewModel
+import org.macpry.kmpcompose.screens.MainViewModel
 import org.macpry.kmpcompose.screens.Route
-import org.macpry.kmpcompose.screens.dblist.DbListScreen
-import org.macpry.kmpcompose.screens.dblist.DbListViewModel
-import org.macpry.kmpcompose.screens.details.DetailsCommonViewModelScreen
-import org.macpry.kmpcompose.screens.details.DetailsNavArgsScreen
-import org.macpry.kmpcompose.screens.details.DetailsViewModel
+import org.macpry.kmpcompose.screens.notes.NotesScreen
+import org.macpry.kmpcompose.screens.notes.NotesViewModel
+import org.macpry.kmpcompose.screens.args.ArgsFromViewModelScreen
+import org.macpry.kmpcompose.screens.args.ArgsFromNavigationScreen
 import org.macpry.kmpcompose.screens.findRoute
 import org.macpry.kmpcompose.screens.main.MainScreen
 import org.macpry.kmpcompose.utils.composableWithLabel
@@ -122,7 +121,7 @@ private fun BottomBar(
             BottomNavigation.Main,
             BottomNavigation.DetailsNavArgs,
             BottomNavigation.DetailsCommonState,
-            BottomNavigation.DbList
+            BottomNavigation.Notes
         ).forEach { screen ->
             NavigationBarItem(
                 selected = backStackEntry?.destination?.hierarchy?.any { it.hasRoute(screen.findRoute()) } == true,
@@ -131,7 +130,7 @@ private fun BottomBar(
                         BottomNavigation.Main -> navController.navigateTo(Route.Main)
                         BottomNavigation.DetailsNavArgs -> navArgsOnOpenDetails()
                         BottomNavigation.DetailsCommonState -> navController.navigateTo(Route.DetailsCommonState)
-                        BottomNavigation.DbList -> navController.navigateTo(Route.DbList)
+                        BottomNavigation.Notes -> navController.navigateTo(Route.Notes)
                     }
                 },
                 icon = { Icon(screen.icon, screen.label) },
@@ -175,20 +174,18 @@ private fun Navigation(
         }
         composableWithLabel<Route.DetailsNavArgs>(BottomNavigation.DetailsNavArgs.label) {
             it.toRoute<Route.DetailsNavArgs>().arg.let {
-                DetailsNavArgsScreen(it)
+                ArgsFromNavigationScreen(it)
             }
         }
         composableWithLabel<Route.DetailsCommonState>(BottomNavigation.DetailsCommonState.label) {
-            val detailsViewModel: DetailsViewModel = koinViewModel()
-            val detailsState by detailsViewModel.state.collectAsStateWithLifecycle()
-            DetailsCommonViewModelScreen(mainState.inputText)
+            ArgsFromViewModelScreen(mainState.inputText)
         }
-        composableWithLabel<Route.DbList>(BottomNavigation.DbList.label) {
-            val dbListViewModel: DbListViewModel = koinViewModel()
-            val dbListState by dbListViewModel.state.collectAsStateWithLifecycle()
-            DbListScreen(
-                dbListState,
-                dbListViewModel::saveText
+        composableWithLabel<Route.Notes>(BottomNavigation.Notes.label) {
+            val notesViewModel: NotesViewModel = koinViewModel()
+            val notesState by notesViewModel.state.collectAsStateWithLifecycle()
+            NotesScreen(
+                notesState,
+                notesViewModel::saveNote
             )
         }
     }
