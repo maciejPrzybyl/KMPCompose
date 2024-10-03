@@ -18,7 +18,7 @@ sealed class BottomNavigation(/*val route: KClass<out Route>,*/ val icon: ImageV
         BottomNavigation(/*Route.DetailsCommonState::class,*/ Icons.Default.Add, "Details Common State")
 
     data object Notes :
-        BottomNavigation(/*Route.Notes::class,*/ Icons.Default.Call, "Db List")
+        BottomNavigation(/*Route.Notes::class,*/ Icons.Default.Call, "Notes")
 }
 
 fun BottomNavigation.findRoute() = when (this) {

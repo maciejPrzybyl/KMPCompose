@@ -155,7 +155,6 @@ private fun Navigation(
         startDestination = Route.Main,
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
             .padding(padding)
     ) {
         //TODO Get context and set label from resources
@@ -182,7 +181,7 @@ private fun Navigation(
         }
         composableWithLabel<Route.Notes>(BottomNavigation.Notes.label) {
             val notesViewModel: NotesViewModel = koinViewModel()
-            val notesState by notesViewModel.state.collectAsStateWithLifecycle()
+            val notesState by notesViewModel.notesState.collectAsStateWithLifecycle()
             NotesScreen(
                 notesState,
                 notesViewModel::saveNote

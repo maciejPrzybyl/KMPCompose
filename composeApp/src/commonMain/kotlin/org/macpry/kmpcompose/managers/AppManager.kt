@@ -25,4 +25,8 @@ class AppManager(
         localData.saveNote(note)
     }
 
+    internal fun notesFlow() = localData.notesFlow().catch {
+        println(it)
+    }
+
 }

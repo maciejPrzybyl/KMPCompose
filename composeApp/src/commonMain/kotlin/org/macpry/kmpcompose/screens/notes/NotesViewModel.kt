@@ -2,8 +2,9 @@ package org.macpry.kmpcompose.screens.notes
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 import org.macpry.kmpcompose.managers.AppManager
@@ -13,8 +14,15 @@ class NotesViewModel(
     private val appManager: AppManager
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(NotesState(emptyList()))
-    internal val state = _state.asStateFlow()
+    val notesState = appManager.notesFlow()
+        .map {
+            NotesState(it)
+        }
+        .stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        NotesState(emptyList())
+    )
 
     internal fun saveNote(note: String) = viewModelScope.launch {
         appManager.saveNote(note)
@@ -25,5 +33,5 @@ class NotesViewModel(
 }
 
 data class NotesState(
-    val texts: List<String>
+    val notes: List<String>
 )
