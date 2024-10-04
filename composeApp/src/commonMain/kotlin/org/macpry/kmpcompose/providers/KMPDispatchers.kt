@@ -17,9 +17,9 @@ fun provideDefaultDispatcher() = Dispatchers.Default
 @Single
 @Named(KMPDispatchers.IO)
 @Deprecated(
-    "Cannot import kotlinx.coroutines.IO",
+    "Cannot import kotlinx.coroutines.IO because lack of wasm implementation",
     ReplaceWith("KMPDispatchers.DEFAULT", "org.macpry.kmpcompose.providers")
 )
 
-//TODO Investigate why cannot import kotlinx.coroutines.IO - it's not event included in sources
+//TODO Should provide platform-specific implementation to fix lack of wasm support, but there are issues with injecting this
 fun provideIODispatcher() = Dispatchers.Default

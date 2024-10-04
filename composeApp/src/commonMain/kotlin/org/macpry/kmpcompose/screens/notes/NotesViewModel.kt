@@ -14,11 +14,9 @@ class NotesViewModel(
     private val appManager: AppManager
 ) : ViewModel() {
 
-    val notesState = appManager.notesFlow()
-        .map {
-            NotesState(it)
-        }
-        .stateIn(
+    val notesState = appManager.notesFlow().map {
+        NotesState(it)
+    }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
         NotesState(emptyList())
