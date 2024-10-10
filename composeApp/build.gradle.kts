@@ -12,7 +12,6 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.serialization)
-    //alias(libs.plugins.room)
 }
 
 repositories {
@@ -67,7 +66,7 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
-            implementation(projects.room)
+            implementation(libs.koin.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -96,17 +95,12 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.client.serialization.json)
 
-            /*implementation(libs.room.runtime)
-            implementation(libs.sqlite.bundle)*/
-
             implementation(projects.shared)
-            //implementation(projects.room)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.ktor.client.okhttp)
-            implementation(projects.room)
         }
         wasmJsMain.dependencies {
             implementation(npm("@js-joda/timezone", "2.3.0"))
@@ -114,7 +108,6 @@ kotlin {
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
-            implementation(projects.room)
         }
     }
 
@@ -177,11 +170,11 @@ compose.desktop {
 // KSP Tasks
 dependencies {
     add("kspCommonMainMetadata", libs.koin.compiler)
-    //ksp(libs.room.compiler)
-    /*add("kspAndroid", libs.koin.compiler)
+    add("kspAndroid", libs.koin.compiler)
+    add("kspDesktop", libs.koin.compiler)
     add("kspIosX64", libs.koin.compiler)
     add("kspIosArm64", libs.koin.compiler)
-    add("kspIosSimulatorArm64", libs.koin.compiler)*/
+    add("kspIosSimulatorArm64", libs.koin.compiler)
 }
 
 // Trigger Common Metadata Generation from Native tasks
@@ -195,10 +188,6 @@ ksp {
     arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
     arg("KOIN_CONFIG_CHECK", "true")
 }
-
-/*room {
-    schemaDirectory("$projectDir/schemas")
-}*/
 
 configurations {
     //create("cleanedAnnotations")
