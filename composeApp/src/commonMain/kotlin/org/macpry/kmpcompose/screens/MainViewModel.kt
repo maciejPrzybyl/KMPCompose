@@ -10,11 +10,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.koin.android.annotation.KoinViewModel
 import org.macpry.kmpcompose.managers.AppManager
 import org.macpry.kmpcompose.data.network.NetworkData
 
-@KoinViewModel
 class MainViewModel(
     private val appManager: AppManager
 ) : ViewModel() {

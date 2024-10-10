@@ -6,16 +6,15 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.koin.android.annotation.KoinViewModel
-import org.macpry.kmpcompose.managers.AppManager
+import org.macpry.kmpcompose.repositories.NotesRepository
 
-@KoinViewModel
 class NotesViewModel(
-    private val appManager: AppManager
+    private val notesRepository: NotesRepository
 ) : ViewModel() {
 
-    val notesState = appManager.notesFlow().map {
+    val notesState = notesRepository.notesFlow().map {
         NotesState(it)
+        //NotesState(it.map { it.content })
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
@@ -23,7 +22,7 @@ class NotesViewModel(
     )
 
     internal fun saveNote(note: String) = viewModelScope.launch {
-        appManager.saveNote(note)
+        notesRepository.saveNote(note)
             .onFailure {
                 println(it)
             }

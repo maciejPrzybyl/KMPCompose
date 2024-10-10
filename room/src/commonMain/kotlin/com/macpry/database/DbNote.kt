@@ -1,4 +1,4 @@
-package com.macpry.room
+package com.macpry.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -6,6 +6,6 @@ import androidx.room.PrimaryKey
 @Entity
 data class DbNote(
     @PrimaryKey(autoGenerate = true)
-    val id: Long,
+    val id: Long = 0,
     val content: String
 )

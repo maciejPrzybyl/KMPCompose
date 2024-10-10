@@ -1,4 +1,4 @@
-package com.macpry.room
+package com.macpry.database
 
 import androidx.room.Delete
 import androidx.room.Insert

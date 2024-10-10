@@ -11,13 +11,17 @@ import org.macpry.kmpcompose.providers.KMPDispatchers
 import kotlin.time.Duration.Companion.seconds
 
 @Single
-class LocalData(
-    @Named(KMPDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
+class NotesLocalData(
+    @Named(KMPDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+    //private val kmpDatabase: KMPDatabase
 ) {
 
     internal suspend fun saveNote(note: String): Unit = withContext(ioDispatcher) {
-
+        //kmpDatabase.noteDao().insert(DbNote(content = note))
     }
+
+    /*fun notesFlow() = kmpDatabase.noteDao().getAll()
+        .flowOn(ioDispatcher)*/
 
     fun notesFlow() = flow {
         emit(listOf("bbb", "aaa"))
