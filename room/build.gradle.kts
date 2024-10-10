@@ -1,13 +1,11 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 }
 
 kotlin {
@@ -61,7 +59,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.macpry.room"
+    namespace = "com.macpry.database"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -74,6 +72,7 @@ android {
 
 dependencies {
     //ksp(libs.room.compiler)
+    //add("kspCommonMainMetadata", libs.room.compiler)
     add("kspAndroid", libs.room.compiler)
     add("kspDesktop", libs.room.compiler)
     add("kspIosSimulatorArm64", libs.room.compiler)
@@ -86,10 +85,10 @@ dependencies {
     add("kspIosArm64", libs.room.compiler)*/
 }
 
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
-/*room {
-    schemaDirectory("$projectDir/schemas")
-}*/
+ksp {
+    arg("KOIN_CONFIG_CHECK", "true")
+}

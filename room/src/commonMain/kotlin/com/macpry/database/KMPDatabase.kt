@@ -1,4 +1,4 @@
-package com.macpry.room
+package com.macpry.database
 
 import androidx.room.ConstructedBy
 import androidx.room.Database
@@ -9,11 +9,6 @@ import kotlinx.coroutines.Dispatchers
 
 const val KMP_DATABASE_NAME = "KMPDatabase.db"
 
-/*expect abstract class KMPDatabase: RoomDatabase {
-    abstract fun noteDao(): NoteDao
-}*/
-
-
 @Database(
     entities = [DbNote::class],
     version = 1
@@ -23,18 +18,19 @@ abstract class KMPDatabase : RoomDatabase() {
     abstract fun noteDao(): NoteDao
 }
 
-@Suppress("NO_ACTUAL_FOR_EXPECT", "EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 expect object KMPDatabaseConstructor : RoomDatabaseConstructor<KMPDatabase> {
     override fun initialize(): KMPDatabase
 }
 
 fun getRoomDatabase(
     builder: RoomDatabase.Builder<KMPDatabase>
+    //TODO Inject IO dispatcher
 ): KMPDatabase {
     return builder
         //.addMigrations(MIGRATIONS)
         //.fallbackToDestructiveMigrationOnDowngrade()
         .setDriver(BundledSQLiteDriver())
-        .setQueryCoroutineContext(Dispatchers.Default)
+        .setQueryCoroutineContext(Dispatchers.Default/*Dispatchers.IO*/)
         .build()
 }

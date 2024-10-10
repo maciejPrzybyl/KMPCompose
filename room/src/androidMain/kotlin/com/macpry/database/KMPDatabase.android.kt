@@ -1,17 +1,8 @@
-package com.macpry.room
+package com.macpry.database
 
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
-
-/*@Database(
-    entities = [DbNote::class],
-    version = 1
-)
-@ConstructedBy(KMPDatabaseConstructor::class)
-actual abstract class KMPDatabase : RoomDatabase() {
-    actual abstract fun noteDao(): NoteDao
-}*/
 
 fun getDatabaseBuilder(ctx: Context): RoomDatabase.Builder<KMPDatabase> {
     val appContext = ctx.applicationContext
