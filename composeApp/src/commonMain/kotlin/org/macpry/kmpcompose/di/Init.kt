@@ -1,11 +1,9 @@
 package org.macpry.kmpcompose.di
 
-import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 
-fun initKoin(doBefore: KoinApplication.() -> Unit = {}) {
+fun initKoin() {
     startKoin {
-        doBefore()
         modules(appModule())
     }
 }
