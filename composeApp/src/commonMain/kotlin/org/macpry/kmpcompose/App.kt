@@ -30,6 +30,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.KoinContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.macpry.kmpcompose.screens.BottomNavigation
 import org.macpry.kmpcompose.screens.MainViewModel
@@ -45,37 +46,39 @@ import org.macpry.kmpcompose.utils.composableWithLabel
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
-        val navController = rememberNavController()
+    KoinContext {
+        MaterialTheme {
+            val navController = rememberNavController()
 
-        val backStackEntry by navController.currentBackStackEntryAsState()
-        var navArgsInputText by remember { mutableStateOf("") }
-        val navArgsOnTextChanged: (String) -> Unit = { navArgsInputText = it }
-        val navArgsOnOpenDetails: () -> Unit = {
-            navController.navigateTo(Route.DetailsNavArgs(navArgsInputText))
-        }
-        Scaffold(
-            topBar = {
-                TopBar(
-                    title = backStackEntry?.destination?.label?.toString().orEmpty(),
-                    canNavigateBack = navController.previousBackStackEntry != null,
-                    onNavigateBack = navController::navigateUp
-                )
-            },
-            bottomBar = {
-                BottomBar(
-                    navController,
-                    navArgsOnOpenDetails
+            val backStackEntry by navController.currentBackStackEntryAsState()
+            var navArgsInputText by remember { mutableStateOf("") }
+            val navArgsOnTextChanged: (String) -> Unit = { navArgsInputText = it }
+            val navArgsOnOpenDetails: () -> Unit = {
+                navController.navigateTo(Route.DetailsNavArgs(navArgsInputText))
+            }
+            Scaffold(
+                topBar = {
+                    TopBar(
+                        title = backStackEntry?.destination?.label?.toString().orEmpty(),
+                        canNavigateBack = navController.previousBackStackEntry != null,
+                        onNavigateBack = navController::navigateUp
+                    )
+                },
+                bottomBar = {
+                    BottomBar(
+                        navController,
+                        navArgsOnOpenDetails
+                    )
+                }
+            ) { innerPadding ->
+                Navigation(
+                    innerPadding,
+                    navController = navController,
+                    navArgsInputText = navArgsInputText,
+                    navArgsOnTextChanged = navArgsOnTextChanged,
+                    navArgsOnOpenDetails = navArgsOnOpenDetails
                 )
             }
-        ) { innerPadding ->
-            Navigation(
-                innerPadding,
-                navController = navController,
-                navArgsInputText = navArgsInputText,
-                navArgsOnTextChanged = navArgsOnTextChanged,
-                navArgsOnOpenDetails = navArgsOnOpenDetails
-            )
         }
     }
 }
