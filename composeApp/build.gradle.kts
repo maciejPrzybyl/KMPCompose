@@ -89,13 +89,13 @@ kotlin {
             implementation(libs.coil.network.ktor)
 
             implementation(libs.koin.compose.viewmodel)
-            api(libs.koin.annotations)
 
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.client.serialization.json)
 
             implementation(projects.shared)
+            implementation(projects.database)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

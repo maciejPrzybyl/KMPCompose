@@ -8,14 +8,10 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.koin.core.annotation.Named
-import org.koin.core.annotation.Single
-import org.macpry.kmpcompose.providers.KMPDispatchers
 
-@Single
 class NetworkData(
     private val client: HttpClient,
-    @Named(KMPDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher
 ) {
 
     internal suspend fun getImages() = withContext(ioDispatcher) {

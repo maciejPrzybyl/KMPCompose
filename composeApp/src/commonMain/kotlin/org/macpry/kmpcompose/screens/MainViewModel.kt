@@ -48,7 +48,6 @@ class MainViewModel(
                 println(it)
             }
     }
-
 }
 
 data class MainState(

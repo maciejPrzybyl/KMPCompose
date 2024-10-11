@@ -16,9 +16,13 @@ kotlin {
         }
     }
 
-    /*@OptIn(ExperimentalWasmDsl::class)
+    /**
+    TODO Consider something like below - if room couldn't be provided in commonMain, because of js target
+    https://kotlinlang.org/docs/multiplatform-advanced-project-structure.html#declaring-custom-source-sets
+
+    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        *//*browser {
+        browser {
             val projectDirPath = project.projectDir.path
             commonWebpackConfig {
                 devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
@@ -28,7 +32,7 @@ kotlin {
                     }
                 }
             }
-        }*//*
+        }
     }*/
 
     jvm("desktop")
@@ -39,15 +43,16 @@ kotlin {
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "room"
+            baseName = "database"
             isStatic = true
         }
     }
 
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.room.runtime)
+            api(libs.room.runtime)
             implementation(libs.sqlite.bundle)
+            implementation(libs.koin.core)
         }
     }
 

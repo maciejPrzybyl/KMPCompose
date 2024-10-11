@@ -6,6 +6,7 @@ import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import kotlinx.coroutines.Dispatchers
+import org.koin.core.module.Module
 
 const val KMP_DATABASE_NAME = "KMPDatabase.db"
 
@@ -22,6 +23,8 @@ abstract class KMPDatabase : RoomDatabase() {
 expect object KMPDatabaseConstructor : RoomDatabaseConstructor<KMPDatabase> {
     override fun initialize(): KMPDatabase
 }
+
+expect val databaseModule: Module
 
 fun getRoomDatabase(
     builder: RoomDatabase.Builder<KMPDatabase>

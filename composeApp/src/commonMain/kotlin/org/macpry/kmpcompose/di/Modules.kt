@@ -1,42 +1,55 @@
 package org.macpry.kmpcompose.di
 
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Module
+import com.macpry.database.databaseModule
+import kotlinx.coroutines.CoroutineDispatcher
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
-import org.koin.ksp.generated.module
+import org.macpry.kmpcompose.data.TimeProvider
+import org.macpry.kmpcompose.data.local.NotesLocalData
+import org.macpry.kmpcompose.data.network.NetworkData
+import org.macpry.kmpcompose.managers.AppManager
+import org.macpry.kmpcompose.providers.KMPDispatchers
+import org.macpry.kmpcompose.providers.provideDefaultDispatcher
+import org.macpry.kmpcompose.providers.provideHttpClient
+import org.macpry.kmpcompose.providers.provideIODispatcher
+import org.macpry.kmpcompose.repositories.NotesRepository
 import org.macpry.kmpcompose.screens.MainViewModel
 import org.macpry.kmpcompose.screens.notes.NotesViewModel
 
 fun appModule() = module {
     includes(
-        AppModule().module,
-        viewModelsModule,
-        //databaseModule()
+        dataModule,
+        providersModule,
+        managersModule,
+        repositoriesModule,
+        databaseModule,
+        viewModelsModule
     )
 }
 
-//TODO Use below single module when @KoinViewModel will be stable
-@Module(includes = [DataModule::class, ProvidersModule::class, ManagersModule::class, RepositoriesModule::class])
-internal class AppModule
+val dataModule = module {
+    single { NotesLocalData(get(named(KMPDispatchers.IO)), get()) }
+    single { NetworkData(get(), get(named(KMPDispatchers.IO))) }
+}
 
-@Module
-@ComponentScan("org.macpry.kmpcompose.data")
-internal class DataModule
+val providersModule = module {
+    singleOf(::provideHttpClient)
+    single<CoroutineDispatcher>(named(KMPDispatchers.DEFAULT)) { provideDefaultDispatcher() }
+    single<CoroutineDispatcher>(named(KMPDispatchers.IO)) { provideIODispatcher() }
+    single { TimeProvider(get(named(KMPDispatchers.IO))) }
+}
 
-@Module
-@ComponentScan("org.macpry.kmpcompose.providers")
-internal class ProvidersModule
+val managersModule = module {
+    singleOf(::AppManager)
+}
 
-@Module
-@ComponentScan("org.macpry.kmpcompose.managers")
-internal class ManagersModule
+val repositoriesModule = module {
+    singleOf(::NotesRepository)
+}
 
-@Module
-@ComponentScan("org.macpry.kmpcompose.repositories")
-internal class RepositoriesModule
-
-private val viewModelsModule = module {
-    viewModel { MainViewModel(get(), /*get()*/) }
+val viewModelsModule = module {
+    viewModel { MainViewModel(get()) }
     viewModel { NotesViewModel(get()) }
 }

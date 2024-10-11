@@ -13,8 +13,7 @@ class NotesViewModel(
 ) : ViewModel() {
 
     val notesState = notesRepository.notesFlow().map {
-        NotesState(it)
-        //NotesState(it.map { it.content })
+        NotesState(it.map { it.content })
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
