@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -38,6 +39,12 @@ fun NotesScreen(
             mutableStateOf(TextFieldValue(""))
         }
         val focusManager = LocalFocusManager.current
+
+        fun onDone() {
+            saveText(text.text)
+            text = TextFieldValue("")
+            focusManager.clearFocus()
+        }
         TextField(
             value = text,
             onValueChange = { text = it },
@@ -45,12 +52,16 @@ fun NotesScreen(
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    saveText(text.text)
-                    text = TextFieldValue("")
-                    focusManager.clearFocus()
+                    onDone()
                 }
             ),
         )
+        Button({
+            onDone()
+        }) {
+            Text("Save")
+        }
+
         LazyColumn(
             contentPadding = PaddingValues(12.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
