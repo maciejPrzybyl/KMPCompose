@@ -7,12 +7,12 @@ import java.io.File
 
 actual val databaseModule
     get() = module {
-        single { getRoomDatabase(getDatabaseBuilder()) }
+        single<KMPDatabase> { getRoomDatabase(getDatabaseBuilder()) }
     }
 
-fun getDatabaseBuilder(): RoomDatabase.Builder<KMPDatabase> {
+fun getDatabaseBuilder(): RoomDatabase.Builder<KMPRoomDatabase> {
     val dbFile = File(System.getProperty("java.io.tmpdir"), KMP_DATABASE_NAME)
-    return Room.databaseBuilder<KMPDatabase>(
+    return Room.databaseBuilder<KMPRoomDatabase>(
         name = dbFile.absolutePath,
     )
 }

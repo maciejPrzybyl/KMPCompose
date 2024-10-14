@@ -14,21 +14,19 @@ const val KMP_DATABASE_NAME = "KMPDatabase.db"
     version = 1
 )
 @ConstructedBy(KMPDatabaseConstructor::class)
-abstract class KMPDatabase : RoomDatabase() {
-    abstract fun noteDao(): NoteDao
+abstract class KMPRoomDatabase : RoomDatabase(), KMPDatabase {
+    abstract override fun noteDao(): RoomNoteDao
 }
 
 @Suppress("NO_ACTUAL_FOR_EXPECT")
-expect object KMPDatabaseConstructor : RoomDatabaseConstructor<KMPDatabase> {
-    override fun initialize(): KMPDatabase
+expect object KMPDatabaseConstructor : RoomDatabaseConstructor<KMPRoomDatabase> {
+    override fun initialize(): KMPRoomDatabase
 }
 
-//expect val databaseModule: Module
-
 fun getRoomDatabase(
-    builder: RoomDatabase.Builder<KMPDatabase>
+    builder: RoomDatabase.Builder<KMPRoomDatabase>
     //TODO Inject IO dispatcher
-): KMPDatabase {
+): KMPRoomDatabase {
     return builder
         //.addMigrations(MIGRATIONS)
         //.fallbackToDestructiveMigrationOnDowngrade()

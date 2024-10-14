@@ -1,7 +1,7 @@
 package org.macpry.kmpcompose.data.local
 
-import com.macpry.database.DbNote
 import com.macpry.database.KMPDatabase
+import com.macpry.database.Note
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
@@ -12,7 +12,7 @@ class NotesLocalData(
 ) {
 
     internal suspend fun saveNote(note: String): Unit = withContext(ioDispatcher) {
-        kmpDatabase.noteDao().insert(DbNote(content = note))
+        kmpDatabase.noteDao().insert(Note(content = note))
     }
 
     fun notesFlow() = kmpDatabase.noteDao().getAll()
