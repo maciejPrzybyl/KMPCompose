@@ -1,5 +1,7 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -16,10 +18,6 @@ kotlin {
         }
     }
 
-    /**
-    TODO Consider something like below - if room couldn't be provided in commonMain, because of js target
-    https://kotlinlang.org/docs/multiplatform-advanced-project-structure.html#declaring-custom-source-sets
-
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser {
@@ -33,7 +31,7 @@ kotlin {
                 }
             }
         }
-    }*/
+    }
 
     jvm("desktop")
 
@@ -48,11 +46,24 @@ kotlin {
         }
     }
 
+    applyDefaultHierarchyTemplate()
+
     sourceSets {
         commonMain.dependencies {
+            implementation(libs.koin.core)
+        }
+        val noWasm by creating {
+            dependsOn(commonMain.get())
+        }
+        val desktopMain by getting
+
+        androidMain.get().dependsOn(noWasm)
+        desktopMain.dependsOn(noWasm)
+        iosMain.get().dependsOn(noWasm)
+
+        noWasm.dependencies {
             api(libs.room.runtime)
             implementation(libs.sqlite.bundle)
-            implementation(libs.koin.core)
         }
     }
 
