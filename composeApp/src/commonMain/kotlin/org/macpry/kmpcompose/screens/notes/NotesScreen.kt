@@ -55,6 +55,7 @@ fun NotesScreen(
                     onDone()
                 }
             ),
+            singleLine = true
         )
         Button({
             onDone()
