@@ -49,22 +49,27 @@ kotlin {
     applyDefaultHierarchyTemplate()
 
     sourceSets {
+        val noWasm by creating {
+            dependsOn(commonMain.get())
+        }
+        wasmJsMain.get().dependsOn(commonMain.get())
+
+        androidMain.get().dependsOn(noWasm)
+        val desktopMain by getting
+        desktopMain.dependsOn(noWasm)
+        iosMain.get().dependsOn(noWasm)
+
         commonMain.dependencies {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.koin.core)
         }
-        val noWasm by creating {
-            dependsOn(commonMain.get())
-        }
-        val desktopMain by getting
-
-        androidMain.get().dependsOn(noWasm)
-        desktopMain.dependsOn(noWasm)
-        iosMain.get().dependsOn(noWasm)
-
         noWasm.dependencies {
             api(libs.room.runtime)
             implementation(libs.sqlite.bundle)
+        }
+        wasmJsMain.dependencies {
+            implementation(npm("sql.js", "1.11.0"))
+            implementation(devNpm("copy-webpack-plugin", "9.1.0"))
         }
     }
 
