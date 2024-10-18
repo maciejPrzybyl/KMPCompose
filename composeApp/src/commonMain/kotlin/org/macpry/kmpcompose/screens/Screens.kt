@@ -6,39 +6,16 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.ui.graphics.vector.ImageVector
-import kotlinx.serialization.Serializable
+import kmpcompose.composeapp.generated.resources.Res
+import kmpcompose.composeapp.generated.resources.screen_details_common_state
+import kmpcompose.composeapp.generated.resources.screen_details_nav_args
+import kmpcompose.composeapp.generated.resources.screen_main
+import kmpcompose.composeapp.generated.resources.screen_notes
+import org.jetbrains.compose.resources.StringResource
 
-//TODO Find way of coupling screen with route
-sealed class BottomNavigation(/*val route: KClass<out Route>,*/ val icon: ImageVector, val label: String) {
-    data object Main : BottomNavigation(/*Route.Main::class,*/ Icons.Default.AccountBox, "Main")
-    data object DetailsNavArgs :
-        BottomNavigation(/*Route.DetailsNavArgs::class,*/ Icons.Default.Create, "Details With Nav Args")
-
-    data object DetailsCommonState :
-        BottomNavigation(/*Route.DetailsCommonState::class,*/ Icons.Default.Add, "Details Common State")
-
-    data object Notes :
-        BottomNavigation(/*Route.Notes::class,*/ Icons.Default.Call, "Notes")
-}
-
-fun BottomNavigation.findRoute() = when (this) {
-    BottomNavigation.Main -> Route.Main::class
-    BottomNavigation.DetailsNavArgs -> Route.DetailsNavArgs::class
-    BottomNavigation.DetailsCommonState -> Route.DetailsCommonState::class
-    BottomNavigation.Notes -> Route.Notes::class
-}
-
-@Serializable
-sealed class Route {
-    @Serializable
-    data object Main : Route()
-
-    @Serializable
-    data class DetailsNavArgs(val arg: String) : Route()
-
-    @Serializable
-    data object DetailsCommonState : Route()
-
-    @Serializable
-    data object Notes : Route()
+enum class BottomNavigation(val icon: ImageVector, val label: StringResource) {
+    Main(Icons.Default.AccountBox, Res.string.screen_main),
+    DetailsNavArgs(Icons.Default.Create, Res.string.screen_details_nav_args),
+    DetailsCommonState(Icons.Default.Add, Res.string.screen_details_common_state),
+    Notes(Icons.Default.Call, Res.string.screen_notes)
 }
