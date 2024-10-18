@@ -70,6 +70,8 @@ kotlin {
         wasmJsMain.dependencies {
             implementation(npm("sql.js", "1.11.0"))
             implementation(devNpm("copy-webpack-plugin", "9.1.0"))
+            val jsDatabase = rootDir.resolve("libs/js")
+            implementation(npm("kmp-js-db", jsDatabase))
         }
     }
 
