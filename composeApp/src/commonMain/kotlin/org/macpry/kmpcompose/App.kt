@@ -44,6 +44,7 @@ fun App(mainViewModel: MainViewModel = koinViewModel()) {
     KoinContext {
         MaterialTheme {
             var isDialogVisible by remember { mutableStateOf(false) }
+            //TODO Fix saving mainState when app is recreated
             val mainState by mainViewModel.state.collectAsStateWithLifecycle()
             var currentDestination by rememberSaveable { mutableStateOf(BottomNavigation.Main) }
             var navArgsInputText by remember { mutableStateOf("") }
