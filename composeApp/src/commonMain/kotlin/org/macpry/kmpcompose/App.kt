@@ -5,7 +5,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +33,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import kmpcompose.composeapp.generated.resources.Res
+import kmpcompose.composeapp.generated.resources.title_dialog
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinContext
 import org.koin.compose.viewmodel.koinViewModel
@@ -56,6 +63,7 @@ fun App() {
             val navArgsOnOpenDetails: () -> Unit = {
                 navController.navigateTo(Route.DetailsNavArgs(navArgsInputText))
             }
+            var isDialogVisible by remember { mutableStateOf(false) }
             Scaffold(
                 topBar = {
                     TopBar(
@@ -69,6 +77,15 @@ fun App() {
                         navController,
                         navArgsOnOpenDetails
                     )
+                },
+                floatingActionButton = {
+                    FloatingActionButton(
+                        onClick = {
+                            isDialogVisible = true
+                        }
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = "Add")
+                    }
                 }
             ) { innerPadding ->
                 Navigation(
@@ -77,6 +94,10 @@ fun App() {
                     navArgsInputText = navArgsInputText,
                     navArgsOnTextChanged = navArgsOnTextChanged,
                     navArgsOnOpenDetails = navArgsOnOpenDetails
+                )
+                MainAlertDialog(
+                    isDialogVisible,
+                    { isDialogVisible = false }
                 )
             }
         }
@@ -134,6 +155,31 @@ private fun BottomBar(
                 label = { Text(screen.label) }
             )
         }
+    }
+}
+
+@Composable
+fun MainAlertDialog(
+    isVisible: Boolean,
+    onDismissRequest: () -> Unit
+) {
+    if (isVisible) {
+        AlertDialog(
+            onDismissRequest = onDismissRequest,
+            title = {
+                Text(text = stringResource(Res.string.title_dialog))
+            },
+            text = {
+                Text("aaaaaaaa")
+            },
+            confirmButton = {
+                Button(
+                    onClick = onDismissRequest,
+                ) {
+                    Text(text = "Ok")
+                }
+            },
+        )
     }
 }
 
