@@ -96,6 +96,7 @@ kotlin {
 
             implementation(projects.shared)
             implementation(projects.database)
+            implementation(projects.datastore)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

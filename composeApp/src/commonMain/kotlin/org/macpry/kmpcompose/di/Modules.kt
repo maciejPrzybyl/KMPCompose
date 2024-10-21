@@ -1,6 +1,7 @@
 package org.macpry.kmpcompose.di
 
 import com.macpry.database.databaseModule
+import com.macpry.datastore.datastoreModule
 import kotlinx.coroutines.CoroutineDispatcher
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -29,6 +30,7 @@ fun appModule() = module {
         managersModule,
         repositoriesModule,
         databaseModule,
+        datastoreModule,
         viewModelsModule
     )
 }
@@ -36,7 +38,7 @@ fun appModule() = module {
 val dataModule = module {
     factory { NotesLocalData(get(named(KMPDispatchers.IO)), get()) }
     factory { NetworkData(get(), get(named(KMPDispatchers.IO))) }
-    factory { SettingsLocalData(get(named(KMPDispatchers.IO))) }
+    factory { SettingsLocalData(get(named(KMPDispatchers.IO)), get()) }
 }
 
 val providersModule = module {
