@@ -1,198 +1,154 @@
 package org.macpry.kmpcompose
 
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
+import kmpcompose.composeapp.generated.resources.Res
+import kmpcompose.composeapp.generated.resources.title_dialog
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.macpry.kmpcompose.screens.BottomNavigation
 import org.macpry.kmpcompose.screens.MainViewModel
-import org.macpry.kmpcompose.screens.Route
 import org.macpry.kmpcompose.screens.args.ArgsFromNavigationScreen
 import org.macpry.kmpcompose.screens.args.ArgsFromViewModelScreen
-import org.macpry.kmpcompose.screens.findRoute
 import org.macpry.kmpcompose.screens.main.MainScreen
 import org.macpry.kmpcompose.screens.notes.NotesScreen
 import org.macpry.kmpcompose.screens.notes.NotesViewModel
-import org.macpry.kmpcompose.utils.composableWithLabel
 
 @Composable
 @Preview
-fun App() {
+fun App(mainViewModel: MainViewModel = koinViewModel()) {
     KoinContext {
         MaterialTheme {
-            val navController = rememberNavController()
-
-            val backStackEntry by navController.currentBackStackEntryAsState()
+            var isDialogVisible by remember { mutableStateOf(false) }
+            //TODO Fix saving mainState when app is recreated
+            val mainState by mainViewModel.state.collectAsStateWithLifecycle()
+            var currentDestination by rememberSaveable { mutableStateOf(BottomNavigation.Main) }
             var navArgsInputText by remember { mutableStateOf("") }
             val navArgsOnTextChanged: (String) -> Unit = { navArgsInputText = it }
             val navArgsOnOpenDetails: () -> Unit = {
-                navController.navigateTo(Route.DetailsNavArgs(navArgsInputText))
+                //navController.navigateTo(Route.DetailsNavArgs(navArgsInputText))
             }
-            Scaffold(
-                topBar = {
-                    TopBar(
-                        title = backStackEntry?.destination?.label?.toString().orEmpty(),
-                        canNavigateBack = navController.previousBackStackEntry != null,
-                        onNavigateBack = navController::navigateUp
-                    )
-                },
-                bottomBar = {
-                    BottomBar(
-                        navController,
-                        navArgsOnOpenDetails
-                    )
-                }
-            ) { innerPadding ->
-                Navigation(
-                    innerPadding,
-                    navController = navController,
-                    navArgsInputText = navArgsInputText,
-                    navArgsOnTextChanged = navArgsOnTextChanged,
-                    navArgsOnOpenDetails = navArgsOnOpenDetails
-                )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TopBar(
-    //TODO Use resource
-    title: String,//Resource,
-    canNavigateBack: Boolean,
-    onNavigateBack: () -> Unit
-) {
-    TopAppBar(
-        title = { Text(/*stringResource*/(title)) },
-        navigationIcon = {
-            if (canNavigateBack) {
-                IconButton(
-                    onClick = { onNavigateBack() },
-                ) {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, null)
-                }
-            }
-        }
-    )
-}
-
-@Composable
-private fun BottomBar(
-    navController: NavHostController,
-    navArgsOnOpenDetails: () -> Unit
-) {
-    // TODO No reflection available (so far) for below:
-    // val routes = Screen::class.sealedSubclasses.forEach {}
-    NavigationBar {
-        val backStackEntry by navController.currentBackStackEntryAsState()
-        listOf(
-            BottomNavigation.Main,
-            BottomNavigation.DetailsNavArgs,
-            BottomNavigation.DetailsCommonState,
-            BottomNavigation.Notes
-        ).forEach { screen ->
-            NavigationBarItem(
-                selected = backStackEntry?.destination?.hierarchy?.any { it.hasRoute(screen.findRoute()) } == true,
-                onClick = {
-                    when (screen) {
-                        BottomNavigation.Main -> navController.navigateTo(Route.Main)
-                        BottomNavigation.DetailsNavArgs -> navArgsOnOpenDetails()
-                        BottomNavigation.DetailsCommonState -> navController.navigateTo(Route.DetailsCommonState)
-                        BottomNavigation.Notes -> navController.navigateTo(Route.Notes)
+            NavigationSuiteScaffold(
+                navigationSuiteItems = {
+                    listOf(
+                        BottomNavigation.Main,
+                        BottomNavigation.DetailsNavArgs,
+                        BottomNavigation.DetailsCommonState,
+                        BottomNavigation.Notes
+                    ).forEach { screen ->
+                        item(
+                            selected = screen == currentDestination,
+                            onClick = { currentDestination = screen },
+                            icon = { Icon(screen.icon, stringResource(screen.label)) },
+                            label = { Text(stringResource(screen.label)) }
+                        )
                     }
-                },
-                icon = { Icon(screen.icon, screen.label) },
-                label = { Text(screen.label) }
-            )
+                }
+            ) {
+                MainAlertDialog(
+                    isDialogVisible,
+                    { isDialogVisible = false }
+                )
+                when (currentDestination) {
+                    BottomNavigation.Main -> MainScreen(
+                        state = mainState,
+                        mainViewModel.images,
+                        navArgsInputText = navArgsInputText,
+                        navArgsOnTextChanged = navArgsOnTextChanged,
+                        navArgsOnOpenDetails = navArgsOnOpenDetails,
+                        commonOnTextChanged = mainViewModel::updateInput,
+                        commonOnOpenDetails = {
+                            currentDestination = BottomNavigation.DetailsCommonState
+                        }
+                    )
+
+                    BottomNavigation.DetailsNavArgs -> /*it.toRoute<Route.DetailsNavArgs>().arg.let {
+                        ArgsFromNavigationScreen(it)
+                    }*/
+                        ArgsFromNavigationScreen("PASS ARGS!!!")
+
+                    BottomNavigation.DetailsCommonState -> ArgsFromViewModelScreen(mainState.inputText)
+                    BottomNavigation.Notes -> {
+                        val notesViewModel: NotesViewModel = koinViewModel()
+                        val notesState by notesViewModel.notesState.collectAsStateWithLifecycle()
+                        NotesScreen(
+                            notesState,
+                            notesViewModel::saveNote
+                        )
+                    }
+                }
+                Box(Modifier.fillMaxSize()) {
+                    FloatingActionButton(
+                        onClick = {
+                            isDialogVisible = true
+                        },
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(20.dp)
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = "Add")
+                    }
+                }
+            }
         }
     }
 }
 
 @Composable
-private fun Navigation(
-    padding: PaddingValues,
-    navController: NavHostController,
-    navArgsInputText: String,
-    navArgsOnTextChanged: (String) -> Unit,
-    navArgsOnOpenDetails: () -> Unit
+fun MainAlertDialog(
+    isVisible: Boolean,
+    onDismissRequest: () -> Unit
 ) {
-    val mainViewModel: MainViewModel = koinViewModel()
-    val mainState by mainViewModel.state.collectAsStateWithLifecycle()
-    NavHost(
-        navController = navController,
-        startDestination = Route.Main,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(padding)
-    ) {
-        //TODO Get context and set label from resources
-        // TODO No reflection available, so far for below:
-        // val routes = Screen::class.sealedSubclasses.forEach {}
-        composableWithLabel<Route.Main>(BottomNavigation.Main.label) {
-            MainScreen(
-                state = mainState,
-                mainViewModel.images,
-                navArgsInputText = navArgsInputText,
-                navArgsOnTextChanged = navArgsOnTextChanged,
-                navArgsOnOpenDetails = navArgsOnOpenDetails,
-                commonOnTextChanged = mainViewModel::updateInput,
-                commonOnOpenDetails = { navController.navigateTo(Route.DetailsCommonState) }
-            )
-        }
-        composableWithLabel<Route.DetailsNavArgs>(BottomNavigation.DetailsNavArgs.label) {
-            it.toRoute<Route.DetailsNavArgs>().arg.let {
-                ArgsFromNavigationScreen(it)
-            }
-        }
-        composableWithLabel<Route.DetailsCommonState>(BottomNavigation.DetailsCommonState.label) {
-            ArgsFromViewModelScreen(mainState.inputText)
-        }
-        composableWithLabel<Route.Notes>(BottomNavigation.Notes.label) {
-            val notesViewModel: NotesViewModel = koinViewModel()
-            val notesState by notesViewModel.notesState.collectAsStateWithLifecycle()
-            NotesScreen(
-                notesState,
-                notesViewModel::saveNote
-            )
-        }
+    if (isVisible) {
+        AlertDialog(
+            onDismissRequest = onDismissRequest,
+            modifier = Modifier.padding(vertical = 100.dp),
+            title = {
+                Text(text = stringResource(Res.string.title_dialog))
+            },
+            text = {
+                LazyColumn {
+                    (1..30).forEach {
+                        item {
+                            Text(
+                                "$it",
+                                Modifier.padding(20.dp).fillMaxWidth()
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = onDismissRequest,
+                ) {
+                    Text(text = "Ok")
+                }
+            },
+        )
     }
-}
-
-private fun NavController.navigateTo(route: Route) = navigate(route) {
-    graph.startDestinationRoute?.let {
-        popUpTo<Route.Main> {
-            saveState = true
-        }
-    }
-    launchSingleTop = true
-    restoreState = true
 }

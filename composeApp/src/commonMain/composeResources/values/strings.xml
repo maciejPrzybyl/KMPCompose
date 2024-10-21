@@ -1,4 +1,9 @@
 <resources>
-    <string name="title_main">Home</string>
-    <string name="title_details">Details</string>
+    <string name="screen_main">Main</string>
+    <string name="screen_details_nav_args">Details With Nav Args</string>
+    <string name="screen_details_common_state">Details Common State</string>
+    <string name="screen_notes">Notes</string>
+
+    <string name="title_dialog">Some dialog</string>
+    <string name="ok">Ok</string>
 </resources>
