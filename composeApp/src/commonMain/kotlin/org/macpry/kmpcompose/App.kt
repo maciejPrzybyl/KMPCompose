@@ -37,6 +37,8 @@ import org.macpry.kmpcompose.screens.args.ArgsFromViewModelScreen
 import org.macpry.kmpcompose.screens.main.MainScreen
 import org.macpry.kmpcompose.screens.notes.NotesScreen
 import org.macpry.kmpcompose.screens.notes.NotesViewModel
+import org.macpry.kmpcompose.screens.settings.SettingsScreen
+import org.macpry.kmpcompose.screens.settings.SettingsViewModel
 
 @Composable
 @Preview
@@ -58,7 +60,8 @@ fun App(mainViewModel: MainViewModel = koinViewModel()) {
                         BottomNavigation.Main,
                         BottomNavigation.DetailsNavArgs,
                         BottomNavigation.DetailsCommonState,
-                        BottomNavigation.Notes
+                        BottomNavigation.Notes,
+                        BottomNavigation.Settings
                     ).forEach { screen ->
                         item(
                             selected = screen == currentDestination,
@@ -99,6 +102,12 @@ fun App(mainViewModel: MainViewModel = koinViewModel()) {
                             notesState,
                             notesViewModel::saveNote
                         )
+                    }
+
+                    BottomNavigation.Settings -> {
+                        val settingsViewModel: SettingsViewModel = koinViewModel()
+                        val settingsState by settingsViewModel.settingsState.collectAsStateWithLifecycle()
+                        SettingsScreen(settingsState, settingsViewModel::saveSetting)
                     }
                 }
                 Box(Modifier.fillMaxSize()) {

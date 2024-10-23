@@ -3,6 +3,7 @@
     <string name="screen_details_nav_args">Details With Nav Args</string>
     <string name="screen_details_common_state">Details Common State</string>
     <string name="screen_notes">Notes</string>
+    <string name="screen_settings">Settings</string>
 
     <string name="title_dialog">Some dialog</string>
     <string name="ok">Ok</string>

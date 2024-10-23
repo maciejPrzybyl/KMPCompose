@@ -19,6 +19,7 @@ ktorClient = "3.0.0-rc-2-eap-1098"
 logback = "1.5.7"
 room = "2.7.0-alpha10"
 sqlite = "2.5.0-alpha10"
+datastore = "1.1.1"
 
 [libraries]
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -58,6 +59,9 @@ ktor-server-tests = { module = "io.ktor:ktor-server-tests-jvm", version.ref = "k
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 sqlite-bundle = { group = "androidx.sqlite", name = "sqlite-bundled", version.ref = "sqlite" }
+
+datastore-core = { module = "androidx.datastore:datastore", version.ref = "datastore" }
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
