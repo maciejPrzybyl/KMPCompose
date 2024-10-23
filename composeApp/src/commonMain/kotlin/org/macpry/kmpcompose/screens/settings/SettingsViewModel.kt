@@ -12,7 +12,7 @@ class SettingsViewModel(
     private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
-    val settingsState = settingsRepository.settingsFlow().map {
+    val settingsState = settingsRepository.settingsFlow.map {
         SettingsState(it)
     }.stateIn(
         viewModelScope,

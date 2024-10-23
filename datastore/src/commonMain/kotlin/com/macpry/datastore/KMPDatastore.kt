@@ -6,7 +6,7 @@ import org.koin.core.module.Module
 expect val datastoreModule: Module
 
 interface KMPDatastore {
-    fun getSelectedNumber(): Flow<Int>
+    val selectedNumber: Flow<Int>
     suspend fun setNumber(value: Int)
 }
 

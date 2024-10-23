@@ -29,7 +29,7 @@ fun createDataStore(path: String): DataStore<Preferences> =
 class NoWasmDataStore(
     private val dataStore: DataStore<Preferences>
 ) : KMPDatastore {
-    override fun getSelectedNumber(): Flow<Int> = dataStore.data
+    override val selectedNumber: Flow<Int> = dataStore.data
         .catch {
             //TODO Log error
         }.map {

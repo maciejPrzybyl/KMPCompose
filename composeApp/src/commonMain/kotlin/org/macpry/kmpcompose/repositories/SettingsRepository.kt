@@ -11,7 +11,7 @@ class SettingsRepository(
         settingsLocalData.saveSetting(value)
     }
 
-    internal fun settingsFlow() = settingsLocalData.settingsFlow().catch {
+    internal val settingsFlow = settingsLocalData.settingsFlow.catch {
         println(it)
     }
 

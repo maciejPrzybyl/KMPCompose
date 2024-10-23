@@ -15,7 +15,7 @@ class SettingsLocalData(
         kmpDatastore.setNumber(value)
     }
 
-    internal fun settingsFlow() = kmpDatastore.getSelectedNumber().map { selectedValue ->
+    internal val settingsFlow = kmpDatastore.selectedNumber.map { selectedValue ->
         (1..20).map {
             it to (it == selectedValue)
         }
