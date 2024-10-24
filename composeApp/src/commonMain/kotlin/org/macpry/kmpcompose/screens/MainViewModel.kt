@@ -52,5 +52,5 @@ class MainViewModel(
 
 data class MainState(
     val currentTime: String?,
-    val inputText: String?
+    val destination: String?
 )

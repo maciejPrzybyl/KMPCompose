@@ -24,17 +24,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import kmpcompose.composeapp.generated.resources.Res
 import kmpcompose.composeapp.generated.resources.title_dialog
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinContext
 import org.koin.compose.viewmodel.koinViewModel
-import org.macpry.kmpcompose.screens.BottomNavigation
+import org.macpry.kmpcompose.screens.AppNavigationRoutes
+import org.macpry.kmpcompose.screens.HomeBottomNavigation
 import org.macpry.kmpcompose.screens.MainViewModel
-import org.macpry.kmpcompose.screens.args.ArgsFromNavigationScreen
-import org.macpry.kmpcompose.screens.args.ArgsFromViewModelScreen
 import org.macpry.kmpcompose.screens.main.MainScreen
+import org.macpry.kmpcompose.screens.maps.MapsScreen
 import org.macpry.kmpcompose.screens.notes.NotesScreen
 import org.macpry.kmpcompose.screens.notes.NotesViewModel
 import org.macpry.kmpcompose.screens.settings.SettingsScreen
@@ -42,93 +46,105 @@ import org.macpry.kmpcompose.screens.settings.SettingsViewModel
 
 @Composable
 @Preview
-fun App(mainViewModel: MainViewModel = koinViewModel()) {
+fun App() {
     KoinContext {
         MaterialTheme {
-            var isDialogVisible by remember { mutableStateOf(false) }
-            //TODO Fix saving mainState when app is recreated
-            val mainState by mainViewModel.state.collectAsStateWithLifecycle()
-            var currentDestination by rememberSaveable { mutableStateOf(BottomNavigation.Main) }
-            var navArgsInputText by remember { mutableStateOf("") }
-            val navArgsOnTextChanged: (String) -> Unit = { navArgsInputText = it }
-            val navArgsOnOpenDetails: () -> Unit = {
-                //navController.navigateTo(Route.DetailsNavArgs(navArgsInputText))
+            AppNavigation()
+        }
+    }
+}
+
+@Composable
+fun AppNavigation() {
+    val appNavController = rememberNavController()
+    NavHost(
+        navController = appNavController,
+        startDestination = AppNavigationRoutes.Home
+    ) {
+        composable<AppNavigationRoutes.Home> {
+            HomeNavigation {
+                appNavController.navigate(AppNavigationRoutes.Maps(it))
             }
-            NavigationSuiteScaffold(
-                navigationSuiteItems = {
-                    listOf(
-                        BottomNavigation.Main,
-                        BottomNavigation.DetailsNavArgs,
-                        BottomNavigation.DetailsCommonState,
-                        BottomNavigation.Notes,
-                        BottomNavigation.Settings
-                    ).forEach { screen ->
-                        item(
-                            selected = screen == currentDestination,
-                            onClick = { currentDestination = screen },
-                            icon = { Icon(screen.icon, stringResource(screen.label)) },
-                            label = { Text(stringResource(screen.label)) }
-                        )
-                    }
-                }
-            ) {
-                MainAlertDialog(
-                    isDialogVisible,
-                    { isDialogVisible = false }
-                )
-                when (currentDestination) {
-                    BottomNavigation.Main -> MainScreen(
-                        state = mainState,
-                        mainViewModel.images,
-                        navArgsInputText = navArgsInputText,
-                        navArgsOnTextChanged = navArgsOnTextChanged,
-                        navArgsOnOpenDetails = navArgsOnOpenDetails,
-                        commonOnTextChanged = mainViewModel::updateInput,
-                        commonOnOpenDetails = {
-                            currentDestination = BottomNavigation.DetailsCommonState
-                        }
-                    )
-
-                    BottomNavigation.DetailsNavArgs -> /*it.toRoute<Route.DetailsNavArgs>().arg.let {
-                        ArgsFromNavigationScreen(it)
-                    }*/
-                        ArgsFromNavigationScreen("PASS ARGS!!!")
-
-                    BottomNavigation.DetailsCommonState -> ArgsFromViewModelScreen(mainState.inputText)
-                    BottomNavigation.Notes -> {
-                        val notesViewModel: NotesViewModel = koinViewModel()
-                        val notesState by notesViewModel.notesState.collectAsStateWithLifecycle()
-                        NotesScreen(
-                            notesState,
-                            notesViewModel::saveNote
-                        )
-                    }
-
-                    BottomNavigation.Settings -> {
-                        val settingsViewModel: SettingsViewModel = koinViewModel()
-                        val settingsState by settingsViewModel.settingsState.collectAsStateWithLifecycle()
-                        SettingsScreen(settingsState, settingsViewModel::saveSetting)
-                    }
-                }
-                Box(Modifier.fillMaxSize()) {
-                    FloatingActionButton(
-                        onClick = {
-                            isDialogVisible = true
-                        },
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(20.dp)
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = "Add")
-                    }
-                }
+        }
+        composable<AppNavigationRoutes.Maps> {
+            it.toRoute<AppNavigationRoutes.Maps>().mapsDestination.let {
+                MapsScreen(it)
             }
         }
     }
 }
 
 @Composable
-fun MainAlertDialog(
+private fun HomeNavigation(
+    mainViewModel: MainViewModel = koinViewModel(),
+    onMapsDestinationPicked: (String?) -> Unit
+) {
+    var isDialogVisible by remember { mutableStateOf(false) }
+    //TODO Fix saving mainState when app is recreated
+    val mainState by mainViewModel.state.collectAsStateWithLifecycle()
+    var currentDestination by rememberSaveable { mutableStateOf(HomeBottomNavigation.Main) }
+    NavigationSuiteScaffold(
+        navigationSuiteItems = {
+            listOf(
+                HomeBottomNavigation.Main,
+                HomeBottomNavigation.Notes,
+                HomeBottomNavigation.Settings
+            ).forEach { screen ->
+                item(
+                    selected = screen == currentDestination,
+                    onClick = { currentDestination = screen },
+                    icon = { Icon(screen.icon, stringResource(screen.label)) },
+                    label = { Text(stringResource(screen.label)) }
+                )
+            }
+        }
+    ) {
+        AppAlertDialog(
+            isDialogVisible,
+            { isDialogVisible = false }
+        )
+        when (currentDestination) {
+            HomeBottomNavigation.Main -> MainScreen(
+                state = mainState,
+                images = mainViewModel.images,
+                onDestinationInputTextChanged = mainViewModel::updateInput,
+                onDestinationPicked = {
+                    onMapsDestinationPicked(mainState.destination)
+                }
+            )
+
+            HomeBottomNavigation.Notes -> {
+                val notesViewModel: NotesViewModel = koinViewModel()
+                val notesState by notesViewModel.notesState.collectAsStateWithLifecycle()
+                NotesScreen(
+                    notesState,
+                    notesViewModel::saveNote
+                )
+            }
+
+            HomeBottomNavigation.Settings -> {
+                val settingsViewModel: SettingsViewModel = koinViewModel()
+                val settingsState by settingsViewModel.settingsState.collectAsStateWithLifecycle()
+                SettingsScreen(settingsState, settingsViewModel::saveSetting)
+            }
+        }
+        Box(Modifier.fillMaxSize()) {
+            FloatingActionButton(
+                onClick = {
+                    isDialogVisible = true
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(20.dp)
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Add")
+            }
+        }
+    }
+}
+
+@Composable
+fun AppAlertDialog(
     isVisible: Boolean,
     onDismissRequest: () -> Unit
 ) {

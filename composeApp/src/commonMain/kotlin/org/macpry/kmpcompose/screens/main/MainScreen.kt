@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,7 +33,9 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import kmpcompose.composeapp.generated.resources.Res
 import kmpcompose.composeapp.generated.resources.compose_multiplatform
+import kmpcompose.composeapp.generated.resources.destination_input_label
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.macpry.kmpcompose.Greeting
 import org.macpry.kmpcompose.data.network.NetworkData
 import org.macpry.kmpcompose.screens.MainState
@@ -41,11 +44,8 @@ import org.macpry.kmpcompose.screens.MainState
 fun MainScreen(
     state: MainState,
     images: List<NetworkData.ImageResponse>,
-    navArgsInputText: String,
-    navArgsOnTextChanged: (String) -> Unit,
-    navArgsOnOpenDetails: () -> Unit,
-    commonOnTextChanged: (String) -> Unit,
-    commonOnOpenDetails: () -> Unit
+    onDestinationInputTextChanged: (String) -> Unit,
+    onDestinationPicked: () -> Unit
 ) {
     val greeting = remember { Greeting().greet() }
     Column(
@@ -54,35 +54,18 @@ fun MainScreen(
         Alignment.CenterHorizontally
     ) {
         Text("Compose: $greeting")
-        //Spacer(Modifier.height(400.dp))
         Text(state.currentTime.toString())
-
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.height(50.dp).fillMaxWidth(),
-        ) {
-            TextField(
-                value = navArgsInputText,
-                onValueChange = { navArgsOnTextChanged(it) },
-                label = { Text("Input passed by nav args") },
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(
-                    onDone = { navArgsOnOpenDetails() }
-                ),
-                singleLine = true
-            )
-            //Spacer(Modifier.width(100.dp))
-            TextField(
-                value = state.inputText.orEmpty(),
-                onValueChange = { commonOnTextChanged(it) },
-                label = { Text("Input passed by view model") },
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(
-                    onDone = { commonOnOpenDetails() }
-                ),
-                singleLine = true
-            )
-        }
+        Spacer(Modifier.height(12.dp))
+        TextField(
+            value = state.destination.orEmpty(),
+            onValueChange = { onDestinationInputTextChanged(it) },
+            label = { Text(stringResource(Res.string.destination_input_label)) },
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = { onDestinationPicked() }
+            ),
+            singleLine = true
+        )
         PagerWithIndicator(images)
     }
 }
@@ -113,7 +96,6 @@ fun PagerWithIndicator(images: List<NetworkData.ImageResponse>) {
         Modifier
             .wrapContentHeight()
             .fillMaxWidth()
-            //.align(Alignment.BottomCenter)
             .padding(bottom = 8.dp),
         horizontalArrangement = Arrangement.Center
     ) {
