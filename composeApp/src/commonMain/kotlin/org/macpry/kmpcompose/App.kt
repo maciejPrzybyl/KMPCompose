@@ -68,7 +68,9 @@ fun AppNavigation() {
         }
         composable<AppNavigationRoutes.Maps> {
             it.toRoute<AppNavigationRoutes.Maps>().mapsDestination.let {
-                MapsScreen(it)
+                MapsScreen(it) {
+                    appNavController.navigateUp()
+                }
             }
         }
     }

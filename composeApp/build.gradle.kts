@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.serialization)
+    alias(libs.plugins.secrets)
 }
 
 repositories {
@@ -67,6 +68,8 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.koin.android)
+            implementation(libs.googlemaps.maps)
+            implementation(libs.googlemaps.compose)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -196,4 +199,9 @@ configurations {
     implementation {
         exclude(group = "com.intellij", module = "annotations")
     }
+}
+
+secrets {
+    propertiesFileName = "secrets.properties"
+    defaultPropertiesFileName = "local.defaults.properties"
 }

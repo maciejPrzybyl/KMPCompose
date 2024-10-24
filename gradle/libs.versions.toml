@@ -21,6 +21,9 @@ logback = "1.5.7"
 room = "2.7.0-alpha10"
 sqlite = "2.5.0-alpha10"
 datastore = "1.1.1"
+google-maps = "19.0.0"
+maps-compose = "2.5.3"
+secrets = "2.0.1"
 
 [libraries]
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -65,6 +68,9 @@ sqlite-bundle = { group = "androidx.sqlite", name = "sqlite-bundled", version.re
 datastore-core = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 
+googlemaps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "maps-compose" }
+googlemaps-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "google-maps" }
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
@@ -76,3 +82,4 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 room = { id = "androidx.room", version.ref = "room" }
+secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets" }
