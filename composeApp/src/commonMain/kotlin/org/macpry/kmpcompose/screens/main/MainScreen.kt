@@ -45,7 +45,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.macpry.kmpcompose.Greeting
-import org.macpry.kmpcompose.data.network.NetworkData
+import org.macpry.kmpcompose.data.network.ImageResponse
 import org.macpry.kmpcompose.screens.MainState
 
 val latRange = -90.0..90.0
@@ -54,7 +54,7 @@ val lngRange = -180.0..180.0
 @Composable
 fun MainScreen(
     state: MainState,
-    images: List<NetworkData.ImageResponse>,
+    images: List<ImageResponse>,
     onOpenMaps: (Pair<Double, Double>) -> Unit
 ) {
     val greeting = remember { Greeting().greet() }
@@ -138,7 +138,7 @@ fun CoordinateInput(
 }
 
 @Composable
-fun PagerWithIndicator(images: List<NetworkData.ImageResponse>) {
+fun PagerWithIndicator(images: List<ImageResponse>) {
     val pagerState = rememberPagerState { images.size }
     HorizontalPager(pagerState) { page ->
         Column(

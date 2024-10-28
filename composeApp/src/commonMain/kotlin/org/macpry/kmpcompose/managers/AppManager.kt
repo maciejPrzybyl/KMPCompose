@@ -1,12 +1,12 @@
 package org.macpry.kmpcompose.managers
 
 import kotlinx.coroutines.flow.catch
-import org.macpry.kmpcompose.data.network.NetworkData
-import org.macpry.kmpcompose.data.TimeProvider
+import org.macpry.kmpcompose.data.ITimeProvider
+import org.macpry.kmpcompose.data.network.INetworkData
 
 class AppManager(
-    private val timeProvider: TimeProvider,
-    private val networkData: NetworkData
+    private val timeProvider: ITimeProvider,
+    private val networkData: INetworkData
 ) {
 
     internal fun timeFlow() = timeProvider.currentDateTime().catch {

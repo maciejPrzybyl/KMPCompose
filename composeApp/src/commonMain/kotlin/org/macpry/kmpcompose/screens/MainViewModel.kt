@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.macpry.kmpcompose.data.network.NetworkData
+import org.macpry.kmpcompose.data.network.ImageResponse
 import org.macpry.kmpcompose.managers.AppManager
 
 class MainViewModel(
@@ -28,7 +28,7 @@ class MainViewModel(
         MainState(null)
     )
 
-    internal var images by mutableStateOf(emptyList<NetworkData.ImageResponse>())
+    internal var images by mutableStateOf(emptyList<ImageResponse>())
         private set
 
     private fun fetchImages() = viewModelScope.launch {
