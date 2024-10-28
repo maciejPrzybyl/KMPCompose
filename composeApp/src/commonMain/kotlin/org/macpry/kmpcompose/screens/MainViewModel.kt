@@ -3,15 +3,14 @@ package org.macpry.kmpcompose.screens
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.macpry.kmpcompose.managers.AppManager
 import org.macpry.kmpcompose.data.network.NetworkData
+import org.macpry.kmpcompose.managers.AppManager
 
 class MainViewModel(
     private val appManager: AppManager
@@ -21,20 +20,12 @@ class MainViewModel(
         fetchImages()
     }
 
-    private var inputText by mutableStateOf("")
-
-    internal fun updateInput(value: String) {
-        inputText = value
-    }
-
-    internal val state = appManager.timeFlow().combine(
-        snapshotFlow { inputText }
-    ) { currentTime, inputText ->
-        MainState(currentTime.toString(), inputText)
+    internal val state = appManager.timeFlow().map {
+        MainState(it.toString())
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
-        MainState(null, null)
+        MainState(null)
     )
 
     internal var images by mutableStateOf(emptyList<NetworkData.ImageResponse>())
@@ -51,6 +42,5 @@ class MainViewModel(
 }
 
 data class MainState(
-    val currentTime: String?,
-    val destination: String?
+    val currentTime: String?
 )

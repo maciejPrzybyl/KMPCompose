@@ -11,6 +11,7 @@ import kmpcompose.composeapp.generated.resources.home_navigation_notes
 import kmpcompose.composeapp.generated.resources.home_navigation_settings
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.StringResource
+import org.macpry.kmpcompose.screens.maps.model.Coordinates
 
 @Serializable
 sealed class AppNavigationRoutes {
@@ -18,7 +19,7 @@ sealed class AppNavigationRoutes {
     data object Home : AppNavigationRoutes()
 
     @Serializable
-    data class Maps(val mapsDestination: String?) : AppNavigationRoutes()
+    data class Maps(val coordinates: Coordinates) : AppNavigationRoutes()
 }
 
 enum class HomeBottomNavigation(val icon: ImageVector, val label: StringResource) {

@@ -10,13 +10,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import org.macpry.kmpcompose.screens.maps.model.Coordinates
 
 @Composable
 fun MapsScreen(
-    destination: String?,
+    coordinates: Coordinates,
     onBack: () -> Unit
 ) {
     Box(Modifier.fillMaxSize()) {
+        Map(coordinates)
         IconButton(
             { onBack() },
             Modifier
@@ -25,9 +27,8 @@ fun MapsScreen(
         ) {
             Icon(Icons.AutoMirrored.Default.ArrowBack, null)
         }
-        Map()
     }
 }
 
 @Composable
-expect fun Map()
+expect fun Map(coordinates: Coordinates)

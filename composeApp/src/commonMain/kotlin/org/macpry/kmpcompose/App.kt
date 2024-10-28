@@ -23,13 +23,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.core.bundle.Bundle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import kmpcompose.composeapp.generated.resources.Res
-import kmpcompose.composeapp.generated.resources.title_dialog
+import kmpcompose.composeapp.generated.resources.app_dialog_title
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinContext
@@ -39,10 +43,12 @@ import org.macpry.kmpcompose.screens.HomeBottomNavigation
 import org.macpry.kmpcompose.screens.MainViewModel
 import org.macpry.kmpcompose.screens.main.MainScreen
 import org.macpry.kmpcompose.screens.maps.MapsScreen
+import org.macpry.kmpcompose.screens.maps.model.Coordinates
 import org.macpry.kmpcompose.screens.notes.NotesScreen
 import org.macpry.kmpcompose.screens.notes.NotesViewModel
 import org.macpry.kmpcompose.screens.settings.SettingsScreen
 import org.macpry.kmpcompose.screens.settings.SettingsViewModel
+import kotlin.reflect.typeOf
 
 @Composable
 @Preview
@@ -66,9 +72,11 @@ fun AppNavigation() {
                 appNavController.navigate(AppNavigationRoutes.Maps(it))
             }
         }
-        composable<AppNavigationRoutes.Maps> {
-            it.toRoute<AppNavigationRoutes.Maps>().mapsDestination.let {
-                MapsScreen(it) {
+        composable<AppNavigationRoutes.Maps>(
+            typeMap = mapOf(typeOf<Coordinates>() to CoordinatesNavType),
+        ) {
+            it.toRoute<AppNavigationRoutes.Maps>().coordinates.let { coordinates ->
+                MapsScreen(coordinates) {
                     appNavController.navigateUp()
                 }
             }
@@ -76,10 +84,30 @@ fun AppNavigation() {
     }
 }
 
+val CoordinatesNavType = object : NavType<Coordinates>(
+    isNullableAllowed = false,
+) {
+    override fun get(bundle: Bundle, key: String): Coordinates? {
+        return Json.decodeFromString(bundle.getString(key) ?: return null)
+    }
+
+    override fun parseValue(value: String): Coordinates {
+        return Json.decodeFromString(value)
+    }
+
+    override fun put(bundle: Bundle, key: String, value: Coordinates) {
+        bundle.putString(key, Json.encodeToString(value))
+    }
+
+    override fun serializeAsValue(value: Coordinates): String {
+        return Json.encodeToString(value)
+    }
+}
+
 @Composable
 private fun HomeNavigation(
     mainViewModel: MainViewModel = koinViewModel(),
-    onMapsDestinationPicked: (String?) -> Unit
+    onOpenMaps: (Coordinates) -> Unit
 ) {
     var isDialogVisible by remember { mutableStateOf(false) }
     //TODO Fix saving mainState when app is recreated
@@ -109,10 +137,7 @@ private fun HomeNavigation(
             HomeBottomNavigation.Main -> MainScreen(
                 state = mainState,
                 images = mainViewModel.images,
-                onDestinationInputTextChanged = mainViewModel::updateInput,
-                onDestinationPicked = {
-                    onMapsDestinationPicked(mainState.destination)
-                }
+                { onOpenMaps(Coordinates(it.first, it.second)) }
             )
 
             HomeBottomNavigation.Notes -> {
@@ -155,7 +180,7 @@ fun AppAlertDialog(
             onDismissRequest = onDismissRequest,
             modifier = Modifier.padding(vertical = 100.dp),
             title = {
-                Text(text = stringResource(Res.string.title_dialog))
+                Text(text = stringResource(Res.string.app_dialog_title))
             },
             text = {
                 LazyColumn {

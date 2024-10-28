@@ -19,33 +19,43 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import kmpcompose.composeapp.generated.resources.Res
 import kmpcompose.composeapp.generated.resources.compose_multiplatform
-import kmpcompose.composeapp.generated.resources.destination_input_label
+import kmpcompose.composeapp.generated.resources.coordinates_input_latitude
+import kmpcompose.composeapp.generated.resources.coordinates_input_longitude
+import kmpcompose.composeapp.generated.resources.open_maps
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.macpry.kmpcompose.Greeting
 import org.macpry.kmpcompose.data.network.NetworkData
 import org.macpry.kmpcompose.screens.MainState
 
+val latRange = -90.0..90.0
+val lngRange = -180.0..180.0
+
 @Composable
 fun MainScreen(
     state: MainState,
     images: List<NetworkData.ImageResponse>,
-    onDestinationInputTextChanged: (String) -> Unit,
-    onDestinationPicked: () -> Unit
+    onOpenMaps: (Pair<Double, Double>) -> Unit
 ) {
     val greeting = remember { Greeting().greet() }
     Column(
@@ -56,18 +66,75 @@ fun MainScreen(
         Text("Compose: $greeting")
         Text(state.currentTime.toString())
         Spacer(Modifier.height(12.dp))
-        TextField(
-            value = state.destination.orEmpty(),
-            onValueChange = { onDestinationInputTextChanged(it) },
-            label = { Text(stringResource(Res.string.destination_input_label)) },
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(
-                onDone = { onDestinationPicked() }
-            ),
-            singleLine = true
-        )
+        CoordinatesView(onOpenMaps)
         PagerWithIndicator(images)
     }
+}
+
+@Composable
+fun CoordinatesView(
+    onOpenMaps: (Pair<Double, Double>) -> Unit
+) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        var latLng by rememberSaveable { mutableStateOf(0.0 to 0.0) }
+        fun areCoordinatesValid() = latLng.first in latRange && latLng.second in lngRange
+
+        fun tryToOpenMaps() {
+            if (areCoordinatesValid()) {
+                onOpenMaps(latLng.first to latLng.second)
+            }
+        }
+
+        CoordinateInput(
+            modifier = Modifier.weight(0.4f),
+            value = latLng.first,
+            onChange = { latLng = latLng.copy(first = it) },
+            label = Res.string.coordinates_input_latitude,
+            onDone = { tryToOpenMaps() }
+        )
+        CoordinateInput(
+            modifier = Modifier.weight(0.4f),
+            value = latLng.second,
+            onChange = { latLng = latLng.copy(second = it) },
+            label = Res.string.coordinates_input_longitude,
+            onDone = { tryToOpenMaps() }
+        )
+        TextButton(
+            modifier = Modifier.weight(0.2f),
+            onClick = {
+                tryToOpenMaps()
+            },
+            enabled = areCoordinatesValid()
+        ) {
+            Text(stringResource(Res.string.open_maps))
+        }
+    }
+}
+
+@Composable
+fun CoordinateInput(
+    modifier: Modifier,
+    value: Double,
+    onChange: (Double) -> Unit,
+    label: StringResource,
+    onDone: () -> Unit
+) {
+    TextField(
+        modifier = modifier,
+        value = value.toString(),
+        onValueChange = { onChange(it.toDoubleOrNull() ?: 0.0) },
+        label = { Text(stringResource(label)) },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Decimal
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = { onDone() }
+        ),
+        singleLine = true
+    )
 }
 
 @Composable
