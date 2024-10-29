@@ -92,7 +92,9 @@ fun CoordinatesView(
         }
 
         CoordinateInput(
-            modifier = Modifier.weight(0.4f),
+            modifier = Modifier
+                .weight(0.4f)
+                .testTag(MainScreenTags.COORDINATE_INPUT_LAT),
             value = latLng.first,
             onChange = { latLng = latLng.copy(first = it) },
             label = Res.string.coordinates_input_latitude,
@@ -106,7 +108,9 @@ fun CoordinatesView(
             onDone = { tryToOpenMaps() }
         )
         TextButton(
-            modifier = Modifier.weight(0.2f),
+            modifier = Modifier
+                .weight(0.2f)
+                .testTag(MainScreenTags.OPEN_MAPS_BUTTON),
             onClick = {
                 tryToOpenMaps()
             },
@@ -183,5 +187,7 @@ fun PagerWithIndicator(images: List<ImageResponse>) {
 }
 
 object MainScreenTags {
-    const val CURRENT_TIME_TEXT = "current_time_text"
+    const val CURRENT_TIME_TEXT = "CURRENT_TIME_TEXT"
+    const val OPEN_MAPS_BUTTON = "OPEN_MAPS_BUTTON"
+    const val COORDINATE_INPUT_LAT = "COORDINATES_INPUT_LAT"
 }

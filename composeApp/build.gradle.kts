@@ -224,7 +224,6 @@ secrets {
 }
 
 kover {
-    useJacoco()
     reports {
         filters {
             includes.packages("org.macpry.kmpcompose.*")
@@ -235,7 +234,6 @@ kover {
                     "org.macpry.kmpcompose.providers"
                 )
                 annotatedBy(
-                    //"androidx.compose.runtime.Composable",
                     "androidx.compose.ui.tooling.preview.Preview",
                     "*Generated*",
                     "kotlinx.serialization.Serializable"
