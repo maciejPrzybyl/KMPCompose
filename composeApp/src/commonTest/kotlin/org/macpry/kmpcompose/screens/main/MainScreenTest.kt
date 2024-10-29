@@ -6,9 +6,12 @@ import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @OptIn(ExperimentalTestApi::class)
 class MainScreenTest {
@@ -28,15 +31,22 @@ class MainScreenTest {
     }
 
     @Test
-    fun displayMainScreen() = runComposeUiTest {
+    fun displayMapsButton() = runComposeUiTest {
+        var onOpenMapsClick = 0.0 to 0.0
         setContent {
-            MainScreen(MainState(null), emptyList(), {})
+            MainScreen(MainState(null), emptyList(), { onOpenMapsClick = it })
         }
 
         onNodeWithTag(MainScreenTags.OPEN_MAPS_BUTTON).run {
             assertIsEnabled()
             onNodeWithTag(MainScreenTags.COORDINATE_INPUT_LAT).performTextInput("100")
             assertIsNotEnabled()
+            onNodeWithTag(MainScreenTags.COORDINATE_INPUT_LAT).run {
+                performTextClearance()
+                performTextInput("2")
+            }
+            performClick()
+            assertEquals(20.0 to 0.0, onOpenMapsClick)
         }
     }
 }
