@@ -24,6 +24,10 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import kmpcompose.composeapp.generated.resources.Res
+import kmpcompose.composeapp.generated.resources.save
+import kmpcompose.composeapp.generated.resources.save_something
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun NotesScreen(
@@ -48,7 +52,7 @@ fun NotesScreen(
         TextField(
             value = text,
             onValueChange = { text = it },
-            label = { Text("Save something") },
+            label = { Text(stringResource(Res.string.save_something)) },
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(
                 onDone = {
@@ -60,7 +64,7 @@ fun NotesScreen(
         Button({
             onDone()
         }) {
-            Text("Save")
+            Text(stringResource(Res.string.save))
         }
 
         LazyColumn(

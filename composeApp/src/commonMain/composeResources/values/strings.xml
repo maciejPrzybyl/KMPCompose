@@ -9,4 +9,6 @@
 
     <string name="app_dialog_title">Some dialog</string>
     <string name="ok">Ok</string>
+    <string name="save">Save</string>
+    <string name="save_something">Save something</string>
 </resources>
