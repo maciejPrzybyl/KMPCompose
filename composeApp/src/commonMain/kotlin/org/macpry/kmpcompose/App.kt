@@ -32,6 +32,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import kmpcompose.composeapp.generated.resources.Res
 import kmpcompose.composeapp.generated.resources.app_dialog_title
+import kmpcompose.composeapp.generated.resources.ok
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.stringResource
@@ -40,7 +41,7 @@ import org.koin.compose.KoinContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.macpry.kmpcompose.screens.AppNavigationRoutes
 import org.macpry.kmpcompose.screens.HomeBottomNavigation
-import org.macpry.kmpcompose.screens.MainViewModel
+import org.macpry.kmpcompose.screens.main.MainViewModel
 import org.macpry.kmpcompose.screens.main.MainScreen
 import org.macpry.kmpcompose.screens.maps.MapsScreen
 import org.macpry.kmpcompose.screens.maps.model.Coordinates
@@ -198,7 +199,7 @@ fun AppAlertDialog(
                 Button(
                     onClick = onDismissRequest,
                 ) {
-                    Text(text = "Ok")
+                    Text(text = stringResource(Res.string.ok))
                 }
             },
         )

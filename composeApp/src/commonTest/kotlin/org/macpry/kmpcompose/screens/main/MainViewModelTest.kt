@@ -1,4 +1,4 @@
-package org.macpry.kmpcompose.screens
+package org.macpry.kmpcompose.screens.main
 
 import app.cash.turbine.test
 import kotlinx.coroutines.Dispatchers
@@ -33,8 +33,8 @@ class MainViewModelTest : KoinTest {
     private lateinit var viewModel: MainViewModel
 
     private val testModule = module {
-        singleOf<ITimeProvider>(::FakeTimeProvider)
-        factoryOf<INetworkData>(::FakeNetworkData)
+        singleOf<ITimeProvider>(MainViewModelTest::FakeTimeProvider)
+        factoryOf<INetworkData>(MainViewModelTest::FakeNetworkData)
         factoryOf(::AppManager)
         viewModelOf(::MainViewModel)
     }

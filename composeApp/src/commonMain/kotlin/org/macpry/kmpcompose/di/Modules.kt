@@ -21,7 +21,7 @@ import org.macpry.kmpcompose.providers.provideHttpClient
 import org.macpry.kmpcompose.providers.provideIODispatcher
 import org.macpry.kmpcompose.repositories.NotesRepository
 import org.macpry.kmpcompose.repositories.SettingsRepository
-import org.macpry.kmpcompose.screens.MainViewModel
+import org.macpry.kmpcompose.screens.main.MainViewModel
 import org.macpry.kmpcompose.screens.notes.NotesViewModel
 import org.macpry.kmpcompose.screens.settings.SettingsViewModel
 

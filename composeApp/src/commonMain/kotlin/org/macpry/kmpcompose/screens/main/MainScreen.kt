@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -46,7 +47,6 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.macpry.kmpcompose.Greeting
 import org.macpry.kmpcompose.data.network.ImageResponse
-import org.macpry.kmpcompose.screens.MainState
 
 val latRange = -90.0..90.0
 val lngRange = -180.0..180.0
@@ -64,7 +64,10 @@ fun MainScreen(
         Alignment.CenterHorizontally
     ) {
         Text("Compose: $greeting")
-        Text(state.currentTime.toString())
+        Text(
+            text = state.currentTime.orEmpty(),
+            modifier = Modifier.testTag(MainScreenTags.CURRENT_TIME_TEXT)
+        )
         Spacer(Modifier.height(12.dp))
         CoordinatesView(onOpenMaps)
         PagerWithIndicator(images)
@@ -177,4 +180,8 @@ fun PagerWithIndicator(images: List<ImageResponse>) {
             )
         }
     }
+}
+
+object MainScreenTags {
+    const val CURRENT_TIME_TEXT = "current_time_text"
 }
