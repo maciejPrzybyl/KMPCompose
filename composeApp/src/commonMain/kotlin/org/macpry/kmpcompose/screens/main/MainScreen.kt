@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -47,6 +48,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.macpry.kmpcompose.Greeting
 import org.macpry.kmpcompose.data.network.ImageResponse
+import org.macpry.kmpcompose.ui.colorId
 
 val latRange = -90.0..90.0
 val lngRange = -180.0..180.0
@@ -147,7 +149,10 @@ fun CoordinateInput(
 @Composable
 fun PagerWithIndicator(images: List<ImageResponse>) {
     val pagerState = rememberPagerState { images.size }
-    HorizontalPager(pagerState) { page ->
+    HorizontalPager(
+        state = pagerState,
+        modifier = Modifier.testTag(MainScreenTags.PAGER)
+    ) { page ->
         Column(
             Modifier
                 .fillMaxWidth()
@@ -163,14 +168,18 @@ fun PagerWithIndicator(images: List<ImageResponse>) {
                 modifier = Modifier.aspectRatio(ratio = 1.0f),
                 placeholder = painterResource(Res.drawable.compose_multiplatform)
             )
-            Text("${imageData.id} ${imageData.author}")
+            Text(
+                text = "${imageData.id} ${imageData.author}",
+                modifier = Modifier.testTag(MainScreenTags.PAGER_ITEM_DESCRIPTION)
+            )
         }
     }
     Row(
         Modifier
             .wrapContentHeight()
             .fillMaxWidth()
-            .padding(bottom = 8.dp),
+            .padding(bottom = 8.dp)
+            .testTag(MainScreenTags.PAGER_INDICATOR),
         horizontalArrangement = Arrangement.Center
     ) {
         repeat(pagerState.pageCount) { iteration ->
@@ -181,6 +190,10 @@ fun PagerWithIndicator(images: List<ImageResponse>) {
                     .clip(CircleShape)
                     .background(color)
                     .size(16.dp)
+                    .testTag(MainScreenTags.PAGER_INDICATOR_ITEM)
+                    .semantics {
+                        colorId = color
+                    }
             )
         }
     }
@@ -190,4 +203,8 @@ object MainScreenTags {
     const val CURRENT_TIME_TEXT = "CURRENT_TIME_TEXT"
     const val OPEN_MAPS_BUTTON = "OPEN_MAPS_BUTTON"
     const val COORDINATE_INPUT_LAT = "COORDINATES_INPUT_LAT"
+    const val PAGER = "PAGER"
+    const val PAGER_ITEM_DESCRIPTION = "PAGER_ITEM_DESCRIPTION"
+    const val PAGER_INDICATOR = "PAGER_INDICATOR"
+    const val PAGER_INDICATOR_ITEM = "PAGER_INDICATOR_ITEM"
 }

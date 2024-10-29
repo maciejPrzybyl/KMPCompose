@@ -231,7 +231,8 @@ kover {
                 packages(
                     "org.macpry.kmpcompose.di",
                     "org.macpry.kmpcompose.logger",
-                    "org.macpry.kmpcompose.providers"
+                    "org.macpry.kmpcompose.providers",
+                    "org.macpry.kmpcompose.ui",
                 )
                 annotatedBy(
                     "androidx.compose.ui.tooling.preview.Preview",
