@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.serialization)
     alias(libs.plugins.secrets)
+    alias(libs.plugins.kover)
 }
 
 repositories {
@@ -210,4 +211,23 @@ configurations {
 secrets {
     propertiesFileName = "secrets.properties"
     defaultPropertiesFileName = "local.defaults.properties"
+}
+
+kover.reports {
+    filters {
+        includes.packages("org.macpry.kmpcompose.*")
+        excludes {
+            packages(
+                "org.macpry.kmpcompose.di",
+                "org.macpry.kmpcompose.logger",
+                "org.macpry.kmpcompose.providers"
+            )
+            annotatedBy(
+                "androidx.compose.runtime.Composable",
+                "androidx.compose.ui.tooling.preview.Preview",
+                "*Generated*",
+                "kotlinx.serialization.Serializable"
+            )
+        }
+    }
 }
