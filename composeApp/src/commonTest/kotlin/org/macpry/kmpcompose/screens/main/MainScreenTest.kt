@@ -1,5 +1,6 @@
 package org.macpry.kmpcompose.screens.main
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
@@ -13,15 +14,29 @@ import kotlin.test.Test
 class MainScreenTest {
 
     @Test
-    fun displayMainScreen() = runComposeUiTest {
+    fun displayCurrentTime() = runComposeUiTest {
+        val currentTime = mutableStateOf<String?>("21:37")
         setContent {
-            MainScreen(MainState("21:37"), emptyList(), {})
+            MainScreen(MainState(currentTime.value), emptyList(), {})
         }
 
-        onNodeWithTag(MainScreenTags.CURRENT_TIME_TEXT).assertTextEquals("21:37")
+        onNodeWithTag(MainScreenTags.CURRENT_TIME_TEXT).run {
+            assertTextEquals("21:37")
+            currentTime.value = null
+            assertTextEquals("")
+        }
+    }
 
-        onNodeWithTag(MainScreenTags.OPEN_MAPS_BUTTON).assertIsEnabled()
-        onNodeWithTag(MainScreenTags.COORDINATE_INPUT_LAT).performTextInput("100")
-        onNodeWithTag(MainScreenTags.OPEN_MAPS_BUTTON).assertIsNotEnabled()
+    @Test
+    fun displayMainScreen() = runComposeUiTest {
+        setContent {
+            MainScreen(MainState(null), emptyList(), {})
+        }
+
+        onNodeWithTag(MainScreenTags.OPEN_MAPS_BUTTON).run {
+            assertIsEnabled()
+            onNodeWithTag(MainScreenTags.COORDINATE_INPUT_LAT).performTextInput("100")
+            assertIsNotEnabled()
+        }
     }
 }
