@@ -136,7 +136,7 @@ fun CoordinateInput(
         value = value.toString(),
         onValueChange = { onChange(it.toDoubleOrNull() ?: 0.0) },
         label = { Text(stringResource(label)) },
-        keyboardOptions = KeyboardOptions.Default.copy(
+        keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Decimal
         ),
         keyboardActions = KeyboardActions(

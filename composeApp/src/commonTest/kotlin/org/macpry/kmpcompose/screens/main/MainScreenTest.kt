@@ -47,14 +47,23 @@ class MainScreenTest {
 
         onNodeWithTag(MainScreenTags.OPEN_MAPS_BUTTON).run {
             assertIsEnabled()
+
             onNodeWithTag(MainScreenTags.COORDINATE_INPUT_LAT).performTextInput("100")
             assertIsNotEnabled()
+
             onNodeWithTag(MainScreenTags.COORDINATE_INPUT_LAT).run {
                 performTextClearance()
                 performTextInput("2")
             }
             performClick()
             assertEquals(20.0 to 0.0, onOpenMapsClick)
+
+            /*onNodeWithTag(MainScreenTags.COORDINATE_INPUT_LAT).run {
+                performTextClearance()
+                performTextInput("3")
+                performImeAction()
+            }
+            assertEquals(30.0 to 0.0, onOpenMapsClick)*/
         }
     }
 

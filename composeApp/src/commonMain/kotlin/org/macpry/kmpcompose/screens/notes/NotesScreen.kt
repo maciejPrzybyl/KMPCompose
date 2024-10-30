@@ -53,7 +53,7 @@ fun NotesScreen(
             value = text,
             onValueChange = { text = it },
             label = { Text(stringResource(Res.string.save_something)) },
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(
                 onDone = {
                     onDone()
