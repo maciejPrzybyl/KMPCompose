@@ -28,7 +28,7 @@ class MainScreenTest {
     fun displayCurrentTime() = runComposeUiTest {
         val currentTime = mutableStateOf<String?>("21:37")
         setContent {
-            MainScreen(MainState(currentTime.value), emptyList(), {})
+            MainScreen(MainState(currentTime.value, ImagesState.Init), {})
         }
 
         onNodeWithTag(MainScreenTags.CURRENT_TIME_TEXT).run {
@@ -42,7 +42,7 @@ class MainScreenTest {
     fun displayMapsButton() = runComposeUiTest {
         var onOpenMapsClick = 0.0 to 0.0
         setContent {
-            MainScreen(MainState(null), emptyList(), { onOpenMapsClick = it })
+            MainScreen(MainState(null, ImagesState.Init), { onOpenMapsClick = it })
         }
 
         onNodeWithTag(MainScreenTags.OPEN_MAPS_BUTTON).run {
@@ -68,14 +68,44 @@ class MainScreenTest {
     }
 
     @Test
+    fun displayPagerContainer() = runComposeUiTest {
+        val imagesState = mutableStateOf<ImagesState>(ImagesState.Init)
+
+        setContent {
+            PagerContainer(imagesState.value)
+        }
+
+        onNodeWithTag(MainScreenTags.PAGER_LOADING).assertDoesNotExist()
+        onNodeWithTag(MainScreenTags.PAGER_ERROR).assertDoesNotExist()
+        onNodeWithTag(MainScreenTags.PAGER).assertExists()
+        onNodeWithTag(MainScreenTags.PAGER_ITEM_DESCRIPTION)
+            .assertExists()
+            .assertTextEquals("0 unknown")
+
+        imagesState.value = ImagesState.Loading
+        onNodeWithTag(MainScreenTags.PAGER).assertDoesNotExist()
+        onNodeWithTag(MainScreenTags.PAGER_ERROR).assertDoesNotExist()
+        onNodeWithTag(MainScreenTags.PAGER_LOADING).assertExists()
+
+        imagesState.value = ImagesState.Error(Exception("Loading failed"))
+        onNodeWithTag(MainScreenTags.PAGER).assertDoesNotExist()
+        onNodeWithTag(MainScreenTags.PAGER_LOADING).assertDoesNotExist()
+        onNodeWithTag(MainScreenTags.PAGER_ERROR)
+            .assertExists()
+            .assertTextEquals("Couldn't load images")
+    }
+
+    @Test
     fun displayPager() = runComposeUiTest {
         val images = (1L..2).map {
             ImageResponse(it, "$it url", "$it aut")
         }
         setContent {
-            MainScreen(MainState(null), images, { })
+            MainScreen(MainState(null, ImagesState.Success(images)), { })
         }
 
+        onNodeWithTag(MainScreenTags.PAGER).assertExists()
+        onNodeWithTag(MainScreenTags.PAGER_LOADING).assertDoesNotExist()
         onAllNodesWithTag(MainScreenTags.PAGER_ITEM_DESCRIPTION)
             .onFirst()
             .assertTextEquals("${images.first().id} ${images.first().author}")
@@ -87,7 +117,7 @@ class MainScreenTest {
             ImageResponse(it, "$it urlaa", "$it authoo")
         }
         setContent {
-            MainScreen(MainState(null), images, { })
+            MainScreen(MainState(null, ImagesState.Success(images)), { })
         }
 
         fun checkIndicators(currentItemIndex: Int) {

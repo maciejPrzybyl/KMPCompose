@@ -18,6 +18,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -42,6 +43,7 @@ import kmpcompose.composeapp.generated.resources.Res
 import kmpcompose.composeapp.generated.resources.compose_multiplatform
 import kmpcompose.composeapp.generated.resources.coordinates_input_latitude
 import kmpcompose.composeapp.generated.resources.coordinates_input_longitude
+import kmpcompose.composeapp.generated.resources.images_load_error
 import kmpcompose.composeapp.generated.resources.open_maps
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
@@ -56,7 +58,6 @@ val lngRange = -180.0..180.0
 @Composable
 fun MainScreen(
     state: MainState,
-    images: List<ImageResponse>,
     onOpenMaps: (Pair<Double, Double>) -> Unit
 ) {
     val greeting = remember { Greeting().greet() }
@@ -72,7 +73,7 @@ fun MainScreen(
         )
         Spacer(Modifier.height(12.dp))
         CoordinatesView(onOpenMaps)
-        PagerWithIndicator(images)
+        PagerContainer(state.imagesState)
     }
 }
 
@@ -147,6 +148,26 @@ fun CoordinateInput(
 }
 
 @Composable
+fun PagerContainer(imagesState: ImagesState) {
+    when (imagesState) {
+        ImagesState.Init -> PagerWithIndicator(
+            listOf(ImageResponse(0, "", "unknown"))
+        )
+
+        ImagesState.Loading -> CircularProgressIndicator(
+            Modifier.testTag(MainScreenTags.PAGER_LOADING)
+        )
+
+        is ImagesState.Error -> Text(
+            text = stringResource(Res.string.images_load_error),
+            modifier = Modifier.testTag(MainScreenTags.PAGER_ERROR)
+        )
+
+        is ImagesState.Success -> PagerWithIndicator(imagesState.images)
+    }
+}
+
+@Composable
 fun PagerWithIndicator(images: List<ImageResponse>) {
     val pagerState = rememberPagerState { images.size }
     HorizontalPager(
@@ -203,6 +224,8 @@ object MainScreenTags {
     const val CURRENT_TIME_TEXT = "CURRENT_TIME_TEXT"
     const val OPEN_MAPS_BUTTON = "OPEN_MAPS_BUTTON"
     const val COORDINATE_INPUT_LAT = "COORDINATES_INPUT_LAT"
+    const val PAGER_LOADING = "PAGER_LOADING"
+    const val PAGER_ERROR = "PAGER_ERROR"
     const val PAGER = "PAGER"
     const val PAGER_ITEM_DESCRIPTION = "PAGER_ITEM_DESCRIPTION"
     const val PAGER_INDICATOR = "PAGER_INDICATOR"

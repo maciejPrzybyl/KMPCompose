@@ -137,7 +137,6 @@ private fun HomeNavigation(
         when (currentDestination) {
             HomeBottomNavigation.Main -> MainScreen(
                 state = mainState,
-                images = mainViewModel.images,
                 { onOpenMaps(Coordinates(it.first, it.second)) }
             )
 
