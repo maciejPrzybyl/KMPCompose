@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.macpry.kmpcompose.repositories.NotesRepository
+import org.macpry.kmpcompose.repositories.INotesRepository
 
 class NotesViewModel(
-    private val notesRepository: NotesRepository
+    private val notesRepository: INotesRepository
 ) : ViewModel() {
 
     val notesState = notesRepository.notesFlow().map {
@@ -23,7 +23,7 @@ class NotesViewModel(
     internal fun saveNote(note: String) = viewModelScope.launch {
         notesRepository.saveNote(note)
             .onFailure {
-                println(it)
+                //TODO Show error
             }
     }
 }
