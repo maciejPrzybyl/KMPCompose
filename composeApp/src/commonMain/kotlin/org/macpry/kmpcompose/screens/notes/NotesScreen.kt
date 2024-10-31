@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -52,6 +53,7 @@ fun NotesScreen(
         TextField(
             value = text,
             onValueChange = { text = it },
+            modifier = Modifier.testTag(NotesScreenTags.NOTE_INPUT),
             label = { Text(stringResource(Res.string.save_something)) },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(
@@ -61,13 +63,16 @@ fun NotesScreen(
             ),
             singleLine = true
         )
-        Button({
-            onDone()
-        }) {
+        Button(
+            onClick = { onDone() },
+            modifier = Modifier.testTag(NotesScreenTags.DONE_BUTTON),
+            enabled = text.text.isNotEmpty()
+        ) {
             Text(stringResource(Res.string.save))
         }
 
         LazyColumn(
+            modifier = Modifier.testTag(NotesScreenTags.NOTES_LIST),
             contentPadding = PaddingValues(12.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
@@ -81,4 +86,10 @@ fun NotesScreen(
             }
         }
     }
+}
+
+object NotesScreenTags {
+    const val NOTE_INPUT = "NOTE_INPUT"
+    const val DONE_BUTTON = "DONE_BUTTON"
+    const val NOTES_LIST = "NOTES_LIST"
 }
