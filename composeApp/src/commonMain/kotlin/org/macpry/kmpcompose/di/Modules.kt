@@ -15,12 +15,15 @@ import org.macpry.kmpcompose.data.local.NotesLocalData
 import org.macpry.kmpcompose.data.local.SettingsLocalData
 import org.macpry.kmpcompose.data.network.INetworkData
 import org.macpry.kmpcompose.data.network.NetworkData
+import org.macpry.kmpcompose.logger.IKMPLogger
+import org.macpry.kmpcompose.logger.KMPLogger
 import org.macpry.kmpcompose.managers.AppManager
 import org.macpry.kmpcompose.managers.IAppManager
 import org.macpry.kmpcompose.providers.KMPDispatchers
 import org.macpry.kmpcompose.providers.provideDefaultDispatcher
 import org.macpry.kmpcompose.providers.provideHttpClient
 import org.macpry.kmpcompose.providers.provideIODispatcher
+import org.macpry.kmpcompose.repositories.INotesRepository
 import org.macpry.kmpcompose.repositories.NotesRepository
 import org.macpry.kmpcompose.repositories.SettingsRepository
 import org.macpry.kmpcompose.screens.main.MainViewModel
@@ -50,6 +53,7 @@ val providersModule = module {
     single<CoroutineDispatcher>(named(KMPDispatchers.DEFAULT)) { provideDefaultDispatcher() }
     single<CoroutineDispatcher>(named(KMPDispatchers.IO)) { provideIODispatcher() }
     single<ITimeProvider> { TimeProvider(get(named(KMPDispatchers.IO))) }
+    factoryOf(::KMPLogger) bind IKMPLogger::class
 }
 
 val managersModule = module {
@@ -57,7 +61,7 @@ val managersModule = module {
 }
 
 val repositoriesModule = module {
-    factoryOf(::NotesRepository)
+    factoryOf(::NotesRepository) bind INotesRepository::class
     factoryOf(::SettingsRepository)
 }
 
