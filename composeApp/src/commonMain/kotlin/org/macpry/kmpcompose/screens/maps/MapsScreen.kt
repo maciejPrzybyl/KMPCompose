@@ -10,6 +10,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import org.macpry.kmpcompose.screens.maps.model.Coordinates
 
 @Composable
@@ -24,6 +25,7 @@ fun MapsScreen(
             Modifier
                 .align(Alignment.TopStart)
                 .statusBarsPadding()
+                .testTag(MapsScreenTags.BACK_BUTTON)
         ) {
             Icon(Icons.AutoMirrored.Default.ArrowBack, null)
         }
@@ -32,3 +34,7 @@ fun MapsScreen(
 
 @Composable
 expect fun Map(coordinates: Coordinates)
+
+object MapsScreenTags {
+    const val BACK_BUTTON = "BACK_BUTTON"
+}
