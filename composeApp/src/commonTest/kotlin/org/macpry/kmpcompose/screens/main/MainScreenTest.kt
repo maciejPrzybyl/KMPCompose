@@ -47,6 +47,7 @@ class MainScreenTest {
 
         onNodeWithTag(MainScreenTags.OPEN_MAPS_BUTTON).run {
             assertIsEnabled()
+            assertTextEquals("Open in maps")
 
             onNodeWithTag(MainScreenTags.COORDINATE_INPUT_LAT).performTextInput("100")
             assertIsNotEnabled()

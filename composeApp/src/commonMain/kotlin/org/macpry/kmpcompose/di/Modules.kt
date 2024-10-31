@@ -7,6 +7,7 @@ import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.core.qualifier.named
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.macpry.kmpcompose.data.ITimeProvider
 import org.macpry.kmpcompose.data.TimeProvider
@@ -15,6 +16,7 @@ import org.macpry.kmpcompose.data.local.SettingsLocalData
 import org.macpry.kmpcompose.data.network.INetworkData
 import org.macpry.kmpcompose.data.network.NetworkData
 import org.macpry.kmpcompose.managers.AppManager
+import org.macpry.kmpcompose.managers.IAppManager
 import org.macpry.kmpcompose.providers.KMPDispatchers
 import org.macpry.kmpcompose.providers.provideDefaultDispatcher
 import org.macpry.kmpcompose.providers.provideHttpClient
@@ -51,7 +53,7 @@ val providersModule = module {
 }
 
 val managersModule = module {
-    factoryOf(::AppManager)
+    factoryOf(::AppManager) bind IAppManager::class
 }
 
 val repositoriesModule = module {
