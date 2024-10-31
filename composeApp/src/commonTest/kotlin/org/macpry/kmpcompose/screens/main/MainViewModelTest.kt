@@ -3,90 +3,91 @@ package org.macpry.kmpcompose.screens.main
 import app.cash.turbine.test
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDateTime
-import org.koin.core.component.get
-import org.koin.core.context.startKoin
-import org.koin.core.context.stopKoin
-import org.koin.core.module.dsl.factoryOf
-import org.koin.core.module.dsl.singleOf
-import org.koin.core.module.dsl.viewModelOf
-import org.koin.dsl.module
-import org.koin.test.KoinTest
-import org.macpry.kmpcompose.data.ITimeProvider
-import org.macpry.kmpcompose.data.network.INetworkData
 import org.macpry.kmpcompose.data.network.ImageResponse
-import org.macpry.kmpcompose.managers.AppManager
+import org.macpry.kmpcompose.managers.IAppManager
+import org.macpry.kmpcompose.screens.main.MainViewModelTest.FakeAppManager.Companion.fakeImage
+import org.macpry.kmpcompose.screens.main.MainViewModelTest.FakeAppManager.Companion.fakeTime1
+import org.macpry.kmpcompose.screens.main.MainViewModelTest.FakeAppManager.Companion.fakeTime2
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class MainViewModelTest : KoinTest {
-
-    private lateinit var viewModel: MainViewModel
-
-    private val testModule = module {
-        singleOf<ITimeProvider>(MainViewModelTest::FakeTimeProvider)
-        factoryOf<INetworkData>(MainViewModelTest::FakeNetworkData)
-        factoryOf(::AppManager)
-        viewModelOf(::MainViewModel)
-    }
+class MainViewModelTest {
 
     @BeforeTest
     fun setUp() {
-        startKoin {
-            modules(testModule)
-        }
         Dispatchers.setMain(StandardTestDispatcher())
-        viewModel = get()
     }
 
     @AfterTest
     fun tearDown() {
-        stopKoin()
         Dispatchers.resetMain()
     }
 
     @Test
-    fun fetchImagesOnInit() = runTest {
-        assertEquals(listOf(FakeNetworkData.fakeImage), viewModel.images)
+    fun fetchImagesSuccessfully() = runTest {
+        val viewModel = createViewModel(Result.success(listOf(fakeImage)), 1)
+
+        viewModel.state.test {
+            assertEquals(MainState(null, ImagesState.Init), awaitItem())
+            assertEquals(MainState(fakeTime1.toString(), ImagesState.Loading), awaitItem())
+            assertEquals(
+                MainState(fakeTime1.toString(), ImagesState.Success(listOf(fakeImage))), awaitItem()
+            )
+            assertEquals(
+                MainState(fakeTime2.toString(), ImagesState.Success(listOf(fakeImage))), awaitItem()
+            )
+        }
     }
 
     @Test
-    fun getCurrentTime() = runTest {
+    fun fetchImagesError() = runTest {
+        val exception = Exception("Exxx")
+        val viewModel = createViewModel(Result.failure(exception), 3)
+
         viewModel.state.test {
-            assertEquals(MainState(null), awaitItem())
-            assertEquals(MainState(FakeTimeProvider.fakeTime.toString()), awaitItem())
+            assertEquals(MainState(null, ImagesState.Init), awaitItem())
+            assertEquals(MainState(fakeTime1.toString(), ImagesState.Loading), awaitItem())
+            assertEquals(MainState(fakeTime2.toString(), ImagesState.Loading), awaitItem())
+            assertEquals(
+                MainState(fakeTime2.toString(), ImagesState.Error(exception)), awaitItem()
+            )
         }
     }
 
-    class FakeTimeProvider : ITimeProvider {
+    private fun createViewModel(fetchImagesResult: Result<List<ImageResponse>>, imagesDelay: Long) =
+        MainViewModel(FakeAppManager(fetchImagesResult, imagesDelay))
 
-        override fun currentDateTime(): Flow<LocalDateTime> {
-            return flowOf(fakeTime)
+    class FakeAppManager(
+        private val fetchImagesResult: Result<List<ImageResponse>>,
+        private val imagesDelay: Long
+    ) : IAppManager {
+        override fun timeFlow(): Flow<LocalDateTime> = flow {
+            emit(fakeTime1)
+            delay(2)
+            emit(fakeTime2)
+        }
+
+        override suspend fun fetchImages(): Result<List<ImageResponse>> {
+            delay(imagesDelay)
+            return fetchImagesResult
         }
 
         companion object {
-            val fakeTime = LocalDateTime(2024, 12, 31, 23, 59)
-        }
-    }
+            val fakeTime1 = LocalDateTime(2024, 12, 31, 23, 58)
+            val fakeTime2 = LocalDateTime(2024, 12, 31, 23, 59)
 
-    class FakeNetworkData : INetworkData {
-
-        override suspend fun getImages(): List<ImageResponse> {
-            return listOf(fakeImage)
-        }
-
-        companion object {
             val fakeImage = ImageResponse(31, "aaa", "auuu")
         }
     }
-
 }
