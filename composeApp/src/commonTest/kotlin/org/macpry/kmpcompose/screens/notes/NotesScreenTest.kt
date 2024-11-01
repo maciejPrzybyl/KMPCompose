@@ -17,6 +17,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.runComposeUiTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalTestApi::class)
 class NotesScreenTest {
@@ -25,7 +26,7 @@ class NotesScreenTest {
     fun displayNotesScreen() = runComposeUiTest {
         val state = mutableStateOf(NotesState(listOf("n1")))
         setContent {
-            NotesScreen(state.value, { })
+            NotesScreen(state.value, mutableStateOf("" to false), {}, {})
         }
         onNodeWithTag(NotesScreenTags.NOTE_INPUT, true)
             .assertIsNotFocused()
@@ -38,27 +39,7 @@ class NotesScreenTest {
                 it.assertCountEquals(1)
                 it[0].onChild().assertTextEquals("n1")
             }
-    }
 
-    @Test
-    fun saveNoteOnButtonClick() = runComposeUiTest {
-        val state = mutableStateOf(NotesState(listOf("n1")))
-        var textToSave: String? = null
-        setContent {
-            NotesScreen(state.value, { textToSave = it })
-        }
-
-        onNodeWithTag(NotesScreenTags.NOTE_INPUT).let {
-            it.performTextInput("n2")
-            it.assertIsFocused()
-        }
-        onNodeWithTag(NotesScreenTags.DONE_BUTTON)
-            .assertIsEnabled()
-            .performClick()
-        onNodeWithTag(NotesScreenTags.NOTE_INPUT, true)
-            .assertIsNotFocused()
-            .assertTextEquals("")
-        assertEquals("n2", textToSave)
         state.value = NotesState(listOf("n1", "n2"))
         onNodeWithTag(NotesScreenTags.NOTES_LIST)
             .onChildren().let {
@@ -69,17 +50,53 @@ class NotesScreenTest {
     }
 
     @Test
-    fun saveNoteOnImeDone() = runComposeUiTest {
-        var textToSave: String? = null
+    fun saveNoteOnButtonClick() = runComposeUiTest {
+        val state = mutableStateOf(NotesState(listOf("n1")))
+        val inputState = mutableStateOf("" to false)
+        var textToUpdate: String? = null
+        var saveNoteTriggered = false
         setContent {
-            NotesScreen(NotesState(emptyList()), { textToSave = it })
+            NotesScreen(
+                state.value,
+                inputState,
+                { textToUpdate = it },
+                { saveNoteTriggered = true })
+        }
+
+        onNodeWithTag(NotesScreenTags.NOTE_INPUT).let {
+            it.performTextInput("n2")
+            assertEquals("n2", textToUpdate)
+            it.assertIsFocused()
+        }
+        inputState.value = "n2" to true
+        onNodeWithTag(NotesScreenTags.DONE_BUTTON)
+            .assertIsEnabled()
+            .performClick()
+        assertTrue(saveNoteTriggered)
+        onNodeWithTag(NotesScreenTags.NOTE_INPUT)
+            .assertIsNotFocused()
+    }
+
+    @Test
+    fun saveNoteOnImeDone() = runComposeUiTest {
+        val state = mutableStateOf(NotesState(emptyList()))
+        val inputState = mutableStateOf("" to false)
+        var textToUpdate: String? = null
+        var saveNoteTriggered = false
+        setContent {
+            NotesScreen(
+                state.value,
+                inputState,
+                { textToUpdate = it },
+                { saveNoteTriggered = true })
         }
 
         onNodeWithTag(NotesScreenTags.NOTE_INPUT).let {
             it.performTextInput("n3")
+            assertEquals("n3", textToUpdate)
             it.performImeAction()
+            assertTrue(saveNoteTriggered)
         }
-        assertEquals("n3", textToSave)
     }
 
 }

@@ -145,6 +145,8 @@ private fun HomeNavigation(
                 val notesState by notesViewModel.notesState.collectAsStateWithLifecycle()
                 NotesScreen(
                     notesState,
+                    notesViewModel.inputState,
+                    notesViewModel::updateInput,
                     notesViewModel::saveNote
                 )
             }
