@@ -7,6 +7,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -59,19 +60,13 @@ class NotesViewModelTest {
     @Test
     fun saveNoteError() = runTest {
         val exception = Exception("Save error")
-        val notesFlow = MutableStateFlow<List<Note>>(emptyList())
-        val viewModel = NotesViewModel(FakeNotesRepository(exception, notesFlow))
+        val viewModel =
+            NotesViewModel(FakeNotesRepository(exception, MutableStateFlow(emptyList())))
 
-        viewModel.notesState.test {
-            assertEquals(NotesState(emptyList()), awaitItem())
-
-            val note = Note("bb")
-            notesFlow.emit(listOf(note))
-            assertEquals(NotesState(listOf(note.content)), awaitItem())
-
+        viewModel.error.test {
             viewModel.updateInput("Will fail")
             viewModel.saveNote()
-            //assertEquals(InputState("Will fail", true, true), viewModel.inputState.value)
+            assertEquals(exception, awaitItem())
         }
     }
 
@@ -80,11 +75,12 @@ class NotesViewModelTest {
         val viewModel =
             NotesViewModel(FakeNotesRepository(null, MutableStateFlow(emptyList())))
 
-        viewModel.notesState.test {
-            assertEquals(NotesState(emptyList()), awaitItem())
-
+        viewModel.error.test {
+            viewModel.updateInput("Will succeed")
             viewModel.saveNote()
-            assertEquals(NotesState(emptyList()), awaitItem())
+            advanceUntilIdle()
+            assertEquals("" to false, viewModel.inputState.value)
+            expectNoEvents()
         }
     }
 

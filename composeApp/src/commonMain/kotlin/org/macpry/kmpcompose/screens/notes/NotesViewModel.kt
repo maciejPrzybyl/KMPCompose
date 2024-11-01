@@ -3,7 +3,9 @@ package org.macpry.kmpcompose.screens.notes
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -29,13 +31,15 @@ class NotesViewModel(
         NotesState(emptyList())
     )
 
+    private val _error = MutableSharedFlow<Throwable>(extraBufferCapacity = 1)
+    val error = _error.asSharedFlow()
+
     internal fun saveNote() = viewModelScope.launch {
-        notesRepository.saveNote("aa"/*inputState.value.first*/)
+        notesRepository.saveNote(inputState.value.first)
             .onSuccess {
-                //InputState("", false, false)
-            }
-            .onFailure {
-                //inputState.value = inputState.value.copy(error = true)
+                inputState.value = "" to false
+            }.onFailure {
+                _error.emit(it)
             }
     }
 }
