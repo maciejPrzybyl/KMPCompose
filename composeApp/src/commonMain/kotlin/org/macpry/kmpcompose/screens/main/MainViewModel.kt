@@ -2,11 +2,10 @@ package org.macpry.kmpcompose.screens.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import org.macpry.kmpcompose.data.network.ImageResponse
 import org.macpry.kmpcompose.managers.IAppManager
 
@@ -14,24 +13,18 @@ class MainViewModel(
     private val appManager: IAppManager
 ) : ViewModel() {
 
-    private val imagesState = MutableStateFlow<ImagesState>(ImagesState.Init)
-
-    init {
-        fetchImages()
-    }
-
-    private fun fetchImages() = viewModelScope.launch {
-        imagesState.value = ImagesState.Loading
+    private fun fetchImages() = flow {
+        emit(ImagesState.Loading)
         appManager.fetchImages()
             .onSuccess {
-                imagesState.value = ImagesState.Success(it)
+                emit(ImagesState.Success(it))
             }.onFailure {
                 println(it)
-                imagesState.value = ImagesState.Error(it)
+                emit(ImagesState.Error(it))
             }
     }
 
-    internal val state = appManager.timeFlow().combine(imagesState) { time, images ->
+    internal val state = appManager.timeFlow().combine(fetchImages()) { time, images ->
         MainState(time.toString(), images)
     }.stateIn(
         viewModelScope,
