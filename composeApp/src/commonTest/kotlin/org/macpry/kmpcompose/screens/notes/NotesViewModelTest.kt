@@ -35,11 +35,42 @@ class NotesViewModelTest {
         val viewModel = NotesViewModel(FakeNotesRepository(null, notesFlow))
 
         viewModel.notesState.test {
-            assertEquals(NotesState(emptyList()), awaitItem())
+            assertEquals(NotesState(emptyList(), null), awaitItem())
 
             val note = Note("aaaa")
             notesFlow.emit(listOf(note))
-            assertEquals(NotesState(listOf(note.content)), awaitItem())
+            assertEquals(NotesState(listOf(note.content), null), awaitItem())
+        }
+    }
+
+    @Test
+    fun saveNoteError() = runTest {
+        val exception = Exception("Save error")
+        val notesFlow = MutableStateFlow<List<Note>>(emptyList())
+        val viewModel = NotesViewModel(FakeNotesRepository(exception, notesFlow))
+
+        viewModel.notesState.test {
+            assertEquals(NotesState(emptyList(), null), awaitItem())
+
+            val note = Note("bb")
+            notesFlow.emit(listOf(note))
+            assertEquals(NotesState(listOf(note.content), null), awaitItem())
+
+            viewModel.saveNote("Will fail")
+            assertEquals(NotesState(listOf(note.content), SaveState.Error(exception)), awaitItem())
+        }
+    }
+
+    @Test
+    fun saveNoteSuccess() = runTest {
+        val viewModel =
+            NotesViewModel(FakeNotesRepository(null, MutableStateFlow(emptyList())))
+
+        viewModel.notesState.test {
+            assertEquals(NotesState(emptyList(), null), awaitItem())
+
+            viewModel.saveNote("Will succeed")
+            assertEquals(NotesState(emptyList(), SaveState.Success), awaitItem())
         }
     }
 
