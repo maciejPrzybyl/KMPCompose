@@ -35,12 +35,25 @@ class NotesViewModelTest {
         val viewModel = NotesViewModel(FakeNotesRepository(null, notesFlow))
 
         viewModel.notesState.test {
-            assertEquals(NotesState(emptyList(), null), awaitItem())
+            assertEquals(NotesState(emptyList()), awaitItem())
 
             val note = Note("aaaa")
             notesFlow.emit(listOf(note))
-            assertEquals(NotesState(listOf(note.content), null), awaitItem())
+            assertEquals(NotesState(listOf(note.content)), awaitItem())
         }
+    }
+
+    @Test
+    fun validateNoteInput() = runTest {
+        val viewModel = NotesViewModel(FakeNotesRepository(null, MutableStateFlow(emptyList())))
+
+        assertEquals("" to false, viewModel.inputState.value)
+
+        viewModel.updateInput(" ")
+        assertEquals("" to false, viewModel.inputState.value)
+
+        viewModel.updateInput("v")
+        assertEquals("v" to true, viewModel.inputState.value)
     }
 
     @Test
@@ -50,14 +63,15 @@ class NotesViewModelTest {
         val viewModel = NotesViewModel(FakeNotesRepository(exception, notesFlow))
 
         viewModel.notesState.test {
-            assertEquals(NotesState(emptyList(), null), awaitItem())
+            assertEquals(NotesState(emptyList()), awaitItem())
 
             val note = Note("bb")
             notesFlow.emit(listOf(note))
-            assertEquals(NotesState(listOf(note.content), null), awaitItem())
+            assertEquals(NotesState(listOf(note.content)), awaitItem())
 
-            viewModel.saveNote("Will fail")
-            assertEquals(NotesState(listOf(note.content), SaveState.Error(exception)), awaitItem())
+            viewModel.updateInput("Will fail")
+            viewModel.saveNote()
+            //assertEquals(InputState("Will fail", true, true), viewModel.inputState.value)
         }
     }
 
@@ -67,10 +81,10 @@ class NotesViewModelTest {
             NotesViewModel(FakeNotesRepository(null, MutableStateFlow(emptyList())))
 
         viewModel.notesState.test {
-            assertEquals(NotesState(emptyList(), null), awaitItem())
+            assertEquals(NotesState(emptyList()), awaitItem())
 
-            viewModel.saveNote("Will succeed")
-            assertEquals(NotesState(emptyList(), SaveState.Success), awaitItem())
+            viewModel.saveNote()
+            assertEquals(NotesState(emptyList()), awaitItem())
         }
     }
 

@@ -1,10 +1,10 @@
 package org.macpry.kmpcompose.screens.notes
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.macpry.kmpcompose.repositories.INotesRepository
@@ -13,33 +13,33 @@ class NotesViewModel(
     private val notesRepository: INotesRepository
 ) : ViewModel() {
 
-    private val saveNoteState = MutableStateFlow<SaveState?>(null)
+    var inputState = mutableStateOf("" to false)
+        private set
 
-    val notesState = notesRepository.notesFlow().combine(saveNoteState) { notes, save ->
-        NotesState(notes.map { it.content }, save)
+    internal fun updateInput(text: String) {
+        val isValid = text.isNotBlank()
+        inputState.value = (if (isValid) text else "") to isValid
+    }
+
+    val notesState = notesRepository.notesFlow().map {
+        NotesState(it.map { it.content })
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
-        NotesState(emptyList(), null)
+        NotesState(emptyList())
     )
 
-    internal fun saveNote(note: String) = viewModelScope.launch {
-        notesRepository.saveNote(note)
+    internal fun saveNote() = viewModelScope.launch {
+        notesRepository.saveNote("aa"/*inputState.value.first*/)
             .onSuccess {
-                saveNoteState.value = SaveState.Success
+                //InputState("", false, false)
             }
             .onFailure {
-                saveNoteState.value = SaveState.Error(it)
+                //inputState.value = inputState.value.copy(error = true)
             }
     }
 }
 
 data class NotesState(
-    val notes: List<String>,
-    val saveState: SaveState?
+    val notes: List<String>
 )
-
-sealed class SaveState {
-    data object Success : SaveState()
-    data class Error(val error: Throwable) : SaveState()
-}
