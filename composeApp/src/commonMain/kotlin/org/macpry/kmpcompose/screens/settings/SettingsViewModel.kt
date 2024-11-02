@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.macpry.kmpcompose.repositories.SettingsRepository
+import org.macpry.kmpcompose.repositories.ISettingsRepository
 
 class SettingsViewModel(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: ISettingsRepository
 ) : ViewModel() {
 
     val settingsState = settingsRepository.settingsFlow.map {

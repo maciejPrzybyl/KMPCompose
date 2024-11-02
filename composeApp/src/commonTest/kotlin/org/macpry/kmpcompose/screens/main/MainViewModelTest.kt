@@ -72,7 +72,7 @@ class MainViewModelTest {
         private val fetchImagesResult: Result<List<ImageResponse>>,
         private val imagesDelay: Long
     ) : IAppManager {
-        override fun timeFlow(): Flow<LocalDateTime> = flow {
+        override val timeFlow: Flow<LocalDateTime> = flow {
             emit(fakeTime1)
             delay(2)
             emit(fakeTime2)

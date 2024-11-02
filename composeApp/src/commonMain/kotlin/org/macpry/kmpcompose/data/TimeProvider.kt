@@ -12,14 +12,14 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Duration.Companion.seconds
 
 interface ITimeProvider {
-    fun currentDateTime(): Flow<LocalDateTime>
+    val currentDateTime: Flow<LocalDateTime>
 }
 
 class TimeProvider(
     private val ioDispatcher: CoroutineDispatcher
 ) : ITimeProvider {
 
-    override fun currentDateTime() = flow {
+    override val currentDateTime = flow {
         while (true) {
             emit(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()))
             delay(1.seconds)

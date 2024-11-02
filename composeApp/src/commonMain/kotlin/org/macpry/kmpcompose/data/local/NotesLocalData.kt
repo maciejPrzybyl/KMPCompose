@@ -15,6 +15,6 @@ class NotesLocalData(
         kmpDatabase.noteDao().insert(Note(content = note))
     }
 
-    fun notesFlow() = kmpDatabase.noteDao().getAll()
+    val notesFlow = kmpDatabase.noteDao().getAll()
         .flowOn(ioDispatcher)
 }

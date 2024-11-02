@@ -8,7 +8,7 @@ import org.macpry.kmpcompose.logger.IKMPLogger
 
 interface INotesRepository {
     suspend fun saveNote(note: String): Result<Unit>
-    fun notesFlow(): Flow<List<Note>>
+    val notesFlow: Flow<List<Note>>
 }
 
 class NotesRepository(
@@ -20,7 +20,7 @@ class NotesRepository(
         notesLocalData.saveNote(note)
     }
 
-    override fun notesFlow() = notesLocalData.notesFlow().catch {
+    override val notesFlow = notesLocalData.notesFlow.catch {
         logger.logError(it)
     }
 

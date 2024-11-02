@@ -86,11 +86,11 @@ class NotesViewModelTest {
 
     class FakeNotesRepository(
         private val saveResultException: Exception?,
-        private val notesFlow: MutableStateFlow<List<Note>>
+        fakeNotesFlow: MutableStateFlow<List<Note>>
     ) : INotesRepository {
         override suspend fun saveNote(note: String) =
             saveResultException?.let { Result.failure(it) } ?: Result.success(Unit)
 
-        override fun notesFlow(): Flow<List<Note>> = notesFlow
+        override val notesFlow: Flow<List<Note>> = fakeNotesFlow
     }
 }

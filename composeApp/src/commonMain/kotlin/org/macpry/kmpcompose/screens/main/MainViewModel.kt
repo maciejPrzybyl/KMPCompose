@@ -24,7 +24,7 @@ class MainViewModel(
             }
     }
 
-    internal val state = appManager.timeFlow().combine(fetchImages()) { time, images ->
+    internal val state = appManager.timeFlow.combine(fetchImages()) { time, images ->
         MainState(time.toString(), images)
     }.stateIn(
         viewModelScope,

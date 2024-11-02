@@ -23,7 +23,7 @@ class NotesViewModel(
         inputState.value = (if (isValid) text else "") to isValid
     }
 
-    val notesState = notesRepository.notesFlow().map {
+    val notesState = notesRepository.notesFlow.map {
         NotesState(it.map { it.content })
     }.stateIn(
         viewModelScope,

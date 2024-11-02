@@ -8,7 +8,7 @@ import org.macpry.kmpcompose.data.network.INetworkData
 import org.macpry.kmpcompose.data.network.ImageResponse
 
 interface IAppManager {
-    fun timeFlow(): Flow<LocalDateTime>
+    val timeFlow: Flow<LocalDateTime>
     suspend fun fetchImages(): Result<List<ImageResponse>>
 }
 
@@ -17,7 +17,7 @@ class AppManager(
     private val networkData: INetworkData
 ) : IAppManager {
 
-    override fun timeFlow() = timeProvider.currentDateTime().catch {
+    override val timeFlow = timeProvider.currentDateTime.catch {
         println(it)
     }
 
