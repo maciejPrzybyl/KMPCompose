@@ -42,6 +42,18 @@ class SettingsViewModelTest {
         }
     }
 
+    @Test
+    fun saveSettingsError() = runTest {
+        val exception = Exception("Save error")
+        val viewModel =
+            SettingsViewModel(FakeSettingsRepository(exception, MutableStateFlow(emptyList())))
+
+        viewModel.error.test {
+            viewModel.saveSetting(666)
+            assertEquals(exception, awaitItem())
+        }
+    }
+
     class FakeSettingsRepository(
         private val saveResultException: Exception?,
         fakeSettingsFlow: MutableStateFlow<List<Pair<Int, Boolean>>>

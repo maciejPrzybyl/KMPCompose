@@ -2,7 +2,9 @@ package org.macpry.kmpcompose.screens.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -20,10 +22,13 @@ class SettingsViewModel(
         SettingsState(emptyList())
     )
 
+    private val _error = MutableSharedFlow<Throwable>(extraBufferCapacity = 1)
+    val error = _error.asSharedFlow()
+
     internal fun saveSetting(value: Int) = viewModelScope.launch {
         settingsRepository.saveSetting(value)
             .onFailure {
-                println(it)
+                _error.emit(it)
             }
     }
 }
