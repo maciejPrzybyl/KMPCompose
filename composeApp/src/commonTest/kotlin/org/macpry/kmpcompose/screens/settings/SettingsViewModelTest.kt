@@ -43,7 +43,7 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun saveSettingsError() = runTest {
+    fun saveSettingError() = runTest {
         val exception = Exception("Save error")
         val viewModel =
             SettingsViewModel(FakeSettingsRepository(exception, MutableStateFlow(emptyList())))
@@ -51,6 +51,17 @@ class SettingsViewModelTest {
         viewModel.error.test {
             viewModel.saveSetting(666)
             assertEquals(exception, awaitItem())
+        }
+    }
+
+    @Test
+    fun saveSettingSuccess() = runTest {
+        val viewModel =
+            SettingsViewModel(FakeSettingsRepository(null, MutableStateFlow(emptyList())))
+
+        viewModel.error.test {
+            viewModel.saveSetting(333)
+            expectNoEvents()
         }
     }
 
