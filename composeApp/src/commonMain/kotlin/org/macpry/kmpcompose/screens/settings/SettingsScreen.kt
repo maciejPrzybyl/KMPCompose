@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -25,7 +26,8 @@ fun SettingsScreen(
     LazyColumn(
         Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(24.dp)
+            .testTag(SettingsScreenTags.ITEMS_CONTAINER),
         verticalArrangement = Arrangement.spacedBy(6.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -38,10 +40,15 @@ fun SettingsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
-                    it.second, { }
+                    selected = it.second,
+                    onClick = null
                 )
                 Text(it.first.toString())
             }
         }
     }
+}
+
+object SettingsScreenTags {
+    const val ITEMS_CONTAINER = "ITEMS_CONTAINER"
 }
