@@ -40,3 +40,10 @@ jobs:
       with:
         name: Kover report
         path: composeApp/build/reports/kover/htmlJvm/index.html
+        
+    - name: Print Kover Html Report
+      id: html_preview
+      uses: pavi2410/html-preview-action@v4
+      with: 
+        html_file: 'composeApp/build/reports/kover/htmlJvm/index.html'
+        job_summary: true
