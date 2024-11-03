@@ -34,8 +34,9 @@ jobs:
 
     - name: Generate Kover Html Report
       run: ./gradlew composeApp:koverHtmlReportJvm
+      
     - name: Upload Kover Html Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: code-coverage.xml
-          path: composeApp/build/reports/kover/htmlJvm/index.html
+    - uses: actions/upload-artifact@v4
+      with:
+        name: Kover report
+        path: composeApp/build/reports/kover/htmlJvm/index.html
