@@ -33,17 +33,19 @@ jobs:
       uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
     - name: Generate Kover Html Report
-      run: ./gradlew composeApp:koverHtmlReportJvm
+      run: ./gradlew composeApp:koverXmlReportJvm
       
-    - name: Upload Kover Html Report
-      uses: actions/upload-artifact@v4
+    #- name: Upload Kover Html Report
+     # uses: actions/upload-artifact@v4
+      #with:
+       # name: Kover report
+        #path: composeApp/build/reports/kover/htmlJvm/index.html
+    
+
+    - name: Code Coverage Summary Report
+      uses: irongut/CodeCoverageSummary@v1.3.0
       with:
-        name: Kover report
-        path: composeApp/build/reports/kover/htmlJvm/index.html
-        
-    - name: Print Kover Html Report
-      id: html_preview
-      uses: pavi2410/html-preview-action@v4
-      with: 
-        html_file: 'composeApp/build/reports/kover/htmlJvm/index.html'
-        job_summary: true
+        filename: 'composeApp/build/reports/kover/reportJvm.xml'
+        badge: true
+        format: 'markdown'
+        output: 'both'
