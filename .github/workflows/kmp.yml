@@ -45,7 +45,7 @@ jobs:
     - name: Code Coverage Summary Report
       uses: irongut/CodeCoverageSummary@v1.3.0
       with:
-        filename: composeApp/build/reports/kover/reportJvm.xml
+        filename: /**/reportJvm.xml
         badge: true
         format: 'markdown'
         output: 'both'
