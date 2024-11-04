@@ -18,6 +18,8 @@ class NotesRepository(
 
     override suspend fun saveNote(note: String) = runCatching {
         notesLocalData.saveNote(note)
+    }.onFailure {
+        logger.logError(it)
     }
 
     override val notesFlow = notesLocalData.notesFlow.catch {

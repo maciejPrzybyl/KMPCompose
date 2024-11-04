@@ -15,6 +15,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class NotesRepositoryTest {
@@ -31,22 +32,24 @@ class NotesRepositoryTest {
 
     @Test
     fun saveNoteError() = runTest {
+        var exceptionConsumed: Boolean = false
         val exception = Exception("Errr")
         val repository = NotesRepository(
             FakeNotesLocalData({ throw exception }, MutableStateFlow(emptyList())),
-            FakeKMPLogger()
+            FakeKMPLogger { exceptionConsumed = true }
         )
 
         val result = repository.saveNote("aa")
 
         assertEquals(Result.failure(exception), result)
+        assertTrue(exceptionConsumed)
     }
 
     @Test
     fun saveNoteSuccess() = runTest {
         val repository = NotesRepository(
             FakeNotesLocalData({ }, MutableStateFlow(emptyList())),
-            FakeKMPLogger()
+            FakeKMPLogger({})
         )
 
         val result = repository.saveNote("bb")
@@ -66,10 +69,10 @@ class NotesRepositoryTest {
         }
     }
 
-    class FakeKMPLogger : IKMPLogger {
+    class FakeKMPLogger(private val exceptionConsumed: () -> Unit) : IKMPLogger {
 
         override fun logError(exception: Throwable) {
-            TODO("Not yet implemented")
+            exceptionConsumed()
         }
     }
 }
