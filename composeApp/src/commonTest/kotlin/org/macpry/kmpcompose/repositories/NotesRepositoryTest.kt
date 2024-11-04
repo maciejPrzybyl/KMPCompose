@@ -42,6 +42,18 @@ class NotesRepositoryTest {
         assertEquals(Result.failure(exception), result)
     }
 
+    @Test
+    fun saveNoteSuccess() = runTest {
+        val repository = NotesRepository(
+            FakeNotesLocalData({ }, MutableStateFlow(emptyList())),
+            FakeKMPLogger()
+        )
+
+        val result = repository.saveNote("bb")
+
+        assertEquals(Result.success(Unit), result)
+    }
+
     class FakeNotesLocalData(
         private val saveNoteAction: () -> Unit,
         fakeNotesFlow: Flow<List<Note>>
