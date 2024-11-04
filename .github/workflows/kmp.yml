@@ -26,14 +26,10 @@ jobs:
       uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
     - name: Generate Kover Html Report
-      run: ./gradlew composeApp:koverXmlReportJvm
+      run: ./gradlew composeApp:koverHtmlReportJvm
       
-    #- name: Upload Kover Html Report
-     # uses: actions/upload-artifact@v4
-      #with:
-       # name: Kover report
-        #path: composeApp/build/reports/kover/htmlJvm/index.html
-
-    - name: Write to Job Summary
-      run: cat composeApp/build/reports/kover/htmlJvm/index.html >> $GITHUB_STEP_SUMMARY
-      
+    - name: Upload Kover Html Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: Kover report
+        path: composeApp/build/reports/kover/htmlJvm/index.html
