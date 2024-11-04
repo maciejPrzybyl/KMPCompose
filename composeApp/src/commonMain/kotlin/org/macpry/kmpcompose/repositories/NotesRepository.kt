@@ -3,7 +3,7 @@ package org.macpry.kmpcompose.repositories
 import com.macpry.database.Note
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import org.macpry.kmpcompose.data.local.NotesLocalData
+import org.macpry.kmpcompose.data.local.INotesLocalData
 import org.macpry.kmpcompose.logger.IKMPLogger
 
 interface INotesRepository {
@@ -12,7 +12,7 @@ interface INotesRepository {
 }
 
 class NotesRepository(
-    private val notesLocalData: NotesLocalData,
+    private val notesLocalData: INotesLocalData,
     private val logger: IKMPLogger
 ) : INotesRepository {
 

@@ -11,6 +11,7 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.macpry.kmpcompose.data.ITimeProvider
 import org.macpry.kmpcompose.data.TimeProvider
+import org.macpry.kmpcompose.data.local.INotesLocalData
 import org.macpry.kmpcompose.data.local.NotesLocalData
 import org.macpry.kmpcompose.data.local.SettingsLocalData
 import org.macpry.kmpcompose.data.network.INetworkData
@@ -44,7 +45,7 @@ fun appModule() = module {
 }
 
 val dataModule = module {
-    factory { NotesLocalData(get(named(KMPDispatchers.IO)), get()) }
+    factory<INotesLocalData> { NotesLocalData(get(named(KMPDispatchers.IO)), get()) }
     factory<INetworkData> { NetworkData(get(), get(named(KMPDispatchers.IO))) }
     factory { SettingsLocalData(get(named(KMPDispatchers.IO)), get()) }
 }
