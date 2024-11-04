@@ -27,16 +27,16 @@ class SettingsScreenTest {
         ) {
             get(index).onChildren().let { item ->
                 //item[0].run { if (isSelected) assertIsSelected() else assertIsNotSelected() }
-                item[1].assertTextEquals(text)
+                item[0].assertTextEquals(text)
             }
         }
 
         onNodeWithTag(SettingsScreenTags.ITEMS_CONTAINER, true)
             .onChildren().let {
                 it.assertCountEquals(3)
-                /*it.checkItem(0, false, "4")
+                it.checkItem(0, false, "4")
                 it.checkItem(1, true, "7")
-                it.checkItem(2, false, "8")*/
+                it.checkItem(2, false, "8")
             }
     }
 
