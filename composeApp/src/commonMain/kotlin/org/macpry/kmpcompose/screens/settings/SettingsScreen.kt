@@ -36,7 +36,8 @@ fun SettingsScreen(
                 Modifier
                     .fillMaxWidth()
                     .clickable { saveSetting(it.first) }
-                    .background(Color.LightGray),
+                    .background(Color.LightGray)
+                    .testTag(SettingsScreenTags.ITEM),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
@@ -51,4 +52,5 @@ fun SettingsScreen(
 
 object SettingsScreenTags {
     const val ITEMS_CONTAINER = "ITEMS_CONTAINER"
+    const val ITEM = "ITEM"
 }
