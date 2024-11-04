@@ -1,9 +1,9 @@
 name: Generate Kover Report
 on:
   push:
-    branches: [ "9-unit-tests" ]
+    branches:
+      - develop
   pull_request:
-    branches: [ "develop" ]
 
 jobs:
   build:
