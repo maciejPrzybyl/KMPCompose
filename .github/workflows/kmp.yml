@@ -28,12 +28,16 @@ jobs:
     - name: Generate Kover Xml Report
       run: ./gradlew composeApp:koverXmlReportJvm
 
+    - name: Find path
+      run: |
+        echo ${{ github.workspace }} 
+
     - name: Add coverage report to PR
       id: kover
       uses: mi-kas/kover-report@v1
       with:
         path: |
-          ${{ github.workspace }}/KMPCompose/composeApp/build/reports/kover/reportJvm.xml
+          ${{ github.workspace }}/composeApp/build/reports/kover/reportJvm.xml
         title: Code Coverage
         update-comment: true
         min-coverage-overall: 80
