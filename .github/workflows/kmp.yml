@@ -29,14 +29,21 @@ jobs:
     - name: Generate Kover Xml Report
       run: ./gradlew composeApp:koverXmlReportJvm
 
-    - name: Add coverage report to PR
-      id: kover
-      uses: mi-kas/kover-report@v1
-      with:
-        path: |
-          ${{ github.workspace }}/composeApp/build/reports/kover/reportJvm.xml
-        title: Code Coverage
-        update-comment: true
-        min-coverage-overall: 80
-        min-coverage-changed-files: 80
-        coverage-counter-type: INSTRUCTION
+    - name: Print coverage in summary
+      run: |
+        values=$(cat build/reports/kover/project-xml/report.xml | tail -7 | head -5 | grep 'INSTRUCTION' | cut -d ' ' -f 3,4 | sed 's/missed="//;s/" covered="/ /;s/"\/>//')
+        missed=$(<<<$values cut -d ' ' -f 1)
+        covered=$(<<<$values cut -d ' ' -f 2)
+        echo "Coverage $(($covered * 100 / ($covered + $missed)))%" >> $GITHUB_STEP_SUMMARY
+
+#    - name: Add coverage report to PR
+#      id: kover
+#      uses: mi-kas/kover-report@v1
+#      with:
+#        path: |
+#          ${{ github.workspace }}/composeApp/build/reports/kover/reportJvm.xml
+#        title: Code Coverage
+#        update-comment: true
+#        min-coverage-overall: 80
+#        min-coverage-changed-files: 80
+#        coverage-counter-type: INSTRUCTION
