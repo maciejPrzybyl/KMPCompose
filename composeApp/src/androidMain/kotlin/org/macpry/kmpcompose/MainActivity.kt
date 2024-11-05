@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.tooling.preview.Preview
 import org.macpry.kmpcompose.screens.notes.NotesScreen
 import org.macpry.kmpcompose.screens.notes.NotesState
@@ -28,5 +29,5 @@ fun AppAndroidPreview() {
 @Preview(showBackground = true)
 @Composable
 fun NotesScreenPreview() {
-    NotesScreen(NotesState(listOf("sdfh", "opapad")), {})
+    NotesScreen(NotesState(listOf("sdfh", "opapad")), rememberUpdatedState("" to false), {}, {})
 }

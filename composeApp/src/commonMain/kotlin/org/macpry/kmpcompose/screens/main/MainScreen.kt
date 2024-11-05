@@ -18,6 +18,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -31,6 +32,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -40,13 +43,14 @@ import kmpcompose.composeapp.generated.resources.Res
 import kmpcompose.composeapp.generated.resources.compose_multiplatform
 import kmpcompose.composeapp.generated.resources.coordinates_input_latitude
 import kmpcompose.composeapp.generated.resources.coordinates_input_longitude
+import kmpcompose.composeapp.generated.resources.images_load_error
 import kmpcompose.composeapp.generated.resources.open_maps
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.macpry.kmpcompose.Greeting
-import org.macpry.kmpcompose.data.network.NetworkData
-import org.macpry.kmpcompose.screens.MainState
+import org.macpry.kmpcompose.data.network.ImageResponse
+import org.macpry.kmpcompose.ui.colorId
 
 val latRange = -90.0..90.0
 val lngRange = -180.0..180.0
@@ -54,7 +58,6 @@ val lngRange = -180.0..180.0
 @Composable
 fun MainScreen(
     state: MainState,
-    images: List<NetworkData.ImageResponse>,
     onOpenMaps: (Pair<Double, Double>) -> Unit
 ) {
     val greeting = remember { Greeting().greet() }
@@ -64,10 +67,13 @@ fun MainScreen(
         Alignment.CenterHorizontally
     ) {
         Text("Compose: $greeting")
-        Text(state.currentTime.toString())
+        Text(
+            text = state.currentTime.orEmpty(),
+            modifier = Modifier.testTag(MainScreenTags.CURRENT_TIME_TEXT)
+        )
         Spacer(Modifier.height(12.dp))
         CoordinatesView(onOpenMaps)
-        PagerWithIndicator(images)
+        PagerContainer(state.imagesState)
     }
 }
 
@@ -89,7 +95,9 @@ fun CoordinatesView(
         }
 
         CoordinateInput(
-            modifier = Modifier.weight(0.4f),
+            modifier = Modifier
+                .weight(0.4f)
+                .testTag(MainScreenTags.COORDINATE_INPUT_LAT),
             value = latLng.first,
             onChange = { latLng = latLng.copy(first = it) },
             label = Res.string.coordinates_input_latitude,
@@ -103,7 +111,9 @@ fun CoordinatesView(
             onDone = { tryToOpenMaps() }
         )
         TextButton(
-            modifier = Modifier.weight(0.2f),
+            modifier = Modifier
+                .weight(0.2f)
+                .testTag(MainScreenTags.OPEN_MAPS_BUTTON),
             onClick = {
                 tryToOpenMaps()
             },
@@ -127,7 +137,7 @@ fun CoordinateInput(
         value = value.toString(),
         onValueChange = { onChange(it.toDoubleOrNull() ?: 0.0) },
         label = { Text(stringResource(label)) },
-        keyboardOptions = KeyboardOptions.Default.copy(
+        keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Decimal
         ),
         keyboardActions = KeyboardActions(
@@ -138,9 +148,32 @@ fun CoordinateInput(
 }
 
 @Composable
-fun PagerWithIndicator(images: List<NetworkData.ImageResponse>) {
+fun PagerContainer(imagesState: ImagesState) {
+    when (imagesState) {
+        ImagesState.Init -> PagerWithIndicator(
+            listOf(ImageResponse(0, "", "unknown"))
+        )
+
+        ImagesState.Loading -> CircularProgressIndicator(
+            Modifier.testTag(MainScreenTags.PAGER_LOADING)
+        )
+
+        is ImagesState.Error -> Text(
+            text = stringResource(Res.string.images_load_error),
+            modifier = Modifier.testTag(MainScreenTags.PAGER_ERROR)
+        )
+
+        is ImagesState.Success -> PagerWithIndicator(imagesState.images)
+    }
+}
+
+@Composable
+fun PagerWithIndicator(images: List<ImageResponse>) {
     val pagerState = rememberPagerState { images.size }
-    HorizontalPager(pagerState) { page ->
+    HorizontalPager(
+        state = pagerState,
+        modifier = Modifier.testTag(MainScreenTags.PAGER)
+    ) { page ->
         Column(
             Modifier
                 .fillMaxWidth()
@@ -156,14 +189,18 @@ fun PagerWithIndicator(images: List<NetworkData.ImageResponse>) {
                 modifier = Modifier.aspectRatio(ratio = 1.0f),
                 placeholder = painterResource(Res.drawable.compose_multiplatform)
             )
-            Text("${imageData.id} ${imageData.author}")
+            Text(
+                text = "${imageData.id} ${imageData.author}",
+                modifier = Modifier.testTag(MainScreenTags.PAGER_ITEM_DESCRIPTION)
+            )
         }
     }
     Row(
         Modifier
             .wrapContentHeight()
             .fillMaxWidth()
-            .padding(bottom = 8.dp),
+            .padding(bottom = 8.dp)
+            .testTag(MainScreenTags.PAGER_INDICATOR),
         horizontalArrangement = Arrangement.Center
     ) {
         repeat(pagerState.pageCount) { iteration ->
@@ -174,7 +211,23 @@ fun PagerWithIndicator(images: List<NetworkData.ImageResponse>) {
                     .clip(CircleShape)
                     .background(color)
                     .size(16.dp)
+                    .testTag(MainScreenTags.PAGER_INDICATOR_ITEM)
+                    .semantics {
+                        colorId = color
+                    }
             )
         }
     }
+}
+
+object MainScreenTags {
+    const val CURRENT_TIME_TEXT = "CURRENT_TIME_TEXT"
+    const val OPEN_MAPS_BUTTON = "OPEN_MAPS_BUTTON"
+    const val COORDINATE_INPUT_LAT = "COORDINATES_INPUT_LAT"
+    const val PAGER_LOADING = "PAGER_LOADING"
+    const val PAGER_ERROR = "PAGER_ERROR"
+    const val PAGER = "PAGER"
+    const val PAGER_ITEM_DESCRIPTION = "PAGER_ITEM_DESCRIPTION"
+    const val PAGER_INDICATOR = "PAGER_INDICATOR"
+    const val PAGER_INDICATOR_ITEM = "PAGER_INDICATOR_ITEM"
 }

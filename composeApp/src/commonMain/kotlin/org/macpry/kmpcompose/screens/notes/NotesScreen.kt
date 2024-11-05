@@ -14,42 +14,42 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import kmpcompose.composeapp.generated.resources.Res
+import kmpcompose.composeapp.generated.resources.save
+import kmpcompose.composeapp.generated.resources.save_something
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun NotesScreen(
     state: NotesState,
-    saveText: (String) -> Unit
+    inputState: State<Pair<String, Boolean>>,
+    updateInput: (String) -> Unit,
+    saveText: () -> Unit
 ) {
     Column(
         Modifier.fillMaxSize(),
         Arrangement.SpaceEvenly,
         Alignment.CenterHorizontally
     ) {
-        var text by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-            mutableStateOf(TextFieldValue(""))
-        }
         val focusManager = LocalFocusManager.current
 
         fun onDone() {
-            saveText(text.text)
-            text = TextFieldValue("")
+            saveText()
             focusManager.clearFocus()
         }
         TextField(
-            value = text,
-            onValueChange = { text = it },
-            label = { Text("Save something") },
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            value = inputState.value.first,
+            onValueChange = { updateInput(it) },
+            modifier = Modifier.testTag(NotesScreenTags.NOTE_INPUT),
+            label = { Text(stringResource(Res.string.save_something)) },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(
                 onDone = {
                     onDone()
@@ -57,13 +57,16 @@ fun NotesScreen(
             ),
             singleLine = true
         )
-        Button({
-            onDone()
-        }) {
-            Text("Save")
+        Button(
+            onClick = { onDone() },
+            modifier = Modifier.testTag(NotesScreenTags.DONE_BUTTON),
+            enabled = inputState.value.second
+        ) {
+            Text(stringResource(Res.string.save))
         }
 
         LazyColumn(
+            modifier = Modifier.testTag(NotesScreenTags.NOTES_LIST),
             contentPadding = PaddingValues(12.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
@@ -77,4 +80,10 @@ fun NotesScreen(
             }
         }
     }
+}
+
+object NotesScreenTags {
+    const val NOTE_INPUT = "NOTE_INPUT"
+    const val DONE_BUTTON = "DONE_BUTTON"
+    const val NOTES_LIST = "NOTES_LIST"
 }

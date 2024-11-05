@@ -1,18 +1,35 @@
 package org.macpry.kmpcompose.repositories
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import org.macpry.kmpcompose.data.local.SettingsLocalData
+import kotlinx.coroutines.flow.map
+import org.macpry.kmpcompose.data.local.ISettingsLocalData
+import org.macpry.kmpcompose.logger.IKMPLogger
+
+interface ISettingsRepository {
+    val settingsFlow: Flow<List<Pair<Int, Boolean>>>
+    suspend fun saveSetting(value: Int): Result<Unit>
+}
+
+const val SETTINGS_ITEMS_COUNT = 20
 
 class SettingsRepository(
-    private val settingsLocalData: SettingsLocalData
-) {
+    private val settingsLocalData: ISettingsLocalData,
+    private val kmpLogger: IKMPLogger
+) : ISettingsRepository {
 
-    internal suspend fun saveSetting(value: Int) = runCatching {
+    override suspend fun saveSetting(value: Int) = runCatching {
         settingsLocalData.saveSetting(value)
+    }.onFailure {
+        kmpLogger.logError(it)
     }
 
-    internal val settingsFlow = settingsLocalData.settingsFlow.catch {
-        println(it)
+    override val settingsFlow = settingsLocalData.settingsFlow.map { selectedValue ->
+        (1..SETTINGS_ITEMS_COUNT).map {
+            it to (it == selectedValue)
+        }
+    }.catch {
+        kmpLogger.logError(it)
     }
 
 }

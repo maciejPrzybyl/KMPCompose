@@ -1,17 +1,9 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
-
-name: Java CI with Gradle
-
+name: Generate Kover Report
 on:
   push:
-    branches: [ "9-unit-tests" ]
+    branches:
+      - develop
   pull_request:
-    branches: [ "develop" ]
 
 jobs:
   build:
@@ -34,5 +26,10 @@ jobs:
       uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
     - name: Generate Kover Html Report
-      run: ./gradlew koverHtmlReportJvm
-
+      run: ./gradlew composeApp:koverHtmlReportJvm
+      
+    - name: Upload Kover Html Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: Kover report
+        path: composeApp/build/reports/kover/htmlJvm/index.html

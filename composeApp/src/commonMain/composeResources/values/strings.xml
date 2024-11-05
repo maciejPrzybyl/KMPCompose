@@ -6,7 +6,10 @@
     <string name="coordinates_input_latitude">Latitude</string>
     <string name="coordinates_input_longitude">Longitude</string>
     <string name="open_maps">Open in maps</string>
+    <string name="images_load_error">Couldn't load images</string>
 
     <string name="app_dialog_title">Some dialog</string>
     <string name="ok">Ok</string>
+    <string name="save">Save</string>
+    <string name="save_something">Save something</string>
 </resources>
