@@ -1,36 +1,19 @@
 package org.macpry.kmpcompose.managers
 
 import app.cash.turbine.test
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDateTime
 import org.macpry.kmpcompose.data.ITimeProvider
 import org.macpry.kmpcompose.data.network.INetworkData
 import org.macpry.kmpcompose.data.network.ImageResponse
 import org.macpry.kmpcompose.logger.FakeKMPLogger
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class AppManagerTest {
-
-    @BeforeTest
-    fun setUp() {
-        Dispatchers.setMain(StandardTestDispatcher())
-    }
-
-    @AfterTest
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
 
     @Test
     fun timeFlowError() = runTest {
@@ -43,7 +26,7 @@ class AppManagerTest {
         }
         val manager = AppManager(
             FakeTimeProvider(fakeTimeFlow),
-            FakeNetworkData(emptyList()),
+            FakeNetworkData { emptyList() },
             FakeKMPLogger { handledException = it }
         )
 
@@ -54,11 +37,41 @@ class AppManagerTest {
         }
     }
 
+    @Test
+    fun fetchImagesSuccess() = runTest {
+        val images = listOf(ImageResponse(3, "urr", "autt"))
+        val manager = AppManager(
+            FakeTimeProvider(flowOf()),
+            FakeNetworkData { images },
+            FakeKMPLogger { }
+        )
+
+        val result = manager.fetchImages()
+
+        assertEquals(Result.success(images), result)
+    }
+
+    @Test
+    fun fetchImagesError() = runTest {
+        var handledException: Throwable? = null
+        val exception = Exception("Images err")
+        val manager = AppManager(
+            FakeTimeProvider(flowOf()),
+            FakeNetworkData { throw exception },
+            FakeKMPLogger { handledException = it }
+        )
+
+        val result = manager.fetchImages()
+
+        assertEquals(Result.failure(exception), result)
+        assertEquals(exception, handledException)
+    }
+
     class FakeTimeProvider(fakeTimeFlow: Flow<LocalDateTime>) : ITimeProvider {
         override val currentDateTime: Flow<LocalDateTime> = fakeTimeFlow
     }
 
-    class FakeNetworkData(private val fakeImages: List<ImageResponse>) : INetworkData {
-        override suspend fun getImages(): List<ImageResponse> = fakeImages
+    class FakeNetworkData(private val getFakeImages: () -> List<ImageResponse>) : INetworkData {
+        override suspend fun getImages(): List<ImageResponse> = getFakeImages()
     }
 }

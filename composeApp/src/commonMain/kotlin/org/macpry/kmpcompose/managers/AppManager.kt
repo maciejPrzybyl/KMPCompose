@@ -25,6 +25,8 @@ class AppManager(
 
     override suspend fun fetchImages() = runCatching {
         networkData.getImages()
+    }.onFailure {
+        kmpLogger.logError(it)
     }
 
 }
