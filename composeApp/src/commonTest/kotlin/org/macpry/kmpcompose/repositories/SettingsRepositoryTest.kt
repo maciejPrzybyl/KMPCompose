@@ -43,6 +43,20 @@ class SettingsRepositoryTest {
         assertEquals(exception, handledException)
     }
 
+    @Test
+    fun saveSettingSuccess() = runTest {
+        var settingToSave: Int? = null
+        val repository = SettingsRepository(
+            FakeSettingsLocalData({ settingToSave = it }, MutableStateFlow(emptyList())),
+            FakeKMPLogger {  }
+        )
+
+        val result = repository.saveSetting(999)
+
+        assertEquals(Result.success(Unit), result)
+        assertEquals(999, settingToSave)
+    }
+
     class FakeSettingsLocalData(
         private val saveSettingAction: (Int) -> Unit,
         fakeSettingsFlow: Flow<List<Pair<Int, Boolean>>>
