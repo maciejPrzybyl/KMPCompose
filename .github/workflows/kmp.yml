@@ -9,8 +9,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
 
     steps:
     - uses: actions/checkout@v4
@@ -27,10 +25,6 @@ jobs:
 
     - name: Generate Kover Xml Report
       run: ./gradlew composeApp:koverXmlReportJvm
-
-    - name: Find xml path
-      run: |
-        ls
 
     - name: Add coverage report to PR
       id: kover
