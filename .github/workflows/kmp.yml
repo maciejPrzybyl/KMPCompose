@@ -31,7 +31,7 @@ jobs:
 
     - name: Print coverage in summary
       run: |
-        values=$(cat build/reports/kover/project-xml/report.xml | tail -7 | head -5 | grep 'INSTRUCTION' | cut -d ' ' -f 3,4 | sed 's/missed="//;s/" covered="/ /;s/"\/>//')
+        values=$(cat composeApp/build/reports/kover/reportJvm.xml | tail -7 | head -5 | grep 'INSTRUCTION' | cut -d ' ' -f 3,4 | sed 's/missed="//;s/" covered="/ /;s/"\/>//')
         missed=$(<<<$values cut -d ' ' -f 1)
         covered=$(<<<$values cut -d ' ' -f 2)
         echo "Coverage $(($covered * 100 / ($covered + $missed)))%" >> $GITHUB_STEP_SUMMARY
