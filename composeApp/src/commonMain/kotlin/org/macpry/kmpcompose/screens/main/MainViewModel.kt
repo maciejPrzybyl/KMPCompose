@@ -19,7 +19,6 @@ class MainViewModel(
             .onSuccess {
                 emit(ImagesState.Success(it))
             }.onFailure {
-                println(it)
                 emit(ImagesState.Error(it))
             }
     }
