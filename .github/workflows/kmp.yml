@@ -28,6 +28,10 @@ jobs:
     - name: Generate Kover Xml Report
       run: ./gradlew composeApp:koverXmlReportJvm
 
+    - name: Find xml path
+      run: |
+        ls
+
     - name: Add coverage report to PR
       id: kover
       uses: mi-kas/kover-report@v1
