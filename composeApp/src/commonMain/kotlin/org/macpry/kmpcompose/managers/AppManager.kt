@@ -6,6 +6,7 @@ import kotlinx.datetime.LocalDateTime
 import org.macpry.kmpcompose.data.ITimeProvider
 import org.macpry.kmpcompose.data.network.INetworkData
 import org.macpry.kmpcompose.data.network.ImageResponse
+import org.macpry.kmpcompose.logger.IKMPLogger
 
 interface IAppManager {
     val timeFlow: Flow<LocalDateTime>
@@ -14,11 +15,12 @@ interface IAppManager {
 
 class AppManager(
     private val timeProvider: ITimeProvider,
-    private val networkData: INetworkData
+    private val networkData: INetworkData,
+    private val kmpLogger: IKMPLogger
 ) : IAppManager {
 
     override val timeFlow = timeProvider.currentDateTime.catch {
-        println(it)
+        kmpLogger.logError(it)
     }
 
     override suspend fun fetchImages() = runCatching {
