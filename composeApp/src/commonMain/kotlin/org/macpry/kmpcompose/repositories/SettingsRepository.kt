@@ -22,7 +22,7 @@ class SettingsRepository(
     }
 
     override val settingsFlow = settingsLocalData.settingsFlow.catch {
-        println(it)
+        kmpLogger.logError(it)
     }
 
 }
