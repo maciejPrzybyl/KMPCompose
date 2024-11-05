@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      #pull-requests: write
 
     steps:
     - uses: actions/checkout@v4
@@ -25,11 +26,24 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
-    - name: Generate Kover Html Report
-      run: ./gradlew composeApp:koverHtmlReportJvm
-      
-    - name: Upload Kover Html Report
-      uses: actions/upload-artifact@v4
-      with:
-        name: Kover report
-        path: composeApp/build/reports/kover/htmlJvm/index.html
+    - name: Generate Kover Xml Report
+      run: ./gradlew composeApp:koverXmlReportJvm
+
+    - name: Print coverage in summary
+      run: |
+        values=$(cat composeApp/build/reports/kover/reportJvm.xml | tail -7 | head -5 | grep 'INSTRUCTION' | cut -d ' ' -f 3,4 | sed 's/missed="//;s/" covered="/ /;s/"\/>//')
+        missed=$(<<<$values cut -d ' ' -f 1)
+        covered=$(<<<$values cut -d ' ' -f 2)
+        echo "Coverage $(($covered * 100 / ($covered + $missed)))%" >> $GITHUB_STEP_SUMMARY
+
+#    - name: Add coverage report to PR
+#      id: kover
+#      uses: mi-kas/kover-report@v1
+#      with:
+#        path: |
+#          ${{ github.workspace }}/composeApp/build/reports/kover/reportJvm.xml
+#        title: Code Coverage
+#        update-comment: true
+#        min-coverage-overall: 80
+#        min-coverage-changed-files: 80
+#        coverage-counter-type: INSTRUCTION
