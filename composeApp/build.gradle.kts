@@ -232,6 +232,7 @@ kover {
                     "org.macpry.kmpcompose.di",
                     "org.macpry.kmpcompose.logger",
                     "org.macpry.kmpcompose.providers",
+                    "org.macpry.kmpcompose.data",
                     "org.macpry.kmpcompose.ui",
                 )
                 annotatedBy(
