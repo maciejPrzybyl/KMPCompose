@@ -12,12 +12,11 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.macpry.kmpcompose.data.local.INotesLocalData
-import org.macpry.kmpcompose.logger.IKMPLogger
+import org.macpry.kmpcompose.logger.FakeKMPLogger
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class NotesRepositoryTest {
@@ -44,19 +43,21 @@ class NotesRepositoryTest {
         val result = repository.saveNote("aa")
 
         assertEquals(Result.failure(exception), result)
-        assertEquals(handledException, exception)
+        assertEquals(exception, handledException)
     }
 
     @Test
     fun saveNoteSuccess() = runTest {
+        var noteToSave: String? = null
         val repository = NotesRepository(
-            FakeNotesLocalData({ }, MutableStateFlow(emptyList())),
+            FakeNotesLocalData({ noteToSave = it }, MutableStateFlow(emptyList())),
             FakeKMPLogger({})
         )
 
         val result = repository.saveNote("bb")
 
         assertEquals(Result.success(Unit), result)
+        assertEquals("bb", noteToSave)
     }
 
     @Test
@@ -69,27 +70,20 @@ class NotesRepositoryTest {
         )
 
         repository.notesFlow.test {
-            assertEquals(handledException, exception)
+            assertEquals(exception, handledException)
             awaitComplete()
         }
     }
 
     class FakeNotesLocalData(
-        private val saveNoteAction: () -> Unit,
+        private val saveNoteAction: (String) -> Unit,
         fakeNotesFlow: Flow<List<Note>>
     ) : INotesLocalData {
 
         override val notesFlow: Flow<List<Note>> = fakeNotesFlow
 
         override suspend fun saveNote(note: String) {
-            saveNoteAction()
-        }
-    }
-
-    class FakeKMPLogger(private val handledException: (Throwable) -> Unit) : IKMPLogger {
-
-        override fun logError(exception: Throwable) {
-            handledException(exception)
+            saveNoteAction(note)
         }
     }
 }
