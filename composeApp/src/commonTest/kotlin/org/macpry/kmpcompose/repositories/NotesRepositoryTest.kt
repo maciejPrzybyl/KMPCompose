@@ -34,17 +34,17 @@ class NotesRepositoryTest {
 
     @Test
     fun saveNoteError() = runTest {
-        var exceptionConsumed: Boolean = false
+        var handledException: Throwable? = null
         val exception = Exception("Errr")
         val repository = NotesRepository(
             FakeNotesLocalData({ throw exception }, MutableStateFlow(emptyList())),
-            FakeKMPLogger { exceptionConsumed = true }
+            FakeKMPLogger { handledException = it }
         )
 
         val result = repository.saveNote("aa")
 
         assertEquals(Result.failure(exception), result)
-        assertTrue(exceptionConsumed)
+        assertEquals(handledException, exception)
     }
 
     @Test
@@ -86,10 +86,10 @@ class NotesRepositoryTest {
         }
     }
 
-    class FakeKMPLogger(private val exceptionConsumed: (Throwable) -> Unit) : IKMPLogger {
+    class FakeKMPLogger(private val handledException: (Throwable) -> Unit) : IKMPLogger {
 
         override fun logError(exception: Throwable) {
-            exceptionConsumed(exception)
+            handledException(exception)
         }
     }
 }
