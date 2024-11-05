@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: write
+      #pull-requests: write
 
     steps:
     - uses: actions/checkout@v4
@@ -28,10 +28,6 @@ jobs:
 
     - name: Generate Kover Xml Report
       run: ./gradlew composeApp:koverXmlReportJvm
-
-    - name: Find path
-      run: |
-        echo ${{ github.workspace }} 
 
     - name: Add coverage report to PR
       id: kover
