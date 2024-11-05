@@ -1,41 +1,23 @@
 package org.macpry.kmpcompose.repositories
 
 import app.cash.turbine.test
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import org.macpry.kmpcompose.data.local.ISettingsLocalData
 import org.macpry.kmpcompose.logger.FakeKMPLogger
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class SettingsRepositoryTest {
-
-    @BeforeTest
-    fun setUp() {
-        Dispatchers.setMain(StandardTestDispatcher())
-    }
-
-    @AfterTest
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
 
     @Test
     fun saveSettingError() = runTest {
         var handledException: Throwable? = null
         val exception = Exception("Set err")
         val repository = SettingsRepository(
-            FakeSettingsLocalData({ throw exception }, MutableStateFlow(emptyList())),
+            FakeSettingsLocalData({ throw exception }, flowOf(emptyList())),
             FakeKMPLogger { handledException = it }
         )
 
@@ -49,7 +31,7 @@ class SettingsRepositoryTest {
     fun saveSettingSuccess() = runTest {
         var settingToSave: Int? = null
         val repository = SettingsRepository(
-            FakeSettingsLocalData({ settingToSave = it }, MutableStateFlow(emptyList())),
+            FakeSettingsLocalData({ settingToSave = it }, flowOf(emptyList())),
             FakeKMPLogger { }
         )
 

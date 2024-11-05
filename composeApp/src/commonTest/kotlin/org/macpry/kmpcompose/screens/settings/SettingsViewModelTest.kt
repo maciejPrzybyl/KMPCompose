@@ -1,32 +1,15 @@
 package org.macpry.kmpcompose.screens.settings
 
 import app.cash.turbine.test
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import org.macpry.kmpcompose.repositories.ISettingsRepository
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class SettingsViewModelTest {
-
-    @BeforeTest
-    fun setUp() {
-        Dispatchers.setMain(StandardTestDispatcher())
-    }
-
-    @AfterTest
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
 
     @Test
     fun observeSettingsState() = runTest {
@@ -46,7 +29,7 @@ class SettingsViewModelTest {
     fun saveSettingError() = runTest {
         val exception = Exception("Save error")
         val viewModel =
-            SettingsViewModel(FakeSettingsRepository(exception, MutableStateFlow(emptyList())))
+            SettingsViewModel(FakeSettingsRepository(exception, flowOf(emptyList())))
 
         viewModel.error.test {
             viewModel.saveSetting(666)
@@ -57,7 +40,7 @@ class SettingsViewModelTest {
     @Test
     fun saveSettingSuccess() = runTest {
         val viewModel =
-            SettingsViewModel(FakeSettingsRepository(null, MutableStateFlow(emptyList())))
+            SettingsViewModel(FakeSettingsRepository(null, flowOf(emptyList())))
 
         viewModel.error.test {
             viewModel.saveSetting(333)
@@ -67,7 +50,7 @@ class SettingsViewModelTest {
 
     class FakeSettingsRepository(
         private val saveResultException: Exception?,
-        fakeSettingsFlow: MutableStateFlow<List<Pair<Int, Boolean>>>
+        fakeSettingsFlow: Flow<List<Pair<Int, Boolean>>>
     ) : ISettingsRepository {
         override suspend fun saveSetting(value: Int) =
             saveResultException?.let { Result.failure(it) } ?: Result.success(Unit)

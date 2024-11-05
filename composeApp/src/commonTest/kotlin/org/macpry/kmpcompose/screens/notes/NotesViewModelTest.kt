@@ -2,33 +2,17 @@ package org.macpry.kmpcompose.screens.notes
 
 import app.cash.turbine.test
 import com.macpry.database.Note
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import org.macpry.kmpcompose.repositories.INotesRepository
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class NotesViewModelTest {
-
-    @BeforeTest
-    fun setUp() {
-        Dispatchers.setMain(StandardTestDispatcher())
-    }
-
-    @AfterTest
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
 
     @Test
     fun observeNotesState() = runTest {
@@ -46,7 +30,7 @@ class NotesViewModelTest {
 
     @Test
     fun validateNoteInput() = runTest {
-        val viewModel = NotesViewModel(FakeNotesRepository(null, MutableStateFlow(emptyList())))
+        val viewModel = NotesViewModel(FakeNotesRepository(null, flowOf(emptyList())))
 
         assertEquals("" to false, viewModel.inputState.value)
 
@@ -61,7 +45,7 @@ class NotesViewModelTest {
     fun saveNoteError() = runTest {
         val exception = Exception("Save error")
         val viewModel =
-            NotesViewModel(FakeNotesRepository(exception, MutableStateFlow(emptyList())))
+            NotesViewModel(FakeNotesRepository(exception, flowOf(emptyList())))
 
         viewModel.error.test {
             viewModel.updateInput("Will fail")
@@ -70,10 +54,11 @@ class NotesViewModelTest {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun saveNoteSuccess() = runTest {
         val viewModel =
-            NotesViewModel(FakeNotesRepository(null, MutableStateFlow(emptyList())))
+            NotesViewModel(FakeNotesRepository(null, flowOf(emptyList())))
 
         viewModel.error.test {
             viewModel.updateInput("Will succeed")
@@ -86,7 +71,7 @@ class NotesViewModelTest {
 
     class FakeNotesRepository(
         private val saveResultException: Exception?,
-        fakeNotesFlow: MutableStateFlow<List<Note>>
+        fakeNotesFlow: Flow<List<Note>>
     ) : INotesRepository {
         override suspend fun saveNote(note: String) =
             saveResultException?.let { Result.failure(it) } ?: Result.success(Unit)

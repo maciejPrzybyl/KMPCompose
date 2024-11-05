@@ -1,38 +1,20 @@
 package org.macpry.kmpcompose.screens.main
 
 import app.cash.turbine.test
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDateTime
 import org.macpry.kmpcompose.data.network.ImageResponse
 import org.macpry.kmpcompose.managers.IAppManager
 import org.macpry.kmpcompose.screens.main.MainViewModelTest.FakeAppManager.Companion.fakeImage
 import org.macpry.kmpcompose.screens.main.MainViewModelTest.FakeAppManager.Companion.fakeTime1
 import org.macpry.kmpcompose.screens.main.MainViewModelTest.FakeAppManager.Companion.fakeTime2
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModelTest {
-
-    @BeforeTest
-    fun setUp() {
-        Dispatchers.setMain(StandardTestDispatcher())
-    }
-
-    @AfterTest
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
 
     @Test
     fun fetchImagesSuccessfully() = runTest {
