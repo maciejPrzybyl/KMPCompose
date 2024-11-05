@@ -4,11 +4,10 @@ import com.macpry.datastore.KMPDatastore
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 interface ISettingsLocalData {
-    val settingsFlow: Flow<List<Pair<Int, Boolean>>>
+    val settingsFlow: Flow<Int>
     suspend fun saveSetting(value: Int)
 }
 
@@ -21,9 +20,5 @@ class SettingsLocalData(
         kmpDatastore.setNumber(value)
     }
 
-    override val settingsFlow = kmpDatastore.selectedNumber.map { selectedValue ->
-        (1..20).map {
-            it to (it == selectedValue)
-        }
-    }.flowOn(ioDispatcher)
+    override val settingsFlow = kmpDatastore.selectedNumber.flowOn(ioDispatcher)
 }

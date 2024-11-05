@@ -17,7 +17,7 @@ class SettingsRepositoryTest {
         var handledException: Throwable? = null
         val exception = Exception("Set err")
         val repository = SettingsRepository(
-            FakeSettingsLocalData({ throw exception }, flowOf(emptyList())),
+            FakeSettingsLocalData({ throw exception }, flowOf(1)),
             FakeKMPLogger { handledException = it }
         )
 
@@ -31,7 +31,7 @@ class SettingsRepositoryTest {
     fun saveSettingSuccess() = runTest {
         var settingToSave: Int? = null
         val repository = SettingsRepository(
-            FakeSettingsLocalData({ settingToSave = it }, flowOf(emptyList())),
+            FakeSettingsLocalData({ settingToSave = it }, flowOf(2)),
             FakeKMPLogger { }
         )
 
@@ -39,6 +39,20 @@ class SettingsRepositoryTest {
 
         assertEquals(Result.success(Unit), result)
         assertEquals(999, settingToSave)
+    }
+
+    @Test
+    fun settingsFlowSuccess() = runTest {
+        val repository = SettingsRepository(
+            FakeSettingsLocalData({ }, flowOf(4, 7)),
+            FakeKMPLogger { }
+        )
+
+        repository.settingsFlow.test {
+            assertEquals((1..SETTINGS_ITEMS_COUNT).map { it to (it == 4) }, awaitItem())
+            assertEquals((1..SETTINGS_ITEMS_COUNT).map { it to (it == 7) }, awaitItem())
+            awaitComplete()
+        }
     }
 
     @Test
@@ -58,7 +72,7 @@ class SettingsRepositoryTest {
 
     class FakeSettingsLocalData(
         private val saveSettingAction: (Int) -> Unit,
-        fakeSettingsFlow: Flow<List<Pair<Int, Boolean>>>
+        fakeSettingsFlow: Flow<Int>
     ) : ISettingsLocalData {
 
         override val settingsFlow = fakeSettingsFlow
