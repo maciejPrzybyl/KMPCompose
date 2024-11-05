@@ -32,7 +32,8 @@ jobs:
       id: kover
       uses: mi-kas/kover-report@v1
       with:
-        path: ${{ github.workspace }}/composeApp/build/reports/kover/reportJvm.xml
+        path: |
+          ${{ github.workspace }}/composeApp/build/reports/kover/reportJvm.xml
         title: Code Coverage
         update-comment: true
         min-coverage-overall: 80
