@@ -1,0 +1,15 @@
+<resources>
+    <string name="home_navigation_main">Główny</string>
+    <string name="home_navigation_notes">Notatki</string>
+    <string name="home_navigation_settings">Ustawienia</string>
+
+    <string name="coordinates_input_latitude">Szerokość geograficzna</string>
+    <string name="coordinates_input_longitude">Długość geograficzna</string>
+    <string name="open_maps">Otwórz w mapach</string>
+    <string name="images_load_error">Nie udało się załadować obrazów</string>
+
+    <string name="app_dialog_title">Jakis dialog</string>
+    <string name="ok">Ok</string>
+    <string name="save">Zapisz</string>
+    <string name="save_something">Zapisz coś</string>
+</resources>
