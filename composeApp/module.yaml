@@ -1,0 +1,74 @@
+product:
+  type: lib
+  platforms: [ jvm, android, iosArm64, iosSimulatorArm64, iosX64 ]
+
+dependencies:
+  #- ../shared
+  - ../database
+  - ../datastore
+  - $compose.runtime
+  - $compose.foundation
+  - $compose.material3
+  - $compose.ui
+  #- $compose.material3AdaptiveNavigationSuite
+  - $compose.components.resources
+  #- $compose.components.uiToolingPreview
+
+  - $libs.androidx.lifecycle.viewmodel
+  - $libs.androidx.lifecycle.runtime.compose
+  - $libs.androidx.navigation.compose
+
+  - $libs.kotlinx.coroutines.core
+
+  - $libs.kotlinx.serialization.json
+  - $libs.kotlinx.datetime
+
+  - $libs.coil
+  - $libs.coil.network.ktor
+
+  - $libs.koin.compose.viewmodel
+
+  - $libs.ktor.client.core
+  - $libs.ktor.client.content.negotiation
+  - $libs.ktor.client.serialization.json
+
+dependencies@android:
+  - $compose.preview: exported
+  - $libs.androidx.activity.compose
+  - $libs.ktor.client.okhttp
+  - $libs.koin.android
+  - $libs.googlemaps.maps
+  - $libs.googlemaps.compose
+
+dependencies@jvm:
+  - $compose.desktop.currentOs
+  - $libs.kotlinx.coroutines.swing
+  - $libs.ktor.client.okhttp
+
+dependencies@ios:
+  - $libs.ktor.client.darwin
+
+test-dependencies:
+  - $libs.koin.test
+  - $libs.kotlinx.coroutines.test
+  - $libs.flow.turbine
+  - $compose.uiTest: exported
+
+#dependencies@test:
+ # - $kotlin("test")
+  #- $libs.koin.test
+  #- $libs.kotlinx.coroutines.test
+  #- $libs.flow.turbine
+  #- $compose.uiTest: exported
+
+#module:
+  #layout: gradle-kmp
+
+settings:
+  #kotlin:
+    #serialization: json
+  compose:
+    enabled: true
+    resources:
+      #packageName: com.example.app
+      exposedAccessors: true

@@ -1,0 +1,8 @@
+modules:
+  - composeApp
+  #- shared
+  - database
+  - datastore
+  - android-app
+  - ios-app
+  - jvm-app

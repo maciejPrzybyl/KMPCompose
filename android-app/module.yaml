@@ -1,0 +1,12 @@
+product: android/app
+
+dependencies:
+  #- ../shared
+  - ../composeApp
+
+settings:
+  compose:
+    enabled: true
+  android:
+    minSdk: 24
+    #namespace: org.macpry.kmpcompose

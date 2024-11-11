@@ -1,5 +1,3 @@
-package org.macpry.kmpcompose
-
 import android.os.Build
 
 class AndroidPlatform : Platform {

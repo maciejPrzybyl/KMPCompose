@@ -1,0 +1,11 @@
+product:
+  type: ios/app
+  platforms: [ iosSimulatorArm64 ]
+
+dependencies:
+  #- ../shared
+  - ../composeApp
+
+settings:
+  compose:
+    enabled: true

@@ -1,0 +1,15 @@
+product:
+  type: lib
+  platforms: [ jvm, android, iosArm64, iosSimulatorArm64, iosX64, wasm ]
+
+aliases:
+  - noWasm: [jvm, android, iosArm64, iosSimulatorArm64, iosX64]
+
+dependencies:
+  #- ../shared
+  - $libs.kotlinx.coroutines.core
+  - $libs.koin.core
+
+dependencies@noWasm:
+  - $libs.room.runtime
+  - $libs.sqlite.bundle

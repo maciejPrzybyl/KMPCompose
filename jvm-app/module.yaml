@@ -1,0 +1,10 @@
+product: jvm/app
+
+dependencies:
+  #- ../shared
+  - ../composeApp
+  - $compose.desktop.currentOs
+
+settings:
+  compose:
+    enabled: true

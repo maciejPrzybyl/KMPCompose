@@ -1,5 +1,3 @@
-package org.macpry.kmpcompose
-
 import platform.UIKit.UIDevice
 
 class IOSPlatform: Platform {
