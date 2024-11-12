@@ -1,6 +1,6 @@
 product:
   type: lib
-  platforms: [ jvm, android, iosArm64, iosSimulatorArm64, iosX64 ]
+  platforms: [jvm, android, iosArm64, iosSimulatorArm64, iosX64]
 
 dependencies:
   #- ../shared
@@ -48,11 +48,11 @@ dependencies@jvm:
 dependencies@ios:
   - $libs.ktor.client.darwin
 
-test-dependencies:
-  - $libs.koin.test
-  - $libs.kotlinx.coroutines.test
-  - $libs.flow.turbine
-  - $compose.uiTest: exported
+#test-dependencies:
+  #- $libs.koin.test
+  #- $libs.kotlinx.coroutines.test
+  #- $libs.flow.turbine
+  #- androidx.compose.ui:ui-test:1.7.0
 
 #dependencies@test:
  # - $kotlin("test")
@@ -69,6 +69,7 @@ settings:
     #serialization: json
   compose:
     enabled: true
+    version: 1.7.0
     resources:
       #packageName: com.example.app
       exposedAccessors: true

@@ -8,3 +8,4 @@ dependencies:
 settings:
   compose:
     enabled: true
+    version: 1.7.0
