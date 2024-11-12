@@ -28,7 +28,7 @@ class MainScreenTest {
     fun displayCurrentTime() = runComposeUiTest {
         val currentTime = mutableStateOf<String?>("21:37")
         setContent {
-            MainScreen(MainState(currentTime.value, ImagesState.Init), {})
+            MainScreen(MainState(currentTime.value, ImagesState.Init), {}, {})
         }
 
         onNodeWithTag(MainScreenTags.CURRENT_TIME_TEXT).run {
@@ -42,7 +42,7 @@ class MainScreenTest {
     fun displayMapsButton() = runComposeUiTest {
         var onOpenMapsClick = 0.0 to 0.0
         setContent {
-            MainScreen(MainState(null, ImagesState.Init), { onOpenMapsClick = it })
+            MainScreen(MainState(null, ImagesState.Init), { onOpenMapsClick = it }, {})
         }
 
         onNodeWithTag(MainScreenTags.OPEN_MAPS_BUTTON).run {
@@ -73,7 +73,7 @@ class MainScreenTest {
         val imagesState = mutableStateOf<ImagesState>(ImagesState.Init)
 
         setContent {
-            PagerContainer(imagesState.value)
+            PagerContainer(imagesState.value, {})
         }
 
         onNodeWithTag(MainScreenTags.PAGER_LOADING).assertDoesNotExist()
@@ -98,11 +98,12 @@ class MainScreenTest {
 
     @Test
     fun displayPager() = runComposeUiTest {
+        var onImageClick: String? = null
         val images = (1L..2).map {
             ImageResponse(it, "$it url", "$it aut")
         }
         setContent {
-            MainScreen(MainState(null, ImagesState.Success(images)), { })
+            MainScreen(MainState(null, ImagesState.Success(images)), {}, { onImageClick = it })
         }
 
         onNodeWithTag(MainScreenTags.PAGER).assertExists()
@@ -110,6 +111,8 @@ class MainScreenTest {
         onAllNodesWithTag(MainScreenTags.PAGER_ITEM_DESCRIPTION)
             .onFirst()
             .assertTextEquals("${images.first().id} ${images.first().author}")
+        onAllNodesWithTag(MainScreenTags.PAGER_ITEM_IMAGE).onFirst().performClick()
+        assertEquals(images.first().url, onImageClick)
     }
 
     @Test
@@ -118,7 +121,7 @@ class MainScreenTest {
             ImageResponse(it, "$it urlaa", "$it authoo")
         }
         setContent {
-            MainScreen(MainState(null, ImagesState.Success(images)), { })
+            MainScreen(MainState(null, ImagesState.Success(images)), { }, {})
         }
 
         fun checkIndicators(currentItemIndex: Int) {

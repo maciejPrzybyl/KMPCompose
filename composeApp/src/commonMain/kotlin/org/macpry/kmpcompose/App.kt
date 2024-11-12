@@ -41,6 +41,7 @@ import org.koin.compose.KoinContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.macpry.kmpcompose.screens.AppNavigationRoutes
 import org.macpry.kmpcompose.screens.HomeBottomNavigation
+import org.macpry.kmpcompose.screens.imagedetail.ImageDetailScreen
 import org.macpry.kmpcompose.screens.main.MainViewModel
 import org.macpry.kmpcompose.screens.main.MainScreen
 import org.macpry.kmpcompose.screens.maps.MapsScreen
@@ -69,15 +70,23 @@ fun AppNavigation() {
         startDestination = AppNavigationRoutes.Home
     ) {
         composable<AppNavigationRoutes.Home> {
-            HomeNavigation {
-                appNavController.navigate(AppNavigationRoutes.Maps(it))
-            }
+            HomeNavigation(
+                onOpenMaps = { appNavController.navigate(AppNavigationRoutes.Maps(it)) },
+                onOpenImageDetails = { appNavController.navigate(AppNavigationRoutes.ImageDetail(it)) }
+            )
         }
         composable<AppNavigationRoutes.Maps>(
             typeMap = mapOf(typeOf<Coordinates>() to CoordinatesNavType),
         ) {
             it.toRoute<AppNavigationRoutes.Maps>().coordinates.let { coordinates ->
                 MapsScreen(coordinates) {
+                    appNavController.navigateUp()
+                }
+            }
+        }
+        composable<AppNavigationRoutes.ImageDetail> {
+            it.toRoute<AppNavigationRoutes.ImageDetail>().url.let { url ->
+                ImageDetailScreen(url) {
                     appNavController.navigateUp()
                 }
             }
@@ -108,7 +117,8 @@ val CoordinatesNavType = object : NavType<Coordinates>(
 @Composable
 private fun HomeNavigation(
     mainViewModel: MainViewModel = koinViewModel(),
-    onOpenMaps: (Coordinates) -> Unit
+    onOpenMaps: (Coordinates) -> Unit,
+    onOpenImageDetails: (String) -> Unit
 ) {
     var isDialogVisible by remember { mutableStateOf(false) }
     //TODO Fix saving mainState when app is recreated
@@ -137,7 +147,8 @@ private fun HomeNavigation(
         when (currentDestination) {
             HomeBottomNavigation.Main -> MainScreen(
                 state = mainState,
-                { onOpenMaps(Coordinates(it.first, it.second)) }
+                { onOpenMaps(Coordinates(it.first, it.second)) },
+                onOpenImageDetails
             )
 
             HomeBottomNavigation.Notes -> {
