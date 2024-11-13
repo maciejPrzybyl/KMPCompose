@@ -1,5 +1,11 @@
+@file:OptIn(ExperimentalSharedTransitionApi::class)
+
 package org.macpry.kmpcompose
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -62,32 +68,46 @@ fun App() {
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun AppNavigation() {
     val appNavController = rememberNavController()
-    NavHost(
-        navController = appNavController,
-        startDestination = AppNavigationRoutes.Home
-    ) {
-        composable<AppNavigationRoutes.Home> {
-            HomeNavigation(
-                onOpenMaps = { appNavController.navigate(AppNavigationRoutes.Maps(it)) },
-                onOpenImageDetails = { appNavController.navigate(AppNavigationRoutes.ImageDetail(it)) }
-            )
-        }
-        composable<AppNavigationRoutes.Maps>(
-            typeMap = mapOf(typeOf<Coordinates>() to CoordinatesNavType),
+    SharedTransitionLayout {
+        NavHost(
+            navController = appNavController,
+            startDestination = AppNavigationRoutes.Home
         ) {
-            it.toRoute<AppNavigationRoutes.Maps>().coordinates.let { coordinates ->
-                MapsScreen(coordinates) {
-                    appNavController.navigateUp()
+            composable<AppNavigationRoutes.Home> {
+                HomeNavigation(
+                    onOpenMaps = { appNavController.navigate(AppNavigationRoutes.Maps(it)) },
+                    onOpenImageDetails = {
+                        appNavController.navigate(
+                            AppNavigationRoutes.ImageDetail(
+                                it
+                            )
+                        )
+                    },
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedVisibilityScope = this@composable
+                )
+            }
+            composable<AppNavigationRoutes.Maps>(
+                typeMap = mapOf(typeOf<Coordinates>() to CoordinatesNavType),
+            ) {
+                it.toRoute<AppNavigationRoutes.Maps>().coordinates.let { coordinates ->
+                    MapsScreen(coordinates) {
+                        appNavController.navigateUp()
+                    }
                 }
             }
-        }
-        composable<AppNavigationRoutes.ImageDetail> {
-            it.toRoute<AppNavigationRoutes.ImageDetail>().url.let { url ->
-                ImageDetailScreen(url) {
-                    appNavController.navigateUp()
+            composable<AppNavigationRoutes.ImageDetail> {
+                it.toRoute<AppNavigationRoutes.ImageDetail>().url.let { url ->
+                    ImageDetailScreen(
+                        url = url,
+                        onBack = { appNavController.navigateUp() },
+                        sharedTransitionScope = this@SharedTransitionLayout,
+                        animatedVisibilityScope = this@composable
+                    )
                 }
             }
         }
@@ -118,7 +138,9 @@ val CoordinatesNavType = object : NavType<Coordinates>(
 private fun HomeNavigation(
     mainViewModel: MainViewModel = koinViewModel(),
     onOpenMaps: (Coordinates) -> Unit,
-    onOpenImageDetails: (String) -> Unit
+    onOpenImageDetails: (String) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     var isDialogVisible by remember { mutableStateOf(false) }
     //TODO Fix saving mainState when app is recreated
@@ -148,7 +170,9 @@ private fun HomeNavigation(
             HomeBottomNavigation.Main -> MainScreen(
                 state = mainState,
                 { onOpenMaps(Coordinates(it.first, it.second)) },
-                onOpenImageDetails
+                onOpenImageDetails,
+                sharedTransitionScope,
+                animatedVisibilityScope
             )
 
             HomeBottomNavigation.Notes -> {
