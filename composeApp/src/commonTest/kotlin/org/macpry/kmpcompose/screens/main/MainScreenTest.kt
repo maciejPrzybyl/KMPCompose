@@ -1,5 +1,7 @@
 package org.macpry.kmpcompose.screens.main
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.ExperimentalTestApi
@@ -21,14 +23,14 @@ import org.macpry.kmpcompose.extensions.assertColorEquals
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@OptIn(ExperimentalTestApi::class)
+@OptIn(ExperimentalTestApi::class, ExperimentalSharedTransitionApi::class)
 class MainScreenTest {
 
     @Test
     fun displayCurrentTime() = runComposeUiTest {
         val currentTime = mutableStateOf<String?>("21:37")
         setContent {
-            MainScreen(MainState(currentTime.value, ImagesState.Init), {}, {})
+            MainScreen(MainState(currentTime.value, ImagesState.Init), {}, {}, null, null)
         }
 
         onNodeWithTag(MainScreenTags.CURRENT_TIME_TEXT).run {
@@ -42,7 +44,7 @@ class MainScreenTest {
     fun displayMapsButton() = runComposeUiTest {
         var onOpenMapsClick = 0.0 to 0.0
         setContent {
-            MainScreen(MainState(null, ImagesState.Init), { onOpenMapsClick = it }, {})
+            MainScreen(MainState(null, ImagesState.Init), { onOpenMapsClick = it }, {}, null, null)
         }
 
         onNodeWithTag(MainScreenTags.OPEN_MAPS_BUTTON).run {
@@ -73,7 +75,7 @@ class MainScreenTest {
         val imagesState = mutableStateOf<ImagesState>(ImagesState.Init)
 
         setContent {
-            PagerContainer(imagesState.value, {})
+            PagerContainer(imagesState.value, {}, null, null)
         }
 
         onNodeWithTag(MainScreenTags.PAGER_LOADING).assertDoesNotExist()
@@ -103,7 +105,15 @@ class MainScreenTest {
             ImageResponse(it, "$it url", "$it aut")
         }
         setContent {
-            MainScreen(MainState(null, ImagesState.Success(images)), {}, { onImageClick = it })
+            SharedTransitionScope {
+                MainScreen(
+                    MainState(null, ImagesState.Success(images)),
+                    {},
+                    { onImageClick = it },
+                    this,
+                    null
+                )
+            }
         }
 
         onNodeWithTag(MainScreenTags.PAGER).assertExists()
@@ -121,7 +131,7 @@ class MainScreenTest {
             ImageResponse(it, "$it urlaa", "$it authoo")
         }
         setContent {
-            MainScreen(MainState(null, ImagesState.Success(images)), { }, {})
+            MainScreen(MainState(null, ImagesState.Success(images)), { }, {}, null, null)
         }
 
         fun checkIndicators(currentItemIndex: Int) {
