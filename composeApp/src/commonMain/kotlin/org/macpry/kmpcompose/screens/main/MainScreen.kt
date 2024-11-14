@@ -1,6 +1,12 @@
+@file:OptIn(ExperimentalSharedTransitionApi::class)
+
 package org.macpry.kmpcompose.screens.main
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,7 +64,10 @@ val lngRange = -180.0..180.0
 @Composable
 fun MainScreen(
     state: MainState,
-    onOpenMaps: (Pair<Double, Double>) -> Unit
+    onOpenMaps: (Pair<Double, Double>) -> Unit,
+    onOpenImageDetails: (String) -> Unit,
+    sharedTransitionScope: SharedTransitionScope?,
+    animatedVisibilityScope: AnimatedVisibilityScope?
 ) {
     val greeting = remember { Greeting().greet() }
     Column(
@@ -73,7 +82,12 @@ fun MainScreen(
         )
         Spacer(Modifier.height(12.dp))
         CoordinatesView(onOpenMaps)
-        PagerContainer(state.imagesState)
+        PagerContainer(
+            state.imagesState,
+            onOpenImageDetails,
+            sharedTransitionScope,
+            animatedVisibilityScope
+        )
     }
 }
 
@@ -148,10 +162,18 @@ fun CoordinateInput(
 }
 
 @Composable
-fun PagerContainer(imagesState: ImagesState) {
+fun PagerContainer(
+    imagesState: ImagesState,
+    onOpenImageDetails: (String) -> Unit,
+    sharedTransitionScope: SharedTransitionScope?,
+    animatedVisibilityScope: AnimatedVisibilityScope?
+) {
     when (imagesState) {
         ImagesState.Init -> PagerWithIndicator(
-            listOf(ImageResponse(0, "", "unknown"))
+            listOf(ImageResponse(0, "", "unknown")),
+            {},
+            sharedTransitionScope,
+            animatedVisibilityScope
         )
 
         ImagesState.Loading -> CircularProgressIndicator(
@@ -163,12 +185,22 @@ fun PagerContainer(imagesState: ImagesState) {
             modifier = Modifier.testTag(MainScreenTags.PAGER_ERROR)
         )
 
-        is ImagesState.Success -> PagerWithIndicator(imagesState.images)
+        is ImagesState.Success -> PagerWithIndicator(
+            imagesState.images,
+            onOpenImageDetails,
+            sharedTransitionScope,
+            animatedVisibilityScope
+        )
     }
 }
 
 @Composable
-fun PagerWithIndicator(images: List<ImageResponse>) {
+fun PagerWithIndicator(
+    images: List<ImageResponse>,
+    onOpenImageDetails: (String) -> Unit,
+    sharedTransitionScope: SharedTransitionScope?,
+    animatedVisibilityScope: AnimatedVisibilityScope?
+) {
     val pagerState = rememberPagerState { images.size }
     HorizontalPager(
         state = pagerState,
@@ -181,14 +213,28 @@ fun PagerWithIndicator(images: List<ImageResponse>) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val imageData = images[page]
-            AsyncImage(
-                model = ImageRequest.Builder(LocalPlatformContext.current)
-                    .data(imageData.url)
-                    .build(),
-                contentDescription = null,
-                modifier = Modifier.aspectRatio(ratio = 1.0f),
-                placeholder = painterResource(Res.drawable.compose_multiplatform)
-            )
+            sharedTransitionScope?.run {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalPlatformContext.current)
+                        .data(imageData.url)
+                        .build(),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .aspectRatio(ratio = 1.0f)
+                        .clickable {
+                            onOpenImageDetails(imageData.url)
+                        }.apply {
+                            animatedVisibilityScope?.let {
+                                sharedElement(
+                                    state = rememberSharedContentState("image${imageData.url}"),
+                                    animatedVisibilityScope = animatedVisibilityScope
+                                )
+                            }
+                        }
+                        .testTag(MainScreenTags.PAGER_ITEM_IMAGE),
+                    placeholder = painterResource(Res.drawable.compose_multiplatform)
+                )
+            }
             Text(
                 text = "${imageData.id} ${imageData.author}",
                 modifier = Modifier.testTag(MainScreenTags.PAGER_ITEM_DESCRIPTION)
@@ -227,6 +273,7 @@ object MainScreenTags {
     const val PAGER_LOADING = "PAGER_LOADING"
     const val PAGER_ERROR = "PAGER_ERROR"
     const val PAGER = "PAGER"
+    const val PAGER_ITEM_IMAGE = "PAGER_ITEM_IMAGE"
     const val PAGER_ITEM_DESCRIPTION = "PAGER_ITEM_DESCRIPTION"
     const val PAGER_INDICATOR = "PAGER_INDICATOR"
     const val PAGER_INDICATOR_ITEM = "PAGER_INDICATOR_ITEM"

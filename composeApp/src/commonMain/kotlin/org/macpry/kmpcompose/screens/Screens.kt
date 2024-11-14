@@ -20,6 +20,9 @@ sealed class AppNavigationRoutes {
 
     @Serializable
     data class Maps(val coordinates: Coordinates) : AppNavigationRoutes()
+
+    @Serializable
+    data class ImageDetail(val url: String) : AppNavigationRoutes()
 }
 
 enum class HomeBottomNavigation(val icon: ImageVector, val label: StringResource) {
