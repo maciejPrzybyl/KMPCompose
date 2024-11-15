@@ -9,6 +9,7 @@ androidx-navigationCompose = "2.8.0-alpha10"
 compose-plugin = "1.7.1"
 kotlin = "2.1.0-RC"
 kotlinx-coroutines = "1.9.0"
+kotlinx-browser = "0.2"
 flow-turbine = "1.2.0"
 kotlinx-serialization = "1.7.3"
 kotlinx-datetime = "0.6.1"
@@ -46,6 +47,7 @@ flow-turbine = { module = "app.cash.turbine:turbine", version.ref = "flow-turbin
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinx-browser" }
 
 coil = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }

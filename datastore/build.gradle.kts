@@ -69,7 +69,7 @@ kotlin {
             implementation(libs.koin.android)
         }
         wasmJsMain.dependencies {
-
+            implementation(libs.kotlinx.browser)
         }
     }
 }
