@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import coil3.compose.AsyncImage
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -39,8 +40,10 @@ fun ImageDetailScreen(
         }
         IconButton(
             { onBack() },
-            Modifier.align(Alignment.TopStart)
+            Modifier
+                .align(Alignment.TopStart)
                 .statusBarsPadding()
+                .testTag(ImageDetailScreenTags.BACK_BUTTON)
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Default.ArrowBack,
@@ -49,4 +52,8 @@ fun ImageDetailScreen(
             )
         }
     }
+}
+
+object ImageDetailScreenTags {
+    const val BACK_BUTTON = "BACK_BUTTON"
 }
