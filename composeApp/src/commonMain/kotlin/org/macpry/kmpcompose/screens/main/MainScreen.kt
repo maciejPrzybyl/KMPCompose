@@ -66,8 +66,8 @@ fun MainScreen(
     state: MainState,
     onOpenMaps: (Pair<Double, Double>) -> Unit,
     onOpenImageDetails: (String) -> Unit,
-    sharedTransitionScope: SharedTransitionScope?,
-    animatedVisibilityScope: AnimatedVisibilityScope?
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     val greeting = remember { Greeting().greet() }
     Column(
@@ -165,8 +165,8 @@ fun CoordinateInput(
 fun PagerContainer(
     imagesState: ImagesState,
     onOpenImageDetails: (String) -> Unit,
-    sharedTransitionScope: SharedTransitionScope?,
-    animatedVisibilityScope: AnimatedVisibilityScope?
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     when (imagesState) {
         ImagesState.Init -> PagerWithIndicator(
@@ -198,8 +198,8 @@ fun PagerContainer(
 fun PagerWithIndicator(
     images: List<ImageResponse>,
     onOpenImageDetails: (String) -> Unit,
-    sharedTransitionScope: SharedTransitionScope?,
-    animatedVisibilityScope: AnimatedVisibilityScope?
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     val pagerState = rememberPagerState { images.size }
     HorizontalPager(
@@ -213,7 +213,7 @@ fun PagerWithIndicator(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val imageData = images[page]
-            sharedTransitionScope?.run {
+            with(sharedTransitionScope) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalPlatformContext.current)
                         .data(imageData.url)
@@ -224,13 +224,9 @@ fun PagerWithIndicator(
                         .clickable {
                             onOpenImageDetails(imageData.url)
                         }
-                        .then(
-                            animatedVisibilityScope?.let {
-                                Modifier.sharedElement(
-                                    state = rememberSharedContentState("image${imageData.url}"),
-                                    animatedVisibilityScope = it
-                                )
-                            } ?: Modifier
+                        .sharedElement(
+                            state = rememberSharedContentState("image${imageData.url}"),
+                            animatedVisibilityScope = animatedVisibilityScope
                         )
                         .testTag(MainScreenTags.PAGER_ITEM_IMAGE),
                     placeholder = painterResource(Res.drawable.compose_multiplatform)

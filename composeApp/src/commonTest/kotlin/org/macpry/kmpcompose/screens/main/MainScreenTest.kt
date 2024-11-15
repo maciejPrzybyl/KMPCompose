@@ -1,7 +1,8 @@
 package org.macpry.kmpcompose.screens.main
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.ExperimentalTestApi
@@ -30,7 +31,14 @@ class MainScreenTest {
     fun displayCurrentTime() = runComposeUiTest {
         val currentTime = mutableStateOf<String?>("21:37")
         setContent {
-            MainScreen(MainState(currentTime.value, ImagesState.Init), {}, {}, null, null)
+            SharedTransitionLayout {
+                AnimatedVisibility(true) {
+                    MainScreen(
+                        MainState(currentTime.value, ImagesState.Init),
+                        {}, {}, this@SharedTransitionLayout, this@AnimatedVisibility
+                    )
+                }
+            }
         }
 
         onNodeWithTag(MainScreenTags.CURRENT_TIME_TEXT).run {
@@ -44,7 +52,14 @@ class MainScreenTest {
     fun displayMapsButton() = runComposeUiTest {
         var onOpenMapsClick = 0.0 to 0.0
         setContent {
-            MainScreen(MainState(null, ImagesState.Init), { onOpenMapsClick = it }, {}, null, null)
+            SharedTransitionLayout {
+                AnimatedVisibility(true) {
+                    MainScreen(
+                        MainState(null, ImagesState.Init), { onOpenMapsClick = it }, {},
+                        this@SharedTransitionLayout, this@AnimatedVisibility
+                    )
+                }
+            }
         }
 
         onNodeWithTag(MainScreenTags.OPEN_MAPS_BUTTON).run {
@@ -75,7 +90,13 @@ class MainScreenTest {
         val imagesState = mutableStateOf<ImagesState>(ImagesState.Init)
 
         setContent {
-            PagerContainer(imagesState.value, {}, null, null)
+            SharedTransitionLayout {
+                AnimatedVisibility(true) {
+                    PagerContainer(
+                        imagesState.value, {}, this@SharedTransitionLayout, this@AnimatedVisibility
+                    )
+                }
+            }
         }
 
         onNodeWithTag(MainScreenTags.PAGER_LOADING).assertDoesNotExist()
@@ -105,14 +126,16 @@ class MainScreenTest {
             ImageResponse(it, "$it url", "$it aut")
         }
         setContent {
-            SharedTransitionScope {
-                MainScreen(
-                    MainState(null, ImagesState.Success(images)),
-                    {},
-                    { onImageClick = it },
-                    this,
-                    null
-                )
+            SharedTransitionLayout {
+                AnimatedVisibility(true) {
+                    MainScreen(
+                        MainState(null, ImagesState.Success(images)),
+                        {},
+                        { onImageClick = it },
+                        this@SharedTransitionLayout,
+                        this@AnimatedVisibility
+                    )
+                }
             }
         }
 
@@ -131,7 +154,14 @@ class MainScreenTest {
             ImageResponse(it, "$it urlaa", "$it authoo")
         }
         setContent {
-            MainScreen(MainState(null, ImagesState.Success(images)), { }, {}, null, null)
+            SharedTransitionLayout {
+                AnimatedVisibility(true) {
+                    MainScreen(
+                        MainState(null, ImagesState.Success(images)),
+                        { }, {}, this@SharedTransitionLayout, this@AnimatedVisibility
+                    )
+                }
+            }
         }
 
         fun checkIndicators(currentItemIndex: Int) {
