@@ -223,14 +223,15 @@ fun PagerWithIndicator(
                         .aspectRatio(ratio = 1.0f)
                         .clickable {
                             onOpenImageDetails(imageData.url)
-                        }.apply {
-                            animatedVisibilityScope?.let {
-                                sharedElement(
-                                    state = rememberSharedContentState("image${imageData.url}"),
-                                    animatedVisibilityScope = animatedVisibilityScope
-                                )
-                            }
                         }
+                        .then(
+                            animatedVisibilityScope?.let {
+                                Modifier.sharedElement(
+                                    state = rememberSharedContentState("image${imageData.url}"),
+                                    animatedVisibilityScope = it
+                                )
+                            } ?: Modifier
+                        )
                         .testTag(MainScreenTags.PAGER_ITEM_IMAGE),
                     placeholder = painterResource(Res.drawable.compose_multiplatform)
                 )
