@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
+import coil3.request.crossfade
 import kmpcompose.composeapp.generated.resources.Res
 import kmpcompose.composeapp.generated.resources.compose_multiplatform
 import kmpcompose.composeapp.generated.resources.coordinates_input_latitude
@@ -217,6 +218,7 @@ fun PagerWithIndicator(
                 AsyncImage(
                     model = ImageRequest.Builder(LocalPlatformContext.current)
                         .data(imageData.url)
+                        .crossfade(true)
                         .build(),
                     contentDescription = null,
                     modifier = Modifier
