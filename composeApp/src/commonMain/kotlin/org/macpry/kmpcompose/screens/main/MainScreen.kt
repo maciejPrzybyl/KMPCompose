@@ -207,11 +207,11 @@ fun PagerWithIndicator(
         state = pagerState,
         modifier = Modifier.testTag(MainScreenTags.PAGER)
     ) { page ->
-        Column(
+        Box(
             Modifier
                 .fillMaxWidth()
                 .padding(10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            contentAlignment = Alignment.BottomCenter
         ) {
             val imageData = images[page]
             sharedTransitionScope?.run {
