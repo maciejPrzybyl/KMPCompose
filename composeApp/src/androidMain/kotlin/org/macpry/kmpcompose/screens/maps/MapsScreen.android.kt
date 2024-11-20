@@ -4,16 +4,19 @@ import androidx.compose.runtime.Composable
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.rememberCameraPositionState
-import org.macpry.kmpcompose.screens.maps.model.Coordinates
 
 @Composable
-actual fun Map(coordinates: Coordinates) {
+actual fun Map(mapsState: MapsState) {
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(
-            LatLng(coordinates.latitude, coordinates.longitude),
+            LatLng(mapsState.locationToZoom.latitude, mapsState.locationToZoom.longitude),
             10f
         )
     }
-    GoogleMap(cameraPositionState = cameraPositionState)
+    GoogleMap(
+        cameraPositionState = cameraPositionState,
+        properties = MapProperties(isMyLocationEnabled = mapsState.showUserLocationButton)
+    )
 }
