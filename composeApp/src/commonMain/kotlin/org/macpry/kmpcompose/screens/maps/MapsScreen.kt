@@ -11,15 +11,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import org.macpry.kmpcompose.screens.maps.model.Coordinates
 
 @Composable
 fun MapsScreen(
-    coordinates: Coordinates,
+    mapsState: MapsState,
     onBack: () -> Unit
 ) {
     Box(Modifier.fillMaxSize()) {
-        Map(coordinates)
+        Map(mapsState)
         IconButton(
             { onBack() },
             Modifier
@@ -33,7 +32,7 @@ fun MapsScreen(
 }
 
 @Composable
-expect fun Map(coordinates: Coordinates)
+expect fun Map(mapsState: MapsState)
 
 object MapsScreenTags {
     const val BACK_BUTTON = "BACK_BUTTON"

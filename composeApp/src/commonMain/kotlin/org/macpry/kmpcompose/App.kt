@@ -48,9 +48,10 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.macpry.kmpcompose.screens.AppNavigationRoutes
 import org.macpry.kmpcompose.screens.HomeBottomNavigation
 import org.macpry.kmpcompose.screens.imagedetail.ImageDetailScreen
-import org.macpry.kmpcompose.screens.main.MainViewModel
 import org.macpry.kmpcompose.screens.main.MainScreen
+import org.macpry.kmpcompose.screens.main.MainViewModel
 import org.macpry.kmpcompose.screens.maps.MapsScreen
+import org.macpry.kmpcompose.screens.maps.MapsViewModel
 import org.macpry.kmpcompose.screens.maps.model.Coordinates
 import org.macpry.kmpcompose.screens.notes.NotesScreen
 import org.macpry.kmpcompose.screens.notes.NotesViewModel
@@ -95,7 +96,10 @@ fun AppNavigation() {
                 typeMap = mapOf(typeOf<Coordinates>() to CoordinatesNavType),
             ) {
                 it.toRoute<AppNavigationRoutes.Maps>().coordinates.let { coordinates ->
-                    MapsScreen(coordinates) {
+                    val mapsViewModel: MapsViewModel = koinViewModel()
+                    mapsViewModel.setLocation(coordinates)
+                    val mapsState by mapsViewModel.mapsState.collectAsStateWithLifecycle()
+                    MapsScreen(mapsState) {
                         appNavController.navigateUp()
                     }
                 }
