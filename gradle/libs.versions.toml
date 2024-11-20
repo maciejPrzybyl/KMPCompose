@@ -28,6 +28,7 @@ maps-compose = "6.2.1"
 secrets = "2.0.1"
 kover = "0.9.0-RC"
 androidx-ui-test = "1.7.5"
+accompanist = "0.36.0"
 
 [libraries]
 androidx-ui-test-junit4-android = { module = "androidx.compose.ui:ui-test-junit4-android", version.ref = "androidx-ui-test" }
@@ -81,6 +82,8 @@ datastore-preferences = { module = "androidx.datastore:datastore-preferences", v
 
 googlemaps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "maps-compose" }
 googlemaps-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "google-maps" }
+
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

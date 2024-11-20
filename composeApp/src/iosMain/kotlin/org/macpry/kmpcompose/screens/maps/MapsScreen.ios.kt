@@ -12,7 +12,7 @@ import platform.MapKit.MKMapView
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
-actual fun Map(mapsState: MapsState) {
+actual fun Map(mapsState: MapsState, onLocationPermissionsChanged: (Boolean) -> Unit) {
     val mapView = remember { MKMapView() }
     UIKitView(
         modifier = Modifier.fillMaxSize(),

@@ -75,6 +75,7 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.googlemaps.maps)
             implementation(libs.googlemaps.compose)
+            implementation(libs.accompanist.permissions)
         }
         commonMain.dependencies {
             implementation(compose.runtime)

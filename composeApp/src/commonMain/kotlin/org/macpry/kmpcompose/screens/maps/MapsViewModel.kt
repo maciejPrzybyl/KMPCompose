@@ -12,6 +12,10 @@ class MapsViewModel : ViewModel() {
         _mapsState.update { it.copy(locationToZoom = coordinates) }
     }
 
+    fun onLocationPermissionsChanged(isGranted: Boolean) {
+        _mapsState.update { it.copy(showUserLocationButton = isGranted) }
+    }
+
     private val _mapsState: MutableStateFlow<MapsState> = MutableStateFlow(MapsState())
     val mapsState = _mapsState.asStateFlow()
 

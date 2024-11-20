@@ -14,7 +14,7 @@ class MapsScreenTest {
     fun displayBackButton() = runComposeUiTest {
         var onBackClicked = false
         setContent {
-            MapsScreen(MapsState()) { onBackClicked = true }
+            MapsScreen(MapsState(), { onBackClicked = true }, {})
         }
         onNodeWithTag(MapsScreenTags.BACK_BUTTON)
             .assertExists()

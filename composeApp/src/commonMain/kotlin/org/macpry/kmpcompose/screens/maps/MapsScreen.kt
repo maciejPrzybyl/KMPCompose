@@ -15,10 +15,11 @@ import androidx.compose.ui.platform.testTag
 @Composable
 fun MapsScreen(
     mapsState: MapsState,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onLocationPermissionsChanged: (Boolean) -> Unit
 ) {
     Box(Modifier.fillMaxSize()) {
-        Map(mapsState)
+        Map(mapsState, onLocationPermissionsChanged)
         IconButton(
             { onBack() },
             Modifier
@@ -32,7 +33,7 @@ fun MapsScreen(
 }
 
 @Composable
-expect fun Map(mapsState: MapsState)
+expect fun Map(mapsState: MapsState, onLocationPermissionsChanged: (Boolean) -> Unit)
 
 object MapsScreenTags {
     const val BACK_BUTTON = "BACK_BUTTON"

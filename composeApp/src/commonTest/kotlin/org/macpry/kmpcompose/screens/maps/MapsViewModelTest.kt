@@ -38,4 +38,16 @@ class MapsViewModelTest {
             assertEquals(MapsState(coordinates, false), awaitItem())
         }
     }
+
+    @Test
+    fun locationPermissionChanged() = runTest {
+        val viewModel = MapsViewModel()
+
+        viewModel.mapsState.test {
+            assertEquals(MapsState(), awaitItem())
+
+            viewModel.onLocationPermissionsChanged(true)
+            assertEquals(MapsState(showUserLocationButton = true), awaitItem())
+        }
+    }
 }

@@ -99,9 +99,10 @@ fun AppNavigation() {
                     val mapsViewModel: MapsViewModel = koinViewModel()
                     mapsViewModel.setLocation(coordinates)
                     val mapsState by mapsViewModel.mapsState.collectAsStateWithLifecycle()
-                    MapsScreen(mapsState) {
-                        appNavController.navigateUp()
-                    }
+                    MapsScreen(
+                        mapsState,
+                        { appNavController.navigateUp() },
+                        { mapsViewModel.onLocationPermissionsChanged(it) })
                 }
             }
             composable<AppNavigationRoutes.ImageDetail> {
