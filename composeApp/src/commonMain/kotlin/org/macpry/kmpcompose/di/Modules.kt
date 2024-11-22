@@ -30,6 +30,7 @@ import org.macpry.kmpcompose.repositories.ISettingsRepository
 import org.macpry.kmpcompose.repositories.NotesRepository
 import org.macpry.kmpcompose.repositories.SettingsRepository
 import org.macpry.kmpcompose.screens.main.MainViewModel
+import org.macpry.kmpcompose.screens.maps.MapsViewModel
 import org.macpry.kmpcompose.screens.notes.NotesViewModel
 import org.macpry.kmpcompose.screens.settings.SettingsViewModel
 
@@ -72,4 +73,5 @@ val viewModelsModule = module {
     viewModelOf(::MainViewModel)
     viewModelOf(::NotesViewModel)
     viewModelOf(::SettingsViewModel)
+    viewModelOf(::MapsViewModel)
 }
