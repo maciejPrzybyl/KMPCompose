@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.UIKitView
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.CoreLocation.CLLocationCoordinate2DMake
+import platform.CoreLocation.CLLocationManager
 import platform.MapKit.MKCoordinateRegionMakeWithDistance
 import platform.MapKit.MKMapView
 
@@ -14,6 +15,9 @@ import platform.MapKit.MKMapView
 @Composable
 actual fun Map(mapsState: MapsState, onLocationPermissionsChanged: (Boolean) -> Unit) {
     val mapView = remember { MKMapView() }
+    val locationManager = CLLocationManager()
+    locationManager.requestWhenInUseAuthorization()
+    mapView.setShowsUserLocation(true)
     UIKitView(
         modifier = Modifier.fillMaxSize(),
         factory = { mapView },
