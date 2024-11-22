@@ -3,6 +3,7 @@ package org.macpry.kmpcompose.screens.maps
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -41,7 +42,10 @@ actual fun Map(mapsState: MapsState, onLocationPermissionsChanged: (Boolean) -> 
     if (locationPermissionState.allPermissionsGranted) {
         onLocationPermissionsChanged(true)
     } else {
-        Column(verticalArrangement = Arrangement.Bottom) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Bottom
+        ) {
             val allPermissionsRevoked =
                 locationPermissionState.permissions.size == locationPermissionState.revokedPermissions.size
 
