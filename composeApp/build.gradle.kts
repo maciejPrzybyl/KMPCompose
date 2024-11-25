@@ -16,6 +16,7 @@ plugins {
     alias(libs.plugins.serialization)
     alias(libs.plugins.secrets)
     alias(libs.plugins.kover)
+    alias(libs.plugins.googleServices)
 }
 
 repositories {
@@ -76,6 +77,8 @@ kotlin {
             implementation(libs.googlemaps.maps)
             implementation(libs.googlemaps.compose)
             implementation(libs.accompanist.permissions)
+            implementation(project.dependencies.platform(libs.firebase.bom))
+            implementation(libs.firebase.messaging)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
