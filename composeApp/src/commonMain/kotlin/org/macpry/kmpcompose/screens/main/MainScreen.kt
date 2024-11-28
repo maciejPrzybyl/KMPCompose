@@ -71,6 +71,7 @@ fun MainScreen(
     animatedVisibilityScope: AnimatedVisibilityScope?
 ) {
     val greeting = remember { Greeting().greet() }
+    NotificationPermissionDialog()
     Column(
         Modifier.fillMaxSize(),
         Arrangement.SpaceEvenly,
@@ -91,6 +92,9 @@ fun MainScreen(
         )
     }
 }
+
+@Composable
+expect fun NotificationPermissionDialog()
 
 @Composable
 fun CoordinatesView(
