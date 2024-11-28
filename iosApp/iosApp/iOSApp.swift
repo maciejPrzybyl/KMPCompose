@@ -6,11 +6,11 @@ import Firebase
 import FirebaseMessaging
 
 class AppDelegate: NSObject, UIApplicationDelegate {
+
   func application(_ application: UIApplication,
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
 
     FirebaseApp.configure()
-    //FirebaseConfiguration.shared.setLoggerLevel(.min)
     UNUserNotificationCenter.current().delegate = self
     let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
     UNUserNotificationCenter.current().requestAuthorization(
@@ -22,21 +22,20 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
     return true
   }
-}
 
-func application(
-  _ application: UIApplication,
-  didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
-) {
-  Messaging.messaging().apnsToken = deviceToken
-  if  let str = String(data: deviceToken, encoding: .utf8) { NSLog("aaaa didRegisterForRemoteNotificationsWithDeviceToken deviceToken: \(str)") }
-}
-
-func application(
+  func application(
     _ application: UIApplication,
-    didFailToRegisterForRemoteNotificationsWithError error: any Error
-) {
-    NSLog("aaaa didFailToRegisterForRemoteNotificationsWithError error: \(error.localizedDescription)")
+    didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+  ) {
+    Messaging.messaging().apnsToken = deviceToken
+  }
+
+  func application(
+      _ application: UIApplication,
+      didFailToRegisterForRemoteNotificationsWithError error: any Error
+  ) {
+      NSLog("aaaa didFailToRegisterForRemoteNotificationsWithError error: \(error.localizedDescription)")
+  }
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
@@ -46,7 +45,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     withCompletionHandler completionHandler:
     @escaping (UNNotificationPresentationOptions) -> Void
   ) {
-    completionHandler([[.banner, .sound]])
+       completionHandler([[.banner, .sound]])
   }
 
   func userNotificationCenter(
@@ -69,7 +68,6 @@ extension AppDelegate: MessagingDelegate {
       object: nil,
       userInfo: tokenDict
     )
-    NSLog("aaaa didReceiveRegistrationToken fcmToken: " + (fcmToken ?? "Not found"))
   }
 }
 
