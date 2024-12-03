@@ -120,6 +120,7 @@ kotlin {
         wasmJsMain.dependencies {
             implementation(npm("@js-joda/timezone", "2.3.0"))
             implementation(libs.ktor.client.js)
+            implementation(npm("firebase", "11.0.2"))
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
