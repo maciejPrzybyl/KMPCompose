@@ -6,6 +6,6 @@ import org.koin.core.logger.MESSAGE
 
 class KoinLogger: Logger(level = Level.DEBUG) {
     override fun display(level: Level, msg: MESSAGE) {
-        println(msg)
+        //println(msg)
     }
 }
