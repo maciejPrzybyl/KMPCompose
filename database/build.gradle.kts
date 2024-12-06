@@ -68,10 +68,7 @@ kotlin {
             implementation(libs.sqlite.bundle)
         }
         wasmJsMain.dependencies {
-            implementation(npm("sql.js", "1.11.0"))
-            implementation(devNpm("copy-webpack-plugin", "9.1.0"))
-            val jsDatabase = rootDir.resolve("libs/js")
-            implementation(npm("kmp-js-db", jsDatabase))
+            implementation(npm("@sqlite.org/sqlite-wasm", "3.47.1-build1"))
         }
     }
 

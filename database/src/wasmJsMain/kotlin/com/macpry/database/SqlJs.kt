@@ -1,6 +1,5 @@
+@file:JsModule("./sql-init.mjs")
+
 package com.macpry.database
 
-import kotlin.js.Promise
-
-@JsModule("kmp-js-db")
-external fun createDatabase()//: Promise<JsAny>
+external fun insertNote(noteContent: String)
