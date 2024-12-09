@@ -1,4 +1,4 @@
-@file:JsModule("./sql-init.mjs")
+@file:JsModule("./db-worker/wrapped-worker.mjs")
 
 package com.macpry.database
 
