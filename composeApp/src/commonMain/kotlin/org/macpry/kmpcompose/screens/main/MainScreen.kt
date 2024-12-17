@@ -22,9 +22,11 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -242,10 +244,17 @@ fun PagerWithIndicator(
                     placeholder = painterResource(Res.drawable.compose_multiplatform)
                 )
             }
-            Text(
-                text = "${imageData.id} ${imageData.author}",
-                modifier = Modifier.testTag(MainScreenTags.PAGER_ITEM_DESCRIPTION)
-            )
+            Surface(
+                shape = RoundedCornerShape(20, 20, 20, 20),
+                color = Color.LightGray.copy(alpha = 0.3f)
+            ) {
+                Text(
+                    text = "${imageData.id} ${imageData.author}",
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .testTag(MainScreenTags.PAGER_ITEM_DESCRIPTION)
+                )
+            }
         }
     }
     Row(
