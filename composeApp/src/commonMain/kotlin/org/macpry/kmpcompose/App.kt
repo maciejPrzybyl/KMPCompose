@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
@@ -198,6 +199,16 @@ private fun HomeNavigation(
             }
         }
         Box(Modifier.fillMaxSize()) {
+            FloatingActionButton(
+                onClick = {
+
+                },
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(20.dp)
+            ) {
+                Icon(Icons.Default.Refresh, contentDescription = "Start worker")
+            }
             FloatingActionButton(
                 onClick = {
                     isDialogVisible = true

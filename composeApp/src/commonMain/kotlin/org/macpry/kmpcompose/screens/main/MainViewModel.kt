@@ -10,7 +10,8 @@ import org.macpry.kmpcompose.data.network.ImageResponse
 import org.macpry.kmpcompose.managers.IAppManager
 
 class MainViewModel(
-    private val appManager: IAppManager
+    private val appManager: IAppManager,
+    private val workManager: WorkManager
 ) : ViewModel() {
 
     private fun fetchImages() = flow {
