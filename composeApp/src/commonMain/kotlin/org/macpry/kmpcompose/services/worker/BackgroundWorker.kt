@@ -1,5 +1,13 @@
 package org.macpry.kmpcompose.services.worker
 
-interface BackgroundWorker {
-    fun start()
+import kotlinx.coroutines.flow.Flow
+
+abstract class BackgroundWorker {
+    abstract fun start()
+    abstract fun getProgressFlow(): Flow<Int>
+    abstract val tag: String
+
+    companion object {
+        const val PROGRESS = "PROGRESS"
+    }
 }

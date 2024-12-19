@@ -1,12 +1,21 @@
 package org.macpry.kmpcompose.di
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SHORT_SERVICE
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
+import androidx.work.ForegroundInfo
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import org.koin.androidx.workmanager.dsl.worker
 import org.koin.core.module.dsl.singleOf
@@ -18,17 +27,29 @@ import org.macpry.kmpcompose.services.worker.BackgroundWorker
 import kotlin.time.Duration.Companion.seconds
 
 actual val workersModule = module {
-    singleOf(::AndroidBackgroundWorker) bind BackgroundWorker::class
+    singleOf(::AndroidCountingWorker) bind BackgroundWorker::class
     single { WorkManager.getInstance(get()) }
     worker { CountingWorker(get(), get(), get(named(KMPDispatchers.IO))) }
 }
 
-class AndroidBackgroundWorker(
+class AndroidCountingWorker(
     private val workManager: WorkManager
-) : BackgroundWorker {
+) : BackgroundWorker() {
+
     override fun start() {
-        workManager.enqueue(OneTimeWorkRequestBuilder<CountingWorker>().build())
+        workManager.enqueue(
+            OneTimeWorkRequestBuilder<CountingWorker>()
+                .addTag(tag)
+                .build()
+        )
     }
+
+    override fun getProgressFlow() =
+        workManager.getWorkInfosByTagFlow(tag).map {
+            it.firstOrNull()?.progress?.getInt(PROGRESS, 0) ?: 0
+        }
+
+    override val tag: String = "CountingWorker"
 }
 
 class CountingWorker(
@@ -38,10 +59,52 @@ class CountingWorker(
 ) : CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result = withContext(ioDispatcher) {
+        setForeground(createForegroundInfo(0))
         (1..10).forEach {
             println("BackgroundWorker: $it")
+            setProgress(workDataOf(BackgroundWorker.PROGRESS to it / 10))
             delay(1.seconds)
         }
         Result.success()
+    }
+
+    private val notificationManager =
+        appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+    private fun createForegroundInfo(progress: Int): ForegroundInfo {
+        val title = "Count"
+        val cancel = "Cancel"
+        val intent = WorkManager.getInstance(applicationContext).createCancelPendingIntent(id)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createChannel()
+        }
+
+        val notification = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
+            .setContentTitle(title)
+            .setTicker(title)
+            .setContentText("Counting progress")
+            .setProgress(10, progress, false)
+            .setSmallIcon(android.R.drawable.btn_star)
+            .setOngoing(true)
+            .addAction(android.R.drawable.ic_delete, cancel, intent)
+            .build()
+
+        return ForegroundInfo(NOTIFICATION_ID, notification, FOREGROUND_SERVICE_TYPE_SHORT_SERVICE)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createChannel() {
+        val name = "channel_name"
+        val descriptionText = "channel_description"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val mChannel = NotificationChannel(CHANNEL_ID, name, importance)
+        mChannel.description = descriptionText
+        notificationManager.createNotificationChannel(mChannel)
+    }
+
+    companion object {
+        const val CHANNEL_ID = "CountingWorker_notification_channel_id"
+        const val NOTIFICATION_ID = 987123
     }
 }
