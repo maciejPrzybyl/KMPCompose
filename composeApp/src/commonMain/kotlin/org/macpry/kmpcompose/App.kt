@@ -201,7 +201,7 @@ private fun HomeNavigation(
         Box(Modifier.fillMaxSize()) {
             FloatingActionButton(
                 onClick = {
-
+                    mainViewModel.startWorker()
                 },
                 modifier = Modifier
                     .align(Alignment.TopStart)
