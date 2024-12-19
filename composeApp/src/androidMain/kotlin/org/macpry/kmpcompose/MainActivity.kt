@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    MainScreen(MainState("12:12", ImagesState.Success(listOf(ImageResponse(1, "url", "aaaaaaaa")))), {}, {}, null, null)
+    MainScreen(MainState("12:12", ImagesState.Success(listOf(ImageResponse(1, "url", "aaaaaaaa"))), 0), {}, {}, null, null)
 }
 
 @Preview(showBackground = true)

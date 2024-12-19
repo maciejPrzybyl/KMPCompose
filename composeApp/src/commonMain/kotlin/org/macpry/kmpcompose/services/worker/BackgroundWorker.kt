@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 abstract class BackgroundWorker {
     abstract fun start()
-    abstract fun getProgressFlow(): Flow<Int>
+    abstract val progressFlow: Flow<Int>
     abstract val tag: String
 
     companion object {

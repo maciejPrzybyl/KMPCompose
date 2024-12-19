@@ -15,6 +15,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import org.koin.androidx.workmanager.dsl.worker
@@ -44,12 +45,11 @@ class AndroidCountingWorker(
         )
     }
 
-    override fun getProgressFlow() =
-        workManager.getWorkInfosByTagFlow(tag).map {
-            it.firstOrNull()?.progress?.getInt(PROGRESS, 0) ?: 0
-        }
-
     override val tag: String = "CountingWorker"
+
+    override val progressFlow: Flow<Int> = workManager.getWorkInfosByTagFlow(tag).map {
+        it.firstOrNull()?.progress?.getInt(PROGRESS, 0) ?: 0
+    }
 }
 
 class CountingWorker(
