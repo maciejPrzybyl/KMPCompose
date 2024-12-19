@@ -60,16 +60,13 @@ class CountingWorker(
 
     override suspend fun doWork(): Result = withContext(ioDispatcher) {
         setForeground(createForegroundInfo(0))
-        (1..10).forEach {
-            println("BackgroundWorker: $it")
-            setProgress(workDataOf(BackgroundWorker.PROGRESS to it / 10))
+        (1..100).step(10).forEach {
+            setForeground(createForegroundInfo(it))
+            setProgress(workDataOf(BackgroundWorker.PROGRESS to it))
             delay(1.seconds)
         }
         Result.success()
     }
-
-    private val notificationManager =
-        appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     private fun createForegroundInfo(progress: Int): ForegroundInfo {
         val title = "Count"
@@ -84,7 +81,7 @@ class CountingWorker(
             .setContentTitle(title)
             .setTicker(title)
             .setContentText("Counting progress")
-            .setProgress(10, progress, false)
+            .setProgress(100, progress, false)
             .setSmallIcon(android.R.drawable.btn_star)
             .setOngoing(true)
             .addAction(android.R.drawable.ic_delete, cancel, intent)
@@ -100,6 +97,8 @@ class CountingWorker(
         val importance = NotificationManager.IMPORTANCE_DEFAULT
         val mChannel = NotificationChannel(CHANNEL_ID, name, importance)
         mChannel.description = descriptionText
+        val notificationManager =
+            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(mChannel)
     }
 
