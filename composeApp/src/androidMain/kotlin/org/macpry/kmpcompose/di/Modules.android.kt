@@ -60,7 +60,7 @@ class CountingWorker(
 
     override suspend fun doWork(): Result = withContext(ioDispatcher) {
         setForeground(createForegroundInfo(0))
-        (1..100).step(10).forEach {
+        (0..100).step(10).forEach {
             setForeground(createForegroundInfo(it))
             setProgress(workDataOf(BackgroundWorker.PROGRESS to it))
             delay(1.seconds)

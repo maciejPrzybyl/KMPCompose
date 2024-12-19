@@ -207,7 +207,9 @@ private fun HomeNavigation(
                     .align(Alignment.TopStart)
                     .padding(20.dp)
             ) {
-                Icon(Icons.Default.Refresh, contentDescription = "Start worker")
+                if (mainState.workerProgress in 1..99) {
+                    Text("${mainState.workerProgress}")
+                } else Icon(Icons.Default.Refresh, contentDescription = "Start worker")
             }
             FloatingActionButton(
                 onClick = {
