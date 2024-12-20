@@ -8,6 +8,6 @@ abstract class BackgroundWorker {
     abstract val tag: String
 
     companion object {
-        const val PROGRESS = "PROGRESS"
+        const val PROGRESS_TAG = "PROGRESS"
     }
 }

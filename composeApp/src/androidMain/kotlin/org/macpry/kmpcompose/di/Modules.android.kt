@@ -48,7 +48,7 @@ class AndroidCountingWorker(
     override val tag: String = "CountingWorker"
 
     override val progressFlow: Flow<Int> = workManager.getWorkInfosByTagFlow(tag).map {
-        it.firstOrNull()?.progress?.getInt(PROGRESS, 0) ?: 0
+        it.firstOrNull()?.progress?.getInt(PROGRESS_TAG, 0) ?: 0
     }
 }
 
@@ -58,36 +58,48 @@ class CountingWorker(
     private val ioDispatcher: CoroutineDispatcher
 ) : CoroutineWorker(appContext, params) {
 
-    override suspend fun doWork(): Result = withContext(ioDispatcher) {
-        setForeground(createForegroundInfo(0))
-        (0..100).step(10).forEach {
-            setForeground(createForegroundInfo(it))
-            setProgress(workDataOf(BackgroundWorker.PROGRESS to it))
-            delay(1.seconds)
+    private val notificationManager =
+        applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private val notificationBuilder =
+        NotificationCompat.Builder(applicationContext, CHANNEL_ID).apply {
+            val title = "Count"
+            val cancel = "Cancel"
+            val intent = WorkManager.getInstance(applicationContext).createCancelPendingIntent(id)
+            setContentTitle(title)
+            setTicker(title)
+            setContentText("Counting progress")
+            setProgress(MAX_PROGRESS, 0, false)
+            setSmallIcon(android.R.drawable.btn_star)
+            setOngoing(true)
+            setOnlyAlertOnce(true)
+            addAction(android.R.drawable.ic_delete, cancel, intent)
         }
-        Result.success()
+
+    private fun updateNotification(progress: Int) {
+        val updatedNotification =
+            notificationBuilder.setProgress(MAX_PROGRESS, progress, false).build()
+        notificationManager.notify(NOTIFICATION_ID, updatedNotification)
     }
 
-    private fun createForegroundInfo(progress: Int): ForegroundInfo {
-        val title = "Count"
-        val cancel = "Cancel"
-        val intent = WorkManager.getInstance(applicationContext).createCancelPendingIntent(id)
-
+    private fun createForegroundInfo(): ForegroundInfo {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannel()
         }
+        return ForegroundInfo(
+            NOTIFICATION_ID,
+            notificationBuilder.build(),
+            FOREGROUND_SERVICE_TYPE_SHORT_SERVICE
+        )
+    }
 
-        val notification = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
-            .setContentTitle(title)
-            .setTicker(title)
-            .setContentText("Counting progress")
-            .setProgress(100, progress, false)
-            .setSmallIcon(android.R.drawable.btn_star)
-            .setOngoing(true)
-            .addAction(android.R.drawable.ic_delete, cancel, intent)
-            .build()
-
-        return ForegroundInfo(NOTIFICATION_ID, notification, FOREGROUND_SERVICE_TYPE_SHORT_SERVICE)
+    override suspend fun doWork(): Result = withContext(ioDispatcher) {
+        setForeground(createForegroundInfo())
+        (0..MAX_PROGRESS).step(10).forEach {
+            updateNotification(it)
+            setProgress(workDataOf(BackgroundWorker.PROGRESS_TAG to it))
+            delay(1.seconds)
+        }
+        Result.success()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -97,13 +109,12 @@ class CountingWorker(
         val importance = NotificationManager.IMPORTANCE_DEFAULT
         val mChannel = NotificationChannel(CHANNEL_ID, name, importance)
         mChannel.description = descriptionText
-        val notificationManager =
-            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(mChannel)
     }
 
     companion object {
         const val CHANNEL_ID = "CountingWorker_notification_channel_id"
         const val NOTIFICATION_ID = 987123
+        const val MAX_PROGRESS = 100
     }
 }
