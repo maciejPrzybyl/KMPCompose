@@ -8,8 +8,10 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
+import androidx.work.ExistingWorkPolicy
 import androidx.work.ForegroundInfo
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
@@ -38,7 +40,9 @@ class AndroidCountingWorker(
 ) : BackgroundWorker() {
 
     override fun start() {
-        workManager.enqueue(
+        workManager.enqueueUniqueWork(
+            tag,
+            ExistingWorkPolicy.REPLACE,
             OneTimeWorkRequestBuilder<CountingWorker>()
                 .addTag(tag)
                 .build()
@@ -48,7 +52,11 @@ class AndroidCountingWorker(
     override val tag: String = "CountingWorker"
 
     override val progressFlow: Flow<Int> = workManager.getWorkInfosByTagFlow(tag).map {
-        it.firstOrNull()?.progress?.getInt(PROGRESS_TAG, 0) ?: 0
+        it.firstOrNull()?.let { workInfo ->
+            if (workInfo.state == WorkInfo.State.RUNNING) {
+                workInfo.progress.getInt(PROGRESS_TAG, 0)
+            } else 0
+        } ?: 0
     }
 }
 
@@ -94,12 +102,16 @@ class CountingWorker(
 
     override suspend fun doWork(): Result = withContext(ioDispatcher) {
         setForeground(createForegroundInfo())
-        (0..MAX_PROGRESS).step(10).forEach {
-            updateNotification(it)
-            setProgress(workDataOf(BackgroundWorker.PROGRESS_TAG to it))
-            delay(1.seconds)
+        try {
+            (0..MAX_PROGRESS).step(10).forEach {
+                updateNotification(it)
+                setProgress(workDataOf(BackgroundWorker.PROGRESS_TAG to if (isStopped) 0 else it))
+                delay(1.seconds)
+            }
+            Result.success()
+        } catch (exception: Exception) {
+            Result.failure()
         }
-        Result.success()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
