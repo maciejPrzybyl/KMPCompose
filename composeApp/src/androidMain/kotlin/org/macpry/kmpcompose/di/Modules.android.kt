@@ -105,7 +105,7 @@ class CountingWorker(
         try {
             (0..MAX_PROGRESS).step(10).forEach {
                 updateNotification(it)
-                setProgress(workDataOf(BackgroundWorker.PROGRESS_TAG to if (isStopped) 0 else it))
+                setProgress(workDataOf(BackgroundWorker.PROGRESS_TAG to it))
                 delay(1.seconds)
             }
             Result.success()
