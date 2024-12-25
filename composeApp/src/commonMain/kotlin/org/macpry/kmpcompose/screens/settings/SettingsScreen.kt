@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.RadioButton
@@ -26,7 +27,8 @@ fun SettingsScreen(
     LazyColumn(
         Modifier
             .fillMaxSize()
-            .padding(24.dp)
+            .statusBarsPadding()
+            .padding(horizontal = 24.dp)
             .testTag(SettingsScreenTags.ITEMS_CONTAINER),
         verticalArrangement = Arrangement.spacedBy(6.dp),
         horizontalAlignment = Alignment.CenterHorizontally
