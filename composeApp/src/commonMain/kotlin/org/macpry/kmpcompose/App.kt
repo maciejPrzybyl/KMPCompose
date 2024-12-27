@@ -6,6 +6,7 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -58,13 +60,15 @@ import org.macpry.kmpcompose.screens.notes.NotesScreen
 import org.macpry.kmpcompose.screens.notes.NotesViewModel
 import org.macpry.kmpcompose.screens.settings.SettingsScreen
 import org.macpry.kmpcompose.screens.settings.SettingsViewModel
+import org.macpry.kmpcompose.theme.darkScheme
+import org.macpry.kmpcompose.theme.lightScheme
 import kotlin.reflect.typeOf
 
 @Composable
 @Preview
-fun App() {
+fun App(colorScheme: ColorScheme = if (isSystemInDarkTheme()) darkScheme else lightScheme) {
     KoinContext {
-        MaterialTheme {
+        MaterialTheme(colorScheme) {
             AppNavigation()
         }
     }

@@ -3,6 +3,7 @@ package org.macpry.kmpcompose.screens.maps
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -18,7 +19,11 @@ fun MapsScreen(
     onBack: () -> Unit,
     onLocationPermissionsChanged: (Boolean) -> Unit
 ) {
-    Box(Modifier.fillMaxSize()) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .systemBarsPadding()
+    ) {
         Map(mapsState, onLocationPermissionsChanged)
         IconButton(
             { onBack() },
