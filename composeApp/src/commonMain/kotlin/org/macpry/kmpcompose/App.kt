@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -210,6 +211,7 @@ private fun HomeNavigation(
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(20.dp)
+                    .statusBarsPadding()
             ) {
                 if (mainState.workerProgress in 1..99) {
                     Text("${mainState.workerProgress}")
