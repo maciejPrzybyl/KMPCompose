@@ -3,6 +3,7 @@ package org.macpry.kmpcompose.di
 import com.macpry.database.databaseModule
 import com.macpry.datastore.datastoreModule
 import kotlinx.coroutines.CoroutineDispatcher
+import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -42,6 +43,7 @@ fun appModule() = module {
         repositoriesModule,
         databaseModule,
         datastoreModule,
+        workersModule,
         viewModelsModule
     )
 }
@@ -75,3 +77,5 @@ val viewModelsModule = module {
     viewModelOf(::SettingsViewModel)
     viewModelOf(::MapsViewModel)
 }
+
+expect val workersModule: Module

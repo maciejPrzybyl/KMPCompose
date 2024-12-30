@@ -74,6 +74,7 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.koin.android)
+            implementation(libs.koin.androidx.workmanager)
             implementation(libs.googlemaps.maps)
             implementation(libs.googlemaps.compose)
             implementation(libs.accompanist.permissions)

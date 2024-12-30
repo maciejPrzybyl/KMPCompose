@@ -44,7 +44,7 @@ class MainScreenTest {
     fun displayMapsButton() = runComposeUiTest {
         var onOpenMapsClick = 0.0 to 0.0
         setContent {
-            MainScreen(MainState(null, ImagesState.Init), { onOpenMapsClick = it }, {}, null, null)
+            MainScreen(MainState(imagesState = ImagesState.Init), { onOpenMapsClick = it }, {}, null, null)
         }
 
         onNodeWithTag(MainScreenTags.OPEN_MAPS_BUTTON).run {
@@ -107,7 +107,7 @@ class MainScreenTest {
         setContent {
             SharedTransitionScope {
                 MainScreen(
-                    MainState(null, ImagesState.Success(images)),
+                    MainState(imagesState = ImagesState.Success(images)),
                     {},
                     { onImageClick = it },
                     this,
@@ -131,7 +131,7 @@ class MainScreenTest {
             ImageResponse(it, "$it urlaa", "$it authoo")
         }
         setContent {
-            MainScreen(MainState(null, ImagesState.Success(images)), { }, {}, null, null)
+            MainScreen(MainState(imagesState = ImagesState.Success(images)), { }, {}, null, null)
         }
 
         fun checkIndicators(currentItemIndex: Int) {

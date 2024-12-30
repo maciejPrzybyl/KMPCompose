@@ -6,14 +6,21 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ColorScheme
@@ -30,6 +37,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.core.bundle.Bundle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -202,6 +211,36 @@ private fun HomeNavigation(
             }
         }
         Box(Modifier.fillMaxSize()) {
+            val infiniteTransition = rememberInfiniteTransition(label = "infinite transition")
+            val scale by infiniteTransition.animateFloat(
+                initialValue = 1f,
+                targetValue = 2f,
+                animationSpec = infiniteRepeatable(tween(500), RepeatMode.Reverse),
+                label = "scale"
+            )
+            FloatingActionButton(
+                onClick = {
+                    mainViewModel.startWorker()
+                },
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(20.dp)
+                    .statusBarsPadding()
+                    .graphicsLayer {
+                        if (mainState.workerProgress in 1..99) {
+                            scaleX = scale
+                            scaleY = scale
+                            transformOrigin = TransformOrigin.Center
+                        } else {
+                            scaleX = 1f
+                            scaleY = 1f
+                        }
+                    }
+            ) {
+                if (mainState.workerProgress in 1..99) {
+                    Text("${mainState.workerProgress}")
+                } else Icon(Icons.Default.Refresh, contentDescription = "Start worker")
+            }
             FloatingActionButton(
                 onClick = {
                     isDialogVisible = true

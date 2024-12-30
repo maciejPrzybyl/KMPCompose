@@ -6,6 +6,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -16,6 +17,7 @@ import org.macpry.kmpcompose.managers.IAppManager
 import org.macpry.kmpcompose.screens.main.MainViewModelTest.FakeAppManager.Companion.fakeImage
 import org.macpry.kmpcompose.screens.main.MainViewModelTest.FakeAppManager.Companion.fakeTime1
 import org.macpry.kmpcompose.screens.main.MainViewModelTest.FakeAppManager.Companion.fakeTime2
+import org.macpry.kmpcompose.services.worker.BackgroundWorker
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -36,7 +38,7 @@ class MainViewModelTest {
 
     @Test
     fun fetchImagesSuccessfully() = runTest {
-        val viewModel = createViewModel(Result.success(listOf(fakeImage)), 1)
+        val viewModel = createViewModel(Result.success(listOf(fakeImage)), 1, flowOf(0))
 
         viewModel.state.test {
             assertEquals(MainState(null, ImagesState.Init), awaitItem())
@@ -53,7 +55,7 @@ class MainViewModelTest {
     @Test
     fun fetchImagesError() = runTest {
         val exception = Exception("Exxx")
-        val viewModel = createViewModel(Result.failure(exception), 3)
+        val viewModel = createViewModel(Result.failure(exception), 3, flowOf(0))
 
         viewModel.state.test {
             assertEquals(MainState(null, ImagesState.Init), awaitItem())
@@ -65,8 +67,26 @@ class MainViewModelTest {
         }
     }
 
-    private fun createViewModel(fetchImagesResult: Result<List<ImageResponse>>, imagesDelay: Long) =
-        MainViewModel(FakeAppManager(fetchImagesResult, imagesDelay))
+    @Test
+    fun emitWorkerProgress() = runTest {
+        val viewModel = createViewModel(Result.success(emptyList()), 1, flowOf(3, 2, 1))
+
+        viewModel.state.test {
+            assertEquals(MainState(null, ImagesState.Init, 0), awaitItem())
+            assertEquals(MainState(fakeTime1.toString(), ImagesState.Loading, 3), awaitItem())
+            assertEquals(MainState(fakeTime1.toString(), ImagesState.Loading, 2), awaitItem())
+            assertEquals(MainState(fakeTime1.toString(), ImagesState.Loading, 1), awaitItem())
+        }
+    }
+
+    private fun createViewModel(
+        fetchImagesResult: Result<List<ImageResponse>>,
+        imagesDelay: Long,
+        progressFlow: Flow<Int>
+    ) = MainViewModel(
+        FakeAppManager(fetchImagesResult, imagesDelay),
+        FakeBackgroundWorker(progressFlow)
+    )
 
     class FakeAppManager(
         private val fetchImagesResult: Result<List<ImageResponse>>,
@@ -89,5 +109,13 @@ class MainViewModelTest {
 
             val fakeImage = ImageResponse(31, "aaa", "auuu")
         }
+    }
+
+    class FakeBackgroundWorker(fakeProgressFlow: Flow<Int>) : BackgroundWorker() {
+        override fun start() {}
+
+        override val progressFlow: Flow<Int> = fakeProgressFlow
+
+        override val tag: String = "FAKE_TAG"
     }
 }
