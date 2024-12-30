@@ -60,6 +60,7 @@ import org.macpry.kmpcompose.screens.AppNavigationRoutes
 import org.macpry.kmpcompose.screens.HomeBottomNavigation
 import org.macpry.kmpcompose.screens.imagedetail.ImageDetailScreen
 import org.macpry.kmpcompose.screens.main.MainScreen
+import org.macpry.kmpcompose.screens.main.MainState
 import org.macpry.kmpcompose.screens.main.MainViewModel
 import org.macpry.kmpcompose.screens.maps.MapsScreen
 import org.macpry.kmpcompose.screens.maps.MapsViewModel
@@ -93,13 +94,11 @@ fun AppNavigation() {
         ) {
             composable<AppNavigationRoutes.Home> {
                 HomeNavigation(
-                    onOpenMaps = { appNavController.navigate(AppNavigationRoutes.Maps(it)) },
+                    onOpenMaps = {
+                        appNavController.navigate(AppNavigationRoutes.Maps(it))
+                    },
                     onOpenImageDetails = {
-                        appNavController.navigate(
-                            AppNavigationRoutes.ImageDetail(
-                                it
-                            )
-                        )
+                        appNavController.navigate(AppNavigationRoutes.ImageDetail(it))
                     },
                     sharedTransitionScope = this@SharedTransitionLayout,
                     animatedVisibilityScope = this@composable
@@ -227,7 +226,7 @@ private fun HomeNavigation(
                     .padding(20.dp)
                     .statusBarsPadding()
                     .graphicsLayer {
-                        if (mainState.workerProgress in 1..99) {
+                        if (mainState.isWorkerInProgress) {
                             scaleX = scale
                             scaleY = scale
                             transformOrigin = TransformOrigin.Center
@@ -237,9 +236,11 @@ private fun HomeNavigation(
                         }
                     }
             ) {
-                if (mainState.workerProgress in 1..99) {
+                if (mainState.isWorkerInProgress) {
                     Text("${mainState.workerProgress}")
-                } else Icon(Icons.Default.Refresh, contentDescription = "Start worker")
+                } else {
+                    Icon(Icons.Default.Refresh, contentDescription = "Start worker")
+                }
             }
             FloatingActionButton(
                 onClick = {
@@ -254,6 +255,8 @@ private fun HomeNavigation(
         }
     }
 }
+
+private val MainState.isWorkerInProgress get() = workerProgress in 1..99
 
 @Composable
 fun AppAlertDialog(
@@ -271,10 +274,7 @@ fun AppAlertDialog(
                 LazyColumn {
                     (1..30).forEach {
                         item {
-                            Text(
-                                "$it",
-                                Modifier.padding(20.dp).fillMaxWidth()
-                            )
+                            Text("$it", Modifier.padding(20.dp).fillMaxWidth())
                         }
                     }
                 }
