@@ -1,17 +1,15 @@
 package org.macpry.kmpcompose.di
 
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.macpry.kmpcompose.services.worker.BackgroundWorker
-import org.macpry.kmpcompose.services.worker.count
+import org.macpry.kmpcompose.services.worker.BackgroundWorker.Companion.NOTIFICATION_CONTENT
+import org.macpry.kmpcompose.services.worker.BackgroundWorker.Companion.NOTIFICATION_TITLE
 import platform.Foundation.NSUUID.Companion.UUID
-import platform.UIKit.UIBackgroundTaskIdentifier
 import platform.UserNotifications.UNMutableNotificationContent
 import platform.UserNotifications.UNNotificationRequest
 import platform.UserNotifications.UNTimeIntervalNotificationTrigger
@@ -23,27 +21,28 @@ actual val workersModule = module {
 }
 
 class IOSCountingWorker : BackgroundWorker() {
-    override fun start() {
-        triggerNotification()
+    override suspend fun start() {
+        val uuidString = UUID().UUIDString
+        range.forEach {
+            triggerNotification(uuidString, it)
+            delay(1.seconds)
+        }
     }
 
     override val progressFlow: Flow<Int> = flowOf(10)
     override val tag: String = "CountingWorker"
 }
 
-private suspend fun initWork() {
-    count(onEach = {}, onSuccess = {}, onFailure = {})
-}
-
-private fun triggerNotification() {
+private fun triggerNotification(uuidString: String, progress: Int) {
+    val notificationCenter = UNUserNotificationCenter.currentNotificationCenter()
+    notificationCenter.removePendingNotificationRequestsWithIdentifiers(listOf(uuidString))
     val notification = UNMutableNotificationContent()
-    notification.setTitle("Count")
-    notification.setBody("Counting progress")
-    val trigger = UNTimeIntervalNotificationTrigger.triggerWithTimeInterval(1.0, false)
-    val uuidString = UUID().UUIDString
+    notification.setTitle(NOTIFICATION_TITLE)
+    notification.setBody(NOTIFICATION_CONTENT + progress)
+    val trigger = UNTimeIntervalNotificationTrigger.triggerWithTimeInterval(0.0001, false)
     val request = UNNotificationRequest.requestWithIdentifier(uuidString, notification, trigger)
 
-    UNUserNotificationCenter.currentNotificationCenter().addNotificationRequest(request) {
+    notificationCenter.addNotificationRequest(request) {
         println(it)
     }
 }

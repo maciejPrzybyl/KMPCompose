@@ -28,9 +28,8 @@ import org.koin.dsl.module
 import org.macpry.kmpcompose.providers.KMPDispatchers
 import org.macpry.kmpcompose.services.worker.BackgroundWorker
 import org.macpry.kmpcompose.services.worker.BackgroundWorker.Companion.MAX_PROGRESS
-import org.macpry.kmpcompose.services.worker.BackgroundWorker.Companion.contentText
-import org.macpry.kmpcompose.services.worker.BackgroundWorker.Companion.title
-import org.macpry.kmpcompose.services.worker.count
+import org.macpry.kmpcompose.services.worker.BackgroundWorker.Companion.NOTIFICATION_CONTENT
+import org.macpry.kmpcompose.services.worker.BackgroundWorker.Companion.NOTIFICATION_TITLE
 import kotlin.time.Duration.Companion.seconds
 
 actual val workersModule = module {
@@ -43,7 +42,7 @@ class AndroidCountingWorker(
     private val workManager: WorkManager
 ) : BackgroundWorker() {
 
-    override fun start() {
+    override suspend fun start() {
         workManager.enqueueUniqueWork(
             tag,
             ExistingWorkPolicy.REPLACE,
@@ -74,12 +73,12 @@ class CountingWorker(
         applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private val notificationBuilder =
         NotificationCompat.Builder(applicationContext, CHANNEL_ID).apply {
-            val title = title
+            val title = NOTIFICATION_TITLE
             val cancel = "Cancel"
             val intent = WorkManager.getInstance(applicationContext).createCancelPendingIntent(id)
             setContentTitle(title)
             setTicker(title)
-            setContentText(contentText)
+            setContentText(NOTIFICATION_CONTENT)
             setProgress(MAX_PROGRESS, 0, false)
             setSmallIcon(android.R.drawable.btn_star)
             setOngoing(true)
@@ -106,21 +105,9 @@ class CountingWorker(
 
     override suspend fun doWork(): Result = withContext(ioDispatcher) {
         setForeground(createForegroundInfo())
-        count(
-            onEach = {
-                updateNotification(it)
-                setProgress(workDataOf(BackgroundWorker.PROGRESS_TAG to it))
-            },
-            onSuccess = {
-                Result.success()
-            },
-            onFailure = {
-                Result.failure()
-            }
-        )
 
-        /*try {
-            (0..MAX_PROGRESS).step(10).forEach {
+        try {
+            BackgroundWorker.range.forEach {
                 updateNotification(it)
                 setProgress(workDataOf(BackgroundWorker.PROGRESS_TAG to it))
                 delay(1.seconds)
@@ -128,7 +115,7 @@ class CountingWorker(
             Result.success()
         } catch (exception: Exception) {
             Result.failure()
-        }*/
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
