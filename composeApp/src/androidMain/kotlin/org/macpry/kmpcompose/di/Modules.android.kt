@@ -27,6 +27,10 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.macpry.kmpcompose.providers.KMPDispatchers
 import org.macpry.kmpcompose.services.worker.BackgroundWorker
+import org.macpry.kmpcompose.services.worker.BackgroundWorker.Companion.MAX_PROGRESS
+import org.macpry.kmpcompose.services.worker.BackgroundWorker.Companion.contentText
+import org.macpry.kmpcompose.services.worker.BackgroundWorker.Companion.title
+import org.macpry.kmpcompose.services.worker.count
 import kotlin.time.Duration.Companion.seconds
 
 actual val workersModule = module {
@@ -70,12 +74,12 @@ class CountingWorker(
         applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private val notificationBuilder =
         NotificationCompat.Builder(applicationContext, CHANNEL_ID).apply {
-            val title = "Count"
+            val title = title
             val cancel = "Cancel"
             val intent = WorkManager.getInstance(applicationContext).createCancelPendingIntent(id)
             setContentTitle(title)
             setTicker(title)
-            setContentText("Counting progress")
+            setContentText(contentText)
             setProgress(MAX_PROGRESS, 0, false)
             setSmallIcon(android.R.drawable.btn_star)
             setOngoing(true)
@@ -102,7 +106,20 @@ class CountingWorker(
 
     override suspend fun doWork(): Result = withContext(ioDispatcher) {
         setForeground(createForegroundInfo())
-        try {
+        count(
+            onEach = {
+                updateNotification(it)
+                setProgress(workDataOf(BackgroundWorker.PROGRESS_TAG to it))
+            },
+            onSuccess = {
+                Result.success()
+            },
+            onFailure = {
+                Result.failure()
+            }
+        )
+
+        /*try {
             (0..MAX_PROGRESS).step(10).forEach {
                 updateNotification(it)
                 setProgress(workDataOf(BackgroundWorker.PROGRESS_TAG to it))
@@ -111,7 +128,7 @@ class CountingWorker(
             Result.success()
         } catch (exception: Exception) {
             Result.failure()
-        }
+        }*/
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -127,6 +144,5 @@ class CountingWorker(
     companion object {
         const val CHANNEL_ID = "CountingWorker_notification_channel_id"
         const val NOTIFICATION_ID = 987123
-        const val MAX_PROGRESS = 100
     }
 }
