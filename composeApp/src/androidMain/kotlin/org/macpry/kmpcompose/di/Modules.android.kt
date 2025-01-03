@@ -16,10 +16,8 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import org.koin.androidx.workmanager.dsl.worker
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
@@ -30,7 +28,7 @@ import org.macpry.kmpcompose.services.worker.BackgroundWorker
 import org.macpry.kmpcompose.services.worker.BackgroundWorker.Companion.MAX_PROGRESS
 import org.macpry.kmpcompose.services.worker.BackgroundWorker.Companion.NOTIFICATION_CONTENT
 import org.macpry.kmpcompose.services.worker.BackgroundWorker.Companion.NOTIFICATION_TITLE
-import kotlin.time.Duration.Companion.seconds
+import org.macpry.kmpcompose.services.worker.count
 
 actual val workersModule = module {
     singleOf(::AndroidCountingWorker) bind BackgroundWorker::class
@@ -103,19 +101,17 @@ class CountingWorker(
         )
     }
 
-    override suspend fun doWork(): Result = withContext(ioDispatcher) {
-        setForeground(createForegroundInfo())
-
-        try {
-            BackgroundWorker.range.forEach {
-                updateNotification(it)
-                setProgress(workDataOf(BackgroundWorker.PROGRESS_TAG to it))
-                delay(1.seconds)
-            }
-            Result.success()
-        } catch (exception: Exception) {
-            Result.failure()
+    override suspend fun doWork(): Result = count(
+        ioDispatcher,
+        onInit = {
+            setForeground(createForegroundInfo())
+        },
+        onEach = {
+            updateNotification(it)
+            setProgress(workDataOf(BackgroundWorker.PROGRESS_TAG to it))
         }
+    ).exceptionOrNull().let {
+        it?.let { Result.failure() } ?: Result.success()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

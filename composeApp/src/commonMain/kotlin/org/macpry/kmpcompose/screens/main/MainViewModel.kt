@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import org.macpry.kmpcompose.data.network.ImageResponse
 import org.macpry.kmpcompose.managers.IAppManager
 import org.macpry.kmpcompose.services.worker.BackgroundWorker
