@@ -38,7 +38,7 @@ class MainViewModel(
         MainState(null, ImagesState.Init, 0)
     )
 
-    internal fun startWorker() = viewModelScope.launch {
+    internal fun startWorker() {
         backgroundWorker.start()
     }
 }

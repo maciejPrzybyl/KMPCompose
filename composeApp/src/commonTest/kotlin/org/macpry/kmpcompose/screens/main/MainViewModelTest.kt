@@ -112,7 +112,7 @@ class MainViewModelTest {
     }
 
     class FakeBackgroundWorker(fakeProgressFlow: Flow<Int>) : BackgroundWorker() {
-        override suspend fun start() {}
+        override fun start() {}
 
         override val progressFlow: Flow<Int> = fakeProgressFlow
 

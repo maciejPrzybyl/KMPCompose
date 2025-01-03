@@ -1,8 +1,12 @@
 package org.macpry.kmpcompose.di
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -21,15 +25,24 @@ actual val workersModule = module {
 }
 
 class IOSCountingWorker : BackgroundWorker() {
-    override suspend fun start() {
+
+    private val progress = MutableStateFlow(0)
+
+    override fun start() {
         val uuidString = UUID().UUIDString
-        range.forEach {
-            triggerNotification(uuidString, it)
-            delay(1.seconds)
-        }
+
+        //UIApplication.sharedApplication().beginBackgroundTaskWithName(tag) {
+            CoroutineScope(Dispatchers.IO).launch {
+                range.forEach {
+                    triggerNotification(uuidString, it)
+                    progress.emit(it)
+                    delay(1.seconds)
+                }
+            }
+        //}
     }
 
-    override val progressFlow: Flow<Int> = flowOf(10)
+    override val progressFlow: Flow<Int> = progress
     override val tag: String = "CountingWorker"
 }
 

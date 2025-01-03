@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 abstract class BackgroundWorker {
-    abstract suspend fun start()
+    abstract fun start()
     abstract val progressFlow: Flow<Int>
     abstract val tag: String
 
@@ -20,7 +20,7 @@ abstract class BackgroundWorker {
 }
 
 class DummyBackgroundWorker : BackgroundWorker() {
-    override suspend fun start() {}
+    override fun start() {}
 
     override val progressFlow: Flow<Int> = flowOf(10)
     override val tag: String = "DummyBackgroundWorker"

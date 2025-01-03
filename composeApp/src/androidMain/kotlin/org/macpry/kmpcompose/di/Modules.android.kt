@@ -42,7 +42,7 @@ class AndroidCountingWorker(
     private val workManager: WorkManager
 ) : BackgroundWorker() {
 
-    override suspend fun start() {
+    override fun start() {
         workManager.enqueueUniqueWork(
             tag,
             ExistingWorkPolicy.REPLACE,
