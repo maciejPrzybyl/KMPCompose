@@ -5,9 +5,16 @@ import UserNotifications
 import Firebase
 import FirebaseMessaging
 
-class AppDelegate: NSObject, UIApplicationDelegate {
+class IOSAppDelegate: NSObject, UIApplicationDelegate {
 
-  func application(_ application: UIApplication,
+    private let kotlinAppDelegate = KotlinAppDelegate()
+
+    func application(_ application: UIApplication,
+                       didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+                       return kotlinAppDelegate.didFinishLaunchingWithOptions(/*application, launchOptions*/)
+    }
+
+  /*func application(_ application: UIApplication,
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
 
     FirebaseApp.configure()
@@ -35,10 +42,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
       didFailToRegisterForRemoteNotificationsWithError error: any Error
   ) {
       NSLog("aaaa didFailToRegisterForRemoteNotificationsWithError error: \(error.localizedDescription)")
-  }
+  }*/
 }
 
-extension AppDelegate: UNUserNotificationCenterDelegate {
+/*extension AppDelegate: UNUserNotificationCenterDelegate {
   func userNotificationCenter(
     _ center: UNUserNotificationCenter,
     willPresent notification: UNNotification,
@@ -69,7 +76,7 @@ extension AppDelegate: MessagingDelegate {
       userInfo: tokenDict
     )
   }
-}
+}*/
 
 
 @main
@@ -77,7 +84,7 @@ struct iOSApp: App {
     init() {
         InitKt.doInitKoin()
     }
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @UIApplicationDelegateAdaptor(IOSAppDelegate.self) var appDelegate
     var body: some Scene {
         WindowGroup {
             ContentView()
