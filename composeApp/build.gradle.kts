@@ -17,6 +17,7 @@ plugins {
     alias(libs.plugins.secrets)
     alias(libs.plugins.kover)
     alias(libs.plugins.googleServices)
+    kotlin("native.cocoapods")
 }
 
 repositories {
@@ -64,6 +65,16 @@ kotlin {
             baseName = "ComposeApp"
             isStatic = true
         }
+    }
+
+    cocoapods {
+        version = "1.0"
+        summary = "Some description for a Kotlin/Native module"
+        homepage = "Link to a Kotlin/Native module homepage"
+        ios.deploymentTarget = "16.0"
+
+        pod("FirebaseCore", "~> 11.6.0")
+        pod("FirebaseMessaging", "~> 11.6.0")
     }
 
     sourceSets {

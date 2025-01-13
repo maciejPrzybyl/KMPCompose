@@ -14,4 +14,5 @@ plugins {
     alias(libs.plugins.kover)
     id("com.github.ben-manes.versions") version "0.51.0"
     alias(libs.plugins.googleServices) apply false
+    kotlin("native.cocoapods").version("2.0.0").apply(false)
 }
