@@ -2,6 +2,7 @@
     <string name="home_navigation_main">Główny</string>
     <string name="home_navigation_notes">Notatki</string>
     <string name="home_navigation_settings">Ustawienia</string>
+    <string name="home_navigation_user">Użytkownik</string>
 
     <string name="coordinates_input_latitude">Szerokość geograficzna</string>
     <string name="coordinates_input_longitude">Długość geograficzna</string>

@@ -168,7 +168,8 @@ private fun HomeNavigation(
             listOf(
                 HomeBottomNavigation.Main,
                 HomeBottomNavigation.Notes,
-                HomeBottomNavigation.Settings
+                HomeBottomNavigation.Settings,
+                HomeBottomNavigation.User
             ).forEach { screen ->
                 item(
                     selected = screen == currentDestination,
@@ -208,6 +209,8 @@ private fun HomeNavigation(
                 val settingsState by settingsViewModel.settingsState.collectAsStateWithLifecycle()
                 SettingsScreen(settingsState, settingsViewModel::saveSetting)
             }
+
+            HomeBottomNavigation.User -> TODO()
         }
         Box(Modifier.fillMaxSize()) {
             val infiniteTransition = rememberInfiniteTransition(label = "infinite transition")
