@@ -33,3 +33,5 @@ enum class HomeBottomNavigation(val icon: ImageVector, val label: StringResource
     Settings(Icons.Default.Settings, Res.string.home_navigation_settings),
     User(Icons.Default.Face, Res.string.home_navigation_user)
 }
+
+expect val bottomNavigationItems : List<HomeBottomNavigation>

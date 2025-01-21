@@ -58,6 +58,7 @@ import org.koin.compose.KoinContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.macpry.kmpcompose.screens.AppNavigationRoutes
 import org.macpry.kmpcompose.screens.HomeBottomNavigation
+import org.macpry.kmpcompose.screens.bottomNavigationItems
 import org.macpry.kmpcompose.screens.imagedetail.ImageDetailScreen
 import org.macpry.kmpcompose.screens.main.MainScreen
 import org.macpry.kmpcompose.screens.main.MainState
@@ -165,12 +166,7 @@ private fun HomeNavigation(
     var currentDestination by rememberSaveable { mutableStateOf(HomeBottomNavigation.Main) }
     NavigationSuiteScaffold(
         navigationSuiteItems = {
-            listOf(
-                HomeBottomNavigation.Main,
-                HomeBottomNavigation.Notes,
-                HomeBottomNavigation.Settings,
-                HomeBottomNavigation.User
-            ).forEach { screen ->
+            bottomNavigationItems.forEach { screen ->
                 item(
                     selected = screen == currentDestination,
                     onClick = { currentDestination = screen },
