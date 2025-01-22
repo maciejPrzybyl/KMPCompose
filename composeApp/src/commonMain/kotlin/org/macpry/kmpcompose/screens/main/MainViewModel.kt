@@ -8,11 +8,14 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import org.macpry.kmpcompose.data.network.ImageResponse
 import org.macpry.kmpcompose.managers.IAppManager
+import org.macpry.kmpcompose.repositories.CurrentUser
+import org.macpry.kmpcompose.repositories.IUserRepository
 import org.macpry.kmpcompose.services.worker.BackgroundWorker
 
 class MainViewModel(
     private val appManager: IAppManager,
-    private val backgroundWorker: BackgroundWorker
+    private val backgroundWorker: BackgroundWorker,
+    private val userRepository: IUserRepository
 ) : ViewModel() {
 
     private fun fetchImages() = flow {
@@ -28,13 +31,14 @@ class MainViewModel(
     internal val state = combine(
         appManager.timeFlow,
         fetchImages(),
-        backgroundWorker.progressFlow
-    ) { time, images, progress ->
-        MainState(time.toString(), images, progress)
+        backgroundWorker.progressFlow,
+        userRepository.currentUserFlow
+    ) { time, images, progress, user ->
+        MainState(time.toString(), images, progress, user)
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
-        MainState(null, ImagesState.Init, 0)
+        MainState(null, ImagesState.Init, 0, null)
     )
 
     internal fun startWorker() {
@@ -45,7 +49,8 @@ class MainViewModel(
 data class MainState(
     val currentTime: String? = null,
     val imagesState: ImagesState,
-    val workerProgress: Int = 0
+    val workerProgress: Int = 0,
+    val currentUser: CurrentUser? = null
 )
 
 sealed class ImagesState {

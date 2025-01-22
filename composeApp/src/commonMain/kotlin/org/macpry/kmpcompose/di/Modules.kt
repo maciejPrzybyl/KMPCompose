@@ -28,8 +28,10 @@ import org.macpry.kmpcompose.providers.provideHttpClient
 import org.macpry.kmpcompose.providers.provideIODispatcher
 import org.macpry.kmpcompose.repositories.INotesRepository
 import org.macpry.kmpcompose.repositories.ISettingsRepository
+import org.macpry.kmpcompose.repositories.IUserRepository
 import org.macpry.kmpcompose.repositories.NotesRepository
 import org.macpry.kmpcompose.repositories.SettingsRepository
+import org.macpry.kmpcompose.repositories.UserRepository
 import org.macpry.kmpcompose.screens.main.MainViewModel
 import org.macpry.kmpcompose.screens.maps.MapsViewModel
 import org.macpry.kmpcompose.screens.notes.NotesViewModel
@@ -69,6 +71,7 @@ val managersModule = module {
 val repositoriesModule = module {
     factoryOf(::NotesRepository) bind INotesRepository::class
     factoryOf(::SettingsRepository) bind ISettingsRepository::class
+    factoryOf(::UserRepository) bind IUserRepository::class
 }
 
 val viewModelsModule = module {
