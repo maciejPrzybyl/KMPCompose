@@ -171,7 +171,15 @@ private fun HomeNavigation(
                     selected = screen == currentDestination,
                     onClick = { currentDestination = screen },
                     icon = { Icon(screen.icon, stringResource(screen.label)) },
-                    label = { Text(stringResource(screen.label)) }
+                    label = {
+                        Text(
+                            if (screen == HomeBottomNavigation.User && mainState.currentUser != null) {
+                                mainState.currentUser!!.name
+                            } else {
+                                stringResource(screen.label)
+                            }
+                        )
+                    }
                 )
             }
         }
