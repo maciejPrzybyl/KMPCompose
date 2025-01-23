@@ -12,10 +12,10 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDateTime
+import org.macpry.kmpcompose.factories.FakeUserRepository
 import org.macpry.kmpcompose.data.network.ImageResponse
 import org.macpry.kmpcompose.managers.IAppManager
 import org.macpry.kmpcompose.repositories.CurrentUser
-import org.macpry.kmpcompose.repositories.IUserRepository
 import org.macpry.kmpcompose.screens.main.MainViewModelTest.FakeAppManager.Companion.fakeImage
 import org.macpry.kmpcompose.screens.main.MainViewModelTest.FakeAppManager.Companion.fakeTime1
 import org.macpry.kmpcompose.screens.main.MainViewModelTest.FakeAppManager.Companion.fakeTime2
@@ -165,7 +165,4 @@ class MainViewModelTest {
         override val tag: String = "FAKE_TAG"
     }
 
-    class FakeUserRepository(fakeUserFlow: Flow<CurrentUser?>) : IUserRepository {
-        override val currentUserFlow: Flow<CurrentUser?> = fakeUserFlow
-    }
 }
