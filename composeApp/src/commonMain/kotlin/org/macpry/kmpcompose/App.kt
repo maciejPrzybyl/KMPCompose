@@ -70,6 +70,8 @@ import org.macpry.kmpcompose.screens.notes.NotesScreen
 import org.macpry.kmpcompose.screens.notes.NotesViewModel
 import org.macpry.kmpcompose.screens.settings.SettingsScreen
 import org.macpry.kmpcompose.screens.settings.SettingsViewModel
+import org.macpry.kmpcompose.screens.user.UserScreen
+import org.macpry.kmpcompose.screens.user.UserViewModel
 import org.macpry.kmpcompose.theme.darkScheme
 import org.macpry.kmpcompose.theme.lightScheme
 import kotlin.reflect.typeOf
@@ -214,7 +216,11 @@ private fun HomeNavigation(
                 SettingsScreen(settingsState, settingsViewModel::saveSetting)
             }
 
-            HomeBottomNavigation.User -> TODO()
+            HomeBottomNavigation.User -> {
+                val userViewModel: UserViewModel = koinViewModel()
+                val userState by userViewModel.userState.collectAsStateWithLifecycle()
+                UserScreen(userState, userViewModel::signIn)
+            }
         }
         Box(Modifier.fillMaxSize()) {
             val infiniteTransition = rememberInfiniteTransition(label = "infinite transition")

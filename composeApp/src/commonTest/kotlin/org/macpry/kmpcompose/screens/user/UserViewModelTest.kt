@@ -9,6 +9,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.macpry.kmpcompose.factories.FakeUserRepository
+import org.macpry.kmpcompose.managers.IAuthManager
 import org.macpry.kmpcompose.repositories.CurrentUser
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -31,7 +32,7 @@ class UserViewModelTest {
     @Test
     fun observeUserState() = runTest {
         val userFlow = MutableStateFlow<CurrentUser?>(null)
-        val viewModel = UserViewModel(FakeUserRepository(userFlow))
+        val viewModel = UserViewModel(FakeUserRepository(userFlow), FakeAuthManager())
 
         viewModel.userState.test {
             assertEquals(UserState(null), awaitItem())
@@ -40,5 +41,9 @@ class UserViewModelTest {
             userFlow.emit(newUser)
             assertEquals(UserState(newUser), awaitItem())
         }
+    }
+
+    class FakeAuthManager : IAuthManager {
+        override suspend fun signIn() {}
     }
 }

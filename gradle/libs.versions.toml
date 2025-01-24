@@ -31,6 +31,7 @@ androidx-ui-test = "1.7.6"
 accompanist = "0.37.0"
 googleServices = "4.4.2"
 firebaseBOM = "33.8.0"
+devGitliveFirebase = "2.1.0"
 
 [libraries]
 androidx-ui-test-junit4-android = { module = "androidx.compose.ui:ui-test-junit4-android", version.ref = "androidx-ui-test" }
@@ -90,6 +91,7 @@ accompanist-permissions = { module = "com.google.accompanist:accompanist-permiss
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBOM" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
+firebase-gitlive-auth = { module = "dev.gitlive:firebase-auth", version.ref = "devGitliveFirebase" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

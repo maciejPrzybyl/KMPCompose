@@ -66,8 +66,18 @@ kotlin {
         }
     }
 
+    applyDefaultHierarchyTemplate()
+
     sourceSets {
         val desktopMain by getting
+        val noWasm by creating {
+            dependsOn(commonMain.get())
+        }
+        wasmJsMain.get().dependsOn(commonMain.get())
+
+        androidMain.get().dependsOn(noWasm)
+        desktopMain.dependsOn(noWasm)
+        iosMain.get().dependsOn(noWasm)
 
         androidMain.dependencies {
             implementation(compose.preview)
@@ -112,6 +122,9 @@ kotlin {
             implementation(projects.shared)
             implementation(projects.database)
             implementation(projects.datastore)
+        }
+        noWasm.dependencies {
+            implementation(libs.firebase.gitlive.auth)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

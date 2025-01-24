@@ -22,6 +22,7 @@ import org.macpry.kmpcompose.logger.IKMPLogger
 import org.macpry.kmpcompose.logger.KMPLogger
 import org.macpry.kmpcompose.managers.AppManager
 import org.macpry.kmpcompose.managers.IAppManager
+import org.macpry.kmpcompose.managers.authModule
 import org.macpry.kmpcompose.providers.KMPDispatchers
 import org.macpry.kmpcompose.providers.provideDefaultDispatcher
 import org.macpry.kmpcompose.providers.provideHttpClient
@@ -36,6 +37,7 @@ import org.macpry.kmpcompose.screens.main.MainViewModel
 import org.macpry.kmpcompose.screens.maps.MapsViewModel
 import org.macpry.kmpcompose.screens.notes.NotesViewModel
 import org.macpry.kmpcompose.screens.settings.SettingsViewModel
+import org.macpry.kmpcompose.screens.user.UserViewModel
 
 fun appModule() = module {
     includes(
@@ -46,6 +48,7 @@ fun appModule() = module {
         databaseModule,
         datastoreModule,
         workersModule,
+        authModule,
         viewModelsModule
     )
 }
@@ -79,6 +82,7 @@ val viewModelsModule = module {
     viewModelOf(::NotesViewModel)
     viewModelOf(::SettingsViewModel)
     viewModelOf(::MapsViewModel)
+    viewModelOf(::UserViewModel)
 }
 
 expect val workersModule: Module
