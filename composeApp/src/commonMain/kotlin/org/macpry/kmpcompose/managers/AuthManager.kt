@@ -1,17 +1,18 @@
 package org.macpry.kmpcompose.managers
 
 import org.koin.core.module.Module
+import org.macpry.kmpcompose.repositories.CurrentUser
 
 expect val authModule: Module
 
-interface ITokenIdProvider {
-    suspend fun getTokenId(): String
-}
-
 interface IAuthManager {
-    suspend fun signIn()
+    suspend fun signIn(): Result<CurrentUser>
 }
 
-expect class AuthManager(tokenIdProvider: ITokenIdProvider) : IAuthManager {
-    override suspend fun signIn()
+interface IIdTokenProvider {
+    suspend fun getIdToken(): Result<String>
+}
+
+expect class AuthManager : IAuthManager {
+    override suspend fun signIn(): Result<CurrentUser>
 }

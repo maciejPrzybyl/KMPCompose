@@ -101,8 +101,8 @@ class MainViewModelTest {
 
     @Test
     fun emitCurrentUser() = runTest {
-        val user1 = CurrentUser("1", "1em")
-        val user2 = CurrentUser("2", "2em")
+        val user1 = CurrentUser("1", "1em", "1url")
+        val user2 = CurrentUser("2", "2em", null)
         val viewModel =
             createViewModel(
                 flowOf(fakeTime1),

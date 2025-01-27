@@ -1,6 +1,7 @@
 package org.macpry.kmpcompose.screens.user
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Text
@@ -15,13 +16,19 @@ fun UserScreen(
     signIn: () -> Unit
 ) {
     Box(
-        Modifier
+        modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding()
+            .statusBarsPadding(),
+        contentAlignment = Alignment.Center
     ) {
-        TextButton(
+        state.currentUser?.let {
+            Column {
+                Text(it.name)
+                Text(it.email)
+                Text(it.photoURL.orEmpty())
+            }
+        } ?: TextButton(
             onClick = signIn,
-            modifier = Modifier.align(Alignment.Center)
         ) {
             Text("Sign in")
         }

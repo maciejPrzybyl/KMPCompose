@@ -24,7 +24,11 @@ class UserViewModel(
     )
 
     internal fun signIn() = viewModelScope.launch {
-        authManager.signIn()
+        authManager.signIn().onSuccess {
+            userRepository.setCurrentUser(it)
+        }.onFailure {
+
+        }
     }
 }
 

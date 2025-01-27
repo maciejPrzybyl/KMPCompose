@@ -37,13 +37,13 @@ class UserViewModelTest {
         viewModel.userState.test {
             assertEquals(UserState(null), awaitItem())
 
-            val newUser = CurrentUser("akh", "sdfa")
+            val newUser = CurrentUser("akh", "sdfa", "iuas")
             userFlow.emit(newUser)
             assertEquals(UserState(newUser), awaitItem())
         }
     }
 
     class FakeAuthManager : IAuthManager {
-        override suspend fun signIn() {}
+        override suspend fun signIn(): Result<CurrentUser> = Result.failure(Exception("aaa"))
     }
 }

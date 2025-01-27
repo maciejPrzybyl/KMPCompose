@@ -85,11 +85,14 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.workmanager)
-            implementation(libs.googlemaps.maps)
-            implementation(libs.googlemaps.compose)
+            implementation(libs.google.services.maps)
+            implementation(libs.google.maps.compose)
             implementation(libs.accompanist.permissions)
             implementation(project.dependencies.platform(libs.firebase.bom))
             implementation(libs.firebase.messaging)
+            implementation(libs.androidx.credentials)
+            implementation(libs.androidx.credentials.auth)
+            implementation(libs.android.identity.googleid)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -189,6 +192,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     dependencies {
         debugImplementation(compose.uiTooling)

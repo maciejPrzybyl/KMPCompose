@@ -6,6 +6,8 @@ android-targetSdk = "35"
 androidx-activityCompose = "1.10.0"
 androidx-lifecycle = "2.8.4"
 androidx-navigationCompose = "2.8.0-alpha12"
+androidx-credentials = "1.5.0-rc01"
+android-identity-googleid = "1.1.1"
 compose-plugin = "1.7.3"
 kotlin = "2.1.0"
 kotlinx-coroutines = "1.10.1"
@@ -23,8 +25,8 @@ logback = "1.5.16"
 room = "2.7.0-alpha12"
 sqlite = "2.5.0-alpha12"
 datastore = "1.1.2"
-google-maps = "19.0.0"
-maps-compose = "6.4.1"
+google-services-maps = "19.0.0"
+google-maps-compose = "6.4.1"
 secrets = "2.0.1"
 kover = "0.9.1"
 androidx-ui-test = "1.7.6"
@@ -42,6 +44,9 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 androidx-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "androidx-navigationCompose" }
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "androidx-credentials" }
+androidx-credentials-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "androidx-credentials" }
+android-identity-googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "android-identity-googleid" }
 
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
@@ -84,8 +89,8 @@ sqlite-bundle = { group = "androidx.sqlite", name = "sqlite-bundled", version.re
 datastore-core = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 
-googlemaps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "maps-compose" }
-googlemaps-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "google-maps" }
+google-maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "google-maps-compose" }
+google-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "google-services-maps" }
 
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 

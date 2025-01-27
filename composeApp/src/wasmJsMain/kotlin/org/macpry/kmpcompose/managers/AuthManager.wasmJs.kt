@@ -5,12 +5,14 @@ package org.macpry.kmpcompose.managers
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import org.macpry.kmpcompose.repositories.CurrentUser
 
 actual val authModule = module {
     factoryOf(::AuthManager) bind IAuthManager::class
 }
 
-actual class AuthManager actual constructor(tokenIdProvider: ITokenIdProvider) : IAuthManager {
-    actual override suspend fun signIn() {
+actual class AuthManager : IAuthManager {
+    actual override suspend fun signIn(): Result<CurrentUser> {
+        TODO("Not yet implemented")
     }
 }
