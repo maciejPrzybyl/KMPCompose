@@ -1,6 +1,7 @@
 package org.macpry.kmpcompose.managers
 
-import org.koin.core.module.Module
+import org.koin.core.module.dsl.factoryOf
+import org.koin.dsl.module
 
 actual class IdTokenProvider : IIdTokenProvider {
     actual override suspend fun getIdToken(): Result<String> {
@@ -8,6 +9,6 @@ actual class IdTokenProvider : IIdTokenProvider {
     }
 }
 
-actual fun idTokenModule(): Module {
-    TODO("Not yet implemented")
+actual fun idTokenModule() = module {
+    factoryOf(::IdTokenProvider)
 }
