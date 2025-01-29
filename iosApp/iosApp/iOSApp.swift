@@ -4,6 +4,8 @@ import UserNotifications
 
 import Firebase
 import FirebaseMessaging
+import GoogleSignIn
+import GoogleSignInSwift
 
 class AppDelegate: NSObject, UIApplicationDelegate {
 
@@ -36,6 +38,23 @@ class AppDelegate: NSObject, UIApplicationDelegate {
   ) {
       NSLog("aaaa didFailToRegisterForRemoteNotificationsWithError error: \(error.localizedDescription)")
   }
+
+  func application(_ app: UIApplication,
+                     open url: URL,
+                     options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+      // [END application_open]
+      if GIDSignIn.sharedInstance.handle(url) {
+        return true
+      } else {
+        return false
+      }
+      /*return ApplicationDelegate.shared.application(
+        app,
+        open: url,
+        sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
+        annotation: options[UIApplication.OpenURLOptionsKey.annotation]
+      )*/
+    }
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
@@ -82,5 +101,24 @@ struct iOSApp: App {
         WindowGroup {
             ContentView()
         }
+    }
+}
+
+class GoogleSign {
+    
+    func signInWithGoogle(rootViewController: UIViewController) {
+        //GoogleSignInButton(style: .wide) {
+            /*guard let rootViewController = self.rootViewController else {
+                print("No root view controller")
+                return
+            }*/
+        GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { result, error in
+          guard let result else {
+            print("Error signing in: \(String(describing: error))")
+            return
+          }
+          print("Successfully signed in user")
+        }
+        //}
     }
 }
