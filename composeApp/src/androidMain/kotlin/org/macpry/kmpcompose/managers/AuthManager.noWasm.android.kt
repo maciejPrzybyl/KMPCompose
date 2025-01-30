@@ -10,11 +10,11 @@ import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 import org.macpry.kmpcompose.BuildConfig
 
-actual class IdTokenProvider(
+actual class TokenProvider(
     private val context: Context,
     private val credentialManager: CredentialManager
-) : IIdTokenProvider {
-    actual override suspend fun getIdToken(): Result<String> {
+) : ITokenProvider {
+    actual override suspend fun getToken(): Result<Token> {
         val googleIdOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
             .setAutoSelectEnabled(true)
@@ -26,13 +26,13 @@ actual class IdTokenProvider(
         return runCatching {
             val credential = credentialManager.getCredential(context, credentialRequest).credential
             if (credential is CustomCredential && credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                GoogleIdTokenCredential.createFrom(credential.data).idToken
+                Token(GoogleIdTokenCredential.createFrom(credential.data).idToken, null)
             } else return Result.failure(Exception("Unexpected type of credential"))
         }
     }
 }
 
-actual fun idTokenModule() = module {
+actual fun tokenModule() = module {
     factory { CredentialManager.create(get()) }
-    factoryOf(::IdTokenProvider)
+    factoryOf(::TokenProvider)
 }

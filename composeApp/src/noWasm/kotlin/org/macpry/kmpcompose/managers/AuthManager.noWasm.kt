@@ -9,21 +9,21 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.macpry.kmpcompose.repositories.CurrentUser
 
-expect class IdTokenProvider : IIdTokenProvider {
-    override suspend fun getIdToken(): Result<String>
+expect class TokenProvider : ITokenProvider {
+    override suspend fun getToken(): Result<Token>
 }
 
-expect fun idTokenModule(): Module
+expect fun tokenModule(): Module
 
 actual val authModule = module {
-    includes(idTokenModule())
+    includes(tokenModule())
     factoryOf(::AuthManager) bind IAuthManager::class
 }
 
-actual class AuthManager(private val idTokenProvider: IdTokenProvider) : IAuthManager {
-    actual override suspend fun signIn() = idTokenProvider.getIdToken().mapCatching {
+actual class AuthManager(private val tokenProvider: TokenProvider) : IAuthManager {
+    actual override suspend fun signIn() = tokenProvider.getToken().mapCatching {
         Firebase.auth.signInWithCredential(
-            GoogleAuthProvider.credential(idToken = it, accessToken = null)
+            GoogleAuthProvider.credential(idToken = it.idToken, accessToken = it.accessToken)
         ).user?.let {
             CurrentUser(it.displayName.orEmpty(), it.email.orEmpty(), it.photoURL)
         } ?: throw Exception("No user found")

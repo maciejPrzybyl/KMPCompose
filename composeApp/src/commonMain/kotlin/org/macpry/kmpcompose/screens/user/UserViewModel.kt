@@ -27,7 +27,7 @@ class UserViewModel(
         authManager.signIn().onSuccess {
             userRepository.setCurrentUser(it)
         }.onFailure {
-
+            println(it)
         }
     }
 }

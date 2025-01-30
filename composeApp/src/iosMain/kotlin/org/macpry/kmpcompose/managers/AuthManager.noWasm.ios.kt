@@ -3,17 +3,17 @@ package org.macpry.kmpcompose.managers
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 import kotlin.coroutines.suspendCoroutine
-import platform.UIKit.UIApplication
 import kotlin.coroutines.resume
 
-actual class IdTokenProvider : IIdTokenProvider {
-    actual override suspend fun getIdToken(): Result<String> = suspendCoroutine { continutation ->
-        UIApplication.sharedApplication.keyWindow?.rootViewController?.let {
+actual class TokenProvider : ITokenProvider {
+    actual override suspend fun getToken(): Result<Token> = suspendCoroutine { continuation ->
+        continuation.resume(Result.success(Token("123", "456")))
+        /*UIApplication.sharedApplication.keyWindow?.rootViewController?.let {
 
-        } ?: continutation.resume(Result.failure(Exception("eeeeexxx")))
+        } ?: continuation.resume(Result.failure(Exception("eeeeexxx")))*/
     }
 }
 
-actual fun idTokenModule() = module {
-    factoryOf(::IdTokenProvider)
+actual fun tokenModule() = module {
+    factoryOf(::TokenProvider)
 }

@@ -9,9 +9,14 @@ interface IAuthManager {
     suspend fun signIn(): Result<CurrentUser>
 }
 
-interface IIdTokenProvider {
-    suspend fun getIdToken(): Result<String>
+interface ITokenProvider {
+    suspend fun getToken(): Result<Token>
 }
+
+data class Token(
+    val idToken: String,
+    val accessToken: String?
+)
 
 expect class AuthManager : IAuthManager {
     override suspend fun signIn(): Result<CurrentUser>
