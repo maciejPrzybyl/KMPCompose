@@ -13,4 +13,7 @@
     <string name="ok">Ok</string>
     <string name="save">Zapisz</string>
     <string name="save_something">Zapisz coś</string>
+
+    <string name="sign_in">Zaloguj się</string>
+
 </resources>

@@ -9,6 +9,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kmpcompose.composeapp.generated.resources.Res
+import kmpcompose.composeapp.generated.resources.sign_in
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun UserScreen(
@@ -30,7 +33,7 @@ fun UserScreen(
         } ?: TextButton(
             onClick = signIn,
         ) {
-            Text("Sign in")
+            Text(stringResource(Res.string.sign_in))
         }
     }
 }
