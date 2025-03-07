@@ -6,3 +6,4 @@ Core functionalities:
 - background task (Android, iOS)
 - push notifications (Android, iOS)
 - maps (Android, iOS)
+- sign in with Google (Android)
