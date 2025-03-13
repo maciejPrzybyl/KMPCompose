@@ -238,7 +238,7 @@ fun PagerWithIndicator(
                         .then(
                             animatedVisibilityScope?.let {
                                 Modifier.sharedElement(
-                                    state = rememberSharedContentState("image${imageData.url}"),
+                                    sharedContentState = rememberSharedContentState("image${imageData.url}"),
                                     animatedVisibilityScope = it
                                 )
                             } ?: Modifier
