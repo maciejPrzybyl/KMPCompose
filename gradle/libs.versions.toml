@@ -29,7 +29,7 @@ secrets = "2.0.1"
 kover = "0.9.1"
 androidx-ui-test = "1.7.8"
 accompanist = "0.37.2"
-googleServices = "4.4.2"
+googleServices = "4.4.3"
 firebaseBOM = "33.10.0"
 
 [libraries]
