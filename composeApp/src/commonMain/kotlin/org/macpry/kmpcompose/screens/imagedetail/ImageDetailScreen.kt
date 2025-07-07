@@ -32,7 +32,7 @@ fun ImageDetailScreen(
                 model = url,
                 contentDescription = null,
                 modifier = Modifier.sharedElement(
-                    state = rememberSharedContentState("image${url}"),
+                    sharedContentState = rememberSharedContentState("image${url}"),
                     animatedVisibilityScope = animatedVisibilityScope
                 )
             )

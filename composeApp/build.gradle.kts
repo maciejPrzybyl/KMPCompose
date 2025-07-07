@@ -89,6 +89,7 @@ kotlin {
             implementation(compose.material3AdaptiveNavigationSuite)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+            implementation(libs.compose.icons)
 
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)

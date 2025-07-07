@@ -5,14 +5,15 @@ android-minSdk = "24"
 android-targetSdk = "35"
 androidx-activityCompose = "1.10.1"
 androidx-lifecycle = "2.8.4"
-androidx-navigationCompose = "2.8.0-alpha12"
-compose-plugin = "1.7.3"
+androidx-navigationCompose = "2.8.0-alpha13"
+compose-plugin = "1.8.2"
+compose-icons = "1.7.3"
 kotlin = "2.2.0"
-kotlinx-coroutines = "1.10.1"
+kotlinx-coroutines = "1.10.2"
 kotlinx-browser = "0.3"
-flow-turbine = "1.2.0"
-kotlinx-serialization = "1.8.0"
-kotlinx-datetime = "0.6.2"
+flow-turbine = "1.2.1"
+kotlinx-serialization = "1.9.0"
+kotlinx-datetime = "0.7.0"
 coil = "3.1.0"
 koin = "4.0.2"
 koin-ksp = "2.0.0"
@@ -41,6 +42,7 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 androidx-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "androidx-navigationCompose" }
+compose-icons = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "compose-icons"}
 
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
