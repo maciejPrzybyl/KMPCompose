@@ -40,17 +40,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import androidx.core.bundle.Bundle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import androidx.savedstate.SavedState
+import androidx.savedstate.read
+import androidx.savedstate.write
 import kmpcompose.composeapp.generated.resources.Res
 import kmpcompose.composeapp.generated.resources.app_dialog_title
 import kmpcompose.composeapp.generated.resources.ok
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -134,16 +135,16 @@ fun AppNavigation() {
 val CoordinatesNavType = object : NavType<Coordinates>(
     isNullableAllowed = false,
 ) {
-    override fun get(bundle: Bundle, key: String): Coordinates? {
-        return Json.decodeFromString(bundle.getString(key) ?: return null)
+    override fun get(bundle: SavedState, key: String): Coordinates? {
+        return Json.decodeFromString(bundle.read { getStringOrNull(key) ?: return null })
     }
 
     override fun parseValue(value: String): Coordinates {
         return Json.decodeFromString(value)
     }
 
-    override fun put(bundle: Bundle, key: String, value: Coordinates) {
-        bundle.putString(key, Json.encodeToString(value))
+    override fun put(bundle: SavedState, key: String, value: Coordinates) = bundle.write {
+        putString(key, Json.encodeToString(value))
     }
 
     override fun serializeAsValue(value: Coordinates): String {
