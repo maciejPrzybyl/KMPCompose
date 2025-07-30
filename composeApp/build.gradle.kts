@@ -18,11 +18,6 @@ plugins {
     alias(libs.plugins.googleServices)
 }
 
-repositories {
-    mavenCentral()
-    google()
-}
-
 kotlin {
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
