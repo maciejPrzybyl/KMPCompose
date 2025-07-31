@@ -49,8 +49,8 @@ fun appModule() = module {
 }
 
 val dataModule = module {
-    factory<INotesLocalData> { NotesLocalData(get(named(KMPDispatchers.IO)), get()) }
-    factory<INetworkData> { NetworkData(get()) }
+    factoryOf(::NotesLocalData) bind INotesLocalData::class
+    factoryOf(::NetworkData) bind INetworkData::class
     factory<ISettingsLocalData> { SettingsLocalData(get(named(KMPDispatchers.IO)), get()) }
 }
 
