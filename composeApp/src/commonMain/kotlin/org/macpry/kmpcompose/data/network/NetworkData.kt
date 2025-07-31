@@ -3,8 +3,6 @@ package org.macpry.kmpcompose.data.network
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -13,13 +11,11 @@ interface INetworkData {
 }
 
 class NetworkData(
-    private val client: HttpClient,
-    private val ioDispatcher: CoroutineDispatcher
+    private val client: HttpClient
 ) : INetworkData {
 
-    override suspend fun getImages() = withContext(ioDispatcher) {
+    override suspend fun getImages() =
         client.get("https://picsum.photos/v2/list").body<List<ImageResponse>>()
-    }
 
 }
 

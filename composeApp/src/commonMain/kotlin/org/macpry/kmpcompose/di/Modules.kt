@@ -50,7 +50,7 @@ fun appModule() = module {
 
 val dataModule = module {
     factory<INotesLocalData> { NotesLocalData(get(named(KMPDispatchers.IO)), get()) }
-    factory<INetworkData> { NetworkData(get(), get(named(KMPDispatchers.IO))) }
+    factory<INetworkData> { NetworkData(get()) }
     factory<ISettingsLocalData> { SettingsLocalData(get(named(KMPDispatchers.IO)), get()) }
 }
 
